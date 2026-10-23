@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://commercialvoomstore-beep.github.io/echoresta/sitemap.xml

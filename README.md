@@ -35,6 +35,16 @@ Le dossier `_build` n’est pas mis en ligne sur Vercel (voir `.vercelignore`).
 
 Sur vercel.com : **Add New… → Project → Import Git Repository**, choisir ce dépôt, puis **Deploy**. Aucun réglage n'est nécessaire (pas de commande de build).
 
+## Référencement (Google)
+
+- Titres, descriptions, titres H1 et textes des pages : `_build/seo.py`.
+- Chaque page contient une URL canonique, des balises de partage (Open Graph) et des données structurées
+  (école, formations, fil d'Ariane, questions fréquentes).
+- `sitemap.xml` et `robots.txt` sont générés automatiquement.
+- Si le site change d'adresse (nom de domaine), modifier `BASE_URL` dans `_build/seo.py` puis régénérer.
+- À faire hors du site : déclarer le site dans Google Search Console (envoyer `sitemap.xml`)
+  et créer la fiche Google Business Profile de l'école (adresse 92JH+FW, Angré Star 14).
+
 ## À compléter
 
 - Remplacer les photos de `images/` par les originales (mêmes noms de fichiers).

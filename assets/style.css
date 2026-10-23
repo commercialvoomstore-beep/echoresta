@@ -427,8 +427,9 @@
   .h-hero-text{max-width:600px;padding:84px 0 140px}
   .h-kicker{display:flex;align-items:center;gap:12px;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:22px}
   .h-kicker::before{content:"";width:32px;height:2px;background:var(--red)}
-  .h-hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(38px,4.4vw,62px);line-height:1.15;text-wrap:balance}
-  .h-hero p{font-size:18px;line-height:1.7;color:rgba(255,255,255,.86);margin:26px 0 36px;max-width:540px}
+  .h-hero .h-title{font-family:var(--serif);font-weight:900;font-size:clamp(38px,4.4vw,62px);line-height:1.15;text-wrap:balance;margin:0;color:#fff}
+  h1.h-kicker{font-family:var(--sans);line-height:1.5}
+  .h-hero p:not(.h-title){font-size:18px;line-height:1.7;color:rgba(255,255,255,.86);margin:26px 0 36px;max-width:540px}
   .h-actions{display:flex;gap:16px;flex-wrap:wrap}
   .h-hero-points{list-style:none;display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:44px;padding-top:26px;border-top:1px solid rgba(255,255,255,.16);font-size:14.5px;font-weight:600}
   .h-hero-points li{display:flex;align-items:center;gap:8px}
@@ -575,3 +576,14 @@
   }
   /* Photos de bandeau : cadrage un peu plus haut pour garder les visages */
   .page-hero{background-position:center 25%}
+
+  /* Accueil : texte local (Abidjan) et questions fréquentes */
+  .h-local{padding:100px 0}
+  .h-local-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px;max-width:1180px;align-items:start}
+  .h-local-grid>div:first-child p{color:var(--muted);margin-top:22px;line-height:1.75}
+  .h-local-grid>div:first-child .link-arrow{margin-top:26px}
+  .h-faq-title{font-family:var(--serif);font-size:22px;margin-bottom:6px}
+  .h-local .faq{margin:0;max-width:none}
+  .h-local .faq summary{font-size:16.5px}
+  @media (max-width:1000px){.h-local-grid{grid-template-columns:minmax(0,1fr);gap:48px}}
+  @media (max-width:600px){.h-local{padding:72px 0}}

@@ -10,6 +10,8 @@ S = pathlib.Path(__file__).resolve().parent
 OUT = S.parent
 sys.path.insert(0, str(S))
 from metiers import CATEGORIES, METIERS, QUIZ  # noqa: E402
+import seo  # noqa: E402
+from PIL import Image  # noqa: E402
 
 PHONE = '+225 07 68 84 20 38'
 WHATSAPP = '2250768842038'  # numéro WhatsApp au format international, sans + ni espaces
@@ -20,6 +22,14 @@ LIEU = quote(f'{PLUS_CODE} Abidjan')  # Google Maps reconnaît le Plus Code et y
 MAPS_ITINERAIRE = f'https://www.google.com/maps/dir/?api=1&destination={LIEU}'
 MAPS_OUVRIR = f'https://www.google.com/maps/search/?api=1&query={LIEU}'
 BY_CAT = {k: [m for m in METIERS if m['cat'] == k] for k in CATEGORIES}
+LAT, LNG = (float(x) for x in GPS.split(','))
+PAGES_PUBLIEES = []  # (fichier, robots) : sert au plan du site (sitemap.xml)
+
+
+def taille(img):
+    """Largeur et hauteur d'une image du dossier images/, pour réserver sa place à l'affichage."""
+    w, h = Image.open(OUT / 'images' / img).size
+    return f'width="{w}" height="{h}"'
 
 icons = (S / 'icons.html').read_text().replace('</svg>', '''  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
@@ -165,7 +175,10 @@ MAP = f'''<section class="map">
 '''
 
 
-def page(file, title, desc, body, active, wa_text='Bonjour, je souhaite contacter le service commercial d’EchoResta.'):
+def page(file, title, desc, body, active, wa_text='Bonjour, je souhaite contacter le service commercial d’EchoResta.',
+         schemas=(), image='hero-cuisine.jpg', robots='index, follow'):
+    canonical = seo.BASE_URL + ('' if file == 'index.html' else file)
+    PAGES_PUBLIEES.append((file, robots))
     html = f'''<!doctype html>
 <html lang="fr">
 <head>
@@ -173,6 +186,17 @@ def page(file, title, desc, body, active, wa_text='Bonjour, je souhaite contacte
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
+<meta name="robots" content="{robots}">
+<link rel="canonical" href="{canonical}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{seo.SITE_NAME}">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:url" content="{canonical}">
+<meta property="og:image" content="{seo.BASE_URL}images/{image}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#13296b">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -180,6 +204,7 @@ def page(file, title, desc, body, active, wa_text='Bonjour, je souhaite contacte
 <link rel="icon" href="favicon.ico" sizes="48x48">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+{seo.balises_json_ld(schemas)}
 </head>
 <body>
 
@@ -266,12 +291,38 @@ def pole_html(titre, icon, desc, items):
       </div>'''
 
 
+ANCRES = {'cuisinier': 'cuisinier', 'serveur-hotesse': 'serveur et hôtesse', 'audit-nuit': 'réceptionniste',
+          'valet-femme-chambre': 'femme et valet de chambre', 'gouvernante': 'gouvernante', 'bar-mixology': 'barman',
+          'maitre-hotel': 'maître d’hôtel'}
+liens_metiers = ', '.join(f'<a class="link" href="formation-{slug}.html">{txt}</a>' for slug, txt in ANCRES.items())
+liens_metiers += ', ainsi que le <a class="link" href="formation-directeur-hotel.html">management hôtelier</a>, la <a class="link" href="formation-directeur-restaurant.html">gestion de restaurant</a> et l’<a class="link" href="formation-anglais-tourisme-hotellerie.html">anglais professionnel</a>'
+LOCAL_HTML = '''<section class="h-local" id="ecole-abidjan">
+  <div class="container h-local-grid">
+    <div>
+      <div class="eyebrow">Votre école à Abidjan</div>
+      <h2>Se former aux métiers de l’hôtellerie et de la restauration à Abidjan</h2>
+      <div class="sep"></div>
+      <p>Abidjan accueille chaque année de nombreux voyageurs d’affaires, touristes et grands événements, et de nouveaux hôtels et restaurants y ouvrent régulièrement. Ces établissements recherchent du personnel formé aux standards internationaux.</p>
+      <p>École de l’hôtellerie et de la restauration située à Angré Star 14, dans la commune de Cocody, EchoResta prépare aux métiers les plus demandés : {liens_metiers}. Nos formations sont ouvertes aux stagiaires de toutes les communes d’Abidjan et de l’intérieur du pays.</p>
+      <a class="link-arrow" href="contact.html">Nous rendre visite à Angré <svg class="ic"><use href="#i-arrow"/></svg></a>
+    </div>
+    <div>
+      <h3 class="h-faq-title">Questions fréquentes</h3>
+      <div class="faq">
+{faq}
+      </div>
+    </div>
+  </div>
+</section>
+
+'''.format(liens_metiers=liens_metiers, faq='\n'.join(f'        <details><summary>{q}</summary><p>{r}</p></details>' for q, r in seo.ACCUEIL_FAQ))
+
 home = f'''<section class="h-hero">
-  <div class="h-hero-media"><img src="images/hero-cuisine.jpg" alt="Brigade de cuisine EchoResta au travail" fetchpriority="high"></div>
+  <div class="h-hero-media"><img src="images/hero-cuisine.jpg" alt="Brigade de cuisine en formation à l’école hôtelière EchoResta d’Abidjan" {taille("hero-cuisine.jpg")} fetchpriority="high"></div>
   <div class="container">
     <div class="h-hero-text">
-      <div class="h-kicker">Cabinet de formation · Abidjan</div>
-      <h1>Inspiration, Savoir-faire et Excellence</h1>
+      <h1 class="h-kicker">École de l’hôtellerie et de la restauration à Abidjan</h1>
+      <p class="h-title">Inspiration, Savoir-faire et Excellence</p>
       <p>Toute belle carrière commence par une bonne formation. Avec EchoResta, acquérez les gestes et les standards de l’hôtellerie et de la restauration pour gravir les échelons du métier.</p>
       <div class="h-actions">
         <a href="formations.html" class="btn btn-red">Découvrir nos formations</a>
@@ -355,7 +406,7 @@ home = f'''<section class="h-hero">
 
 <section class="h-quote bg-soft">
   <div class="container h-quote-grid">
-    <img src="images/temoin-1.jpg" alt="Aminata Coulibaly">
+    <img src="images/temoin-1.jpg" alt="Aminata Coulibaly, gouvernante diplômée d’EchoResta" {taille("temoin-1.jpg")} loading="lazy" decoding="async">
     <figure>
       <div class="eyebrow">Ils témoignent</div>
       <blockquote>Quand on travaille en hôtellerie et qu’on se forme en parallèle, il faut sacrifier du temps personnel. Mon ambition était non seulement d’obtenir ma certification, mais de tirer le meilleur de chaque heure passée en formation.</blockquote>
@@ -378,7 +429,7 @@ home = f'''<section class="h-hero">
   </div>
 </section>
 
-<section class="banner h-cta">
+{LOCAL_HTML}<section class="banner h-cta">
   <div class="container">
     <h2>Plus de 2500 stagiaires nous font confiance</h2>
     <p>Rejoignez une communauté de professionnels de l’hôtellerie et de la restauration qui réussissent.</p>
@@ -389,8 +440,8 @@ home = f'''<section class="h-hero">
   </div>
 </section>
 '''
-page('index.html', 'EchoResta — École de l’Hôtellerie & Restauration',
-     'Cabinet de formation en hôtellerie et restauration à Abidjan : 10 formations métiers, stage garanti et double certification.', home + MAP, 'index.html')
+page('index.html', *seo.PAGES['index.html'], home + MAP, 'index.html',
+     schemas=[seo.ecole_schema(PHONE, LAT, LNG, PLUS_CODE), seo.site_schema(), seo.faq_schema(seo.ACCUEIL_FAQ)])
 
 # =========================================================== À propos
 values = [('i-target', 'Notre mission', 'Former des professionnels opérationnels dès le premier jour, capables de répondre aux standards de l’hôtellerie internationale.'),
@@ -400,10 +451,10 @@ team = [('galerie-2.jpg', 'Chef Marc Kouadio', 'Formateur cuisine'),
         ('galerie-3.jpg', 'Awa Bamba', 'Formatrice gouvernante'),
         ('galerie-5.jpg', 'David Yao', 'Formateur bar & mixologie'),
         ('galerie-6.jpg', 'Serge Konan', 'Formateur service en salle')]
-about = page_hero('À propos d’EchoResta', 'À propos', 'images/galerie-1.jpg') + f'''
+about = page_hero('EchoResta, école hôtelière à Abidjan', 'À propos', 'images/galerie-1.jpg') + f'''
 <section>
   <div class="container split">
-    <div class="img"><img src="images/galerie-3.jpg" alt="Formatrice EchoResta"></div>
+    <div class="img"><img src="images/galerie-3.jpg" alt="Formatrice de l’école hôtelière EchoResta à Abidjan" {taille("galerie-3.jpg")} loading="lazy" decoding="async"></div>
     <div>
       <div class="eyebrow">Notre histoire</div>
       <h2>Un cabinet né sur le terrain</h2>
@@ -436,7 +487,7 @@ about = page_hero('À propos d’EchoResta', 'À propos', 'images/galerie-1.jpg'
     <div class="sep"></div>
     <p class="muted" style="margin-top:30px">Des praticiens reconnus qui transmettent les gestes et les standards du métier.</p>
     <div class="team">
-{chr(10).join(f'      <div class="member"><img src="images/{img}" alt="{n}"><div class="info"><h4>{n}</h4><span>{r}</span></div></div>' for img, n, r in team)}
+{chr(10).join(f'      <div class="member"><img src="images/{img}" alt="{n}, {r.lower()} chez EchoResta" {taille(img)} loading="lazy" decoding="async"><div class="info"><h4>{n}</h4><span>{r}</span></div></div>' for img, n, r in team)}
     </div>
   </div>
 </section>
@@ -449,7 +500,8 @@ about = page_hero('À propos d’EchoResta', 'À propos', 'images/galerie-1.jpg'
   </div>
 </section>
 '''
-page('apropos.html', 'À propos — EchoResta', 'Histoire, mission et formateurs du cabinet EchoResta.', about, 'apropos.html')
+page('apropos.html', *seo.PAGES['apropos.html'], about, 'apropos.html',
+     schemas=[seo.fil_ariane(('Accueil', ''), ('À propos', 'apropos.html'))])
 
 # =========================================================== Formations
 cards = '\n'.join(f'''      <article class="course" id="{m['slug']}" data-cat="{m['cat']}">
@@ -472,7 +524,7 @@ faq = [('Quels sont les prérequis pour s’inscrire ?', 'La plupart de nos form
        ('Quels sont vos horaires ?', 'Nous vous accueillons du lundi au vendredi, de 8h à 17h. Selon la formation, les cours ont lieu le matin ou l’après-midi : contactez-nous pour connaître le prochain calendrier.'),
        ('Je ne sais pas quel métier choisir. Que faire ?', 'Faites notre test d’orientation en trois questions sur la page d’accueil, ou écrivez-nous sur WhatsApp : un conseiller vous aide à choisir.'),
        ('Peut-on payer en plusieurs fois ?', 'Oui, un échéancier peut être mis en place. Les modalités vous sont présentées lors de l’entretien d’inscription.')]
-formations = page_hero('Nos formations', 'Formations', 'images/hero.jpg',
+formations = page_hero('Formations en hôtellerie et restauration à Abidjan', 'Formations', 'images/hero.jpg',
                        f'{len(METIERS)} métiers de l’hôtellerie et de la restauration, avec stage garanti en entreprise.') + f'''
 <section class="center">
   <div class="container">
@@ -509,14 +561,15 @@ formations = page_hero('Nos formations', 'Formations', 'images/hero.jpg',
   </div>
 </section>
 '''
-page('formations.html', 'Formations — EchoResta', 'Les 10 formations métiers EchoResta en hôtellerie et restauration.', formations, 'formations.html')
+page('formations.html', *seo.PAGES['formations.html'], formations, 'formations.html',
+     schemas=[seo.fil_ariane(('Accueil', ''), ('Formations', 'formations.html')), seo.faq_schema(faq)])
 
 # =========================================================== Pages métier
 LADDER_LABELS = ['Après la formation', 'Avec l’expérience', 'Ensuite', 'À terme']
 for old in OUT.glob('formation-*.html'):
     old.unlink()
 for m in METIERS:
-    visual = (f'<img class="detail-img" src="images/{m["photo"]}" alt="{m["titre"]}">' if m['photo']
+    visual = (f'<img class="detail-img" src="images/{m["photo"]}" alt="Formation {m["titre"].lower()} à Abidjan" {taille(m["photo"])} decoding="async">' if m['photo']
               else f'<div class="icon-panel" role="img" aria-label="{m["titre"]}"><svg class="ic"><use href="#{m["icon"]}"/></svg></div>')
     savoir = '\n'.join(f'        <li><svg class="ic"><use href="#i-check"/></svg>{s}</li>' for s in m['savoir'])
     modules = '\n'.join(f'        <li><b>{t}</b><span>{d}</span></li>' for t, d in m['modules'])
@@ -527,7 +580,8 @@ for m in METIERS:
     others = [o for o in BY_CAT[m['cat']] if o is not m] or BY_CAT['hotellerie'][:3]
     others = '\n'.join(f'        <li><a href="{url(o)}">{o["titre"]}</a></li>' for o in others)
     others += '\n        <li><a href="formations.html">Toutes les formations →</a></li>'
-    body = page_hero(m['titre'], f'<a href="formations.html">Formations</a><span>/</span>{m["titre"]}',
+    meta = seo.METIERS_SEO[m['slug']]
+    body = page_hero(meta['h1'], f'<a href="formations.html">Formations</a><span>/</span>{m["titre"]}',
                      f'images/{m["fond"]}', m['accroche']) + f'''
 <section>
   <div class="container detail">
@@ -538,6 +592,9 @@ for m in METIERS:
       <h2>Le métier en bref</h2>
       <div class="sep"></div>
       <p class="lead-p">{m['resume']} Une formation pratique, animée par des professionnels en activité, pour être opérationnel dès votre premier poste.</p>
+
+      <h3 class="h3">Pourquoi suivre cette formation à Abidjan ?</h3>
+      <p class="lead-p">{meta['pourquoi']}</p>
 
       <h3 class="h3">Ce que vous saurez faire</h3>
       <ul class="checks two">
@@ -605,15 +662,17 @@ for m in METIERS:
   </div>
 </section>
 '''
-    page(url(m), f'Formation {m["titre"]} — EchoResta', m['resume'], body, 'formations.html',
-         f'Bonjour, je souhaite contacter le service commercial d’EchoResta au sujet de la formation {m["titre"]}.')
+    page(url(m), meta['title'], meta['desc'], body, 'formations.html',
+         f'Bonjour, je souhaite contacter le service commercial d’EchoResta au sujet de la formation {m["titre"]}.',
+         schemas=[seo.cours_schema(m, meta), seo.fil_ariane(('Accueil', ''), ('Formations', 'formations.html'), (m['titre'], url(m)))],
+         image=m['photo'] or 'hero-cuisine.jpg')
 
 # =========================================================== Contact
 options = '\n'.join(
     f'              <optgroup label="{CATEGORIES[c]}">\n' +
     '\n'.join(f'                <option value="{m["slug"]}">{m["titre"]}</option>' for m in BY_CAT[c]) +
     '\n              </optgroup>' for c in CATEGORIES)
-contact = page_hero('Contact &amp; inscription', 'Contact', 'images/galerie-3.jpg') + f'''
+contact = page_hero('Contact et inscription : votre école hôtelière à Abidjan', 'Contact', 'images/galerie-3.jpg') + f'''
 <section>
   <div class="container contact-grid">
     <aside class="info-box">
@@ -658,7 +717,8 @@ contact = page_hero('Contact &amp; inscription', 'Contact', 'images/galerie-3.jp
   </div>
 </section>
 ''' + MAP
-page('contact.html', 'Contact — EchoResta', 'Contactez EchoResta ou inscrivez-vous à une session.', contact, 'contact.html')
+page('contact.html', *seo.PAGES['contact.html'], contact, 'contact.html',
+     schemas=[seo.ecole_schema(PHONE, LAT, LNG, PLUS_CODE), seo.fil_ariane(('Accueil', ''), ('Contact', 'contact.html'))])
 
 # =========================================================== 404
 page('404.html', 'Page introuvable — EchoResta', 'Page introuvable.', '''
@@ -671,7 +731,7 @@ page('404.html', 'Page introuvable — EchoResta', 'Page introuvable.', '''
     <a href="index.html" class="btn btn-red">Retour à l’accueil</a>
   </div>
 </section>
-''', '')
+''', '', robots='noindex, follow')
 
 # =========================================================== Données pour la recherche et le test
 index = [{'t': 'Accueil', 'u': 'index.html', 'd': 'Présentation du cabinet EchoResta'},
@@ -692,3 +752,18 @@ old_index = OUT / 'assets' / 'search-index.js'
 if old_index.exists():
     old_index.unlink()
 print('ok :', len(list(OUT.glob('*.html'))), 'pages')
+
+# =========================================================== Plan du site (sitemap.xml) et robots.txt
+import datetime  # noqa: E402
+jour = datetime.date.today().isoformat()
+PRIORITE = {'index.html': '1.0', 'formations.html': '0.9', 'contact.html': '0.8', 'apropos.html': '0.7'}
+urls = '\n'.join(
+    f'  <url><loc>{seo.BASE_URL}{"" if f == "index.html" else f}</loc><lastmod>{jour}</lastmod>'
+    f'<priority>{PRIORITE.get(f, "0.8")}</priority></url>'
+    for f, robots in PAGES_PUBLIEES if robots.startswith('index'))
+(OUT / 'sitemap.xml').write_text(f'''<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{urls}
+</urlset>
+''')
+(OUT / 'robots.txt').write_text(f'User-agent: *\nAllow: /\n\nSitemap: {seo.BASE_URL}sitemap.xml\n')
