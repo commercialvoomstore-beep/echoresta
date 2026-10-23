@@ -165,7 +165,7 @@
   .card p{color:var(--muted);font-size:15px}
 
   /* Équipe */
-  .team{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;margin-top:60px}
+  .team{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:30px;margin-top:60px}
   .member img{width:100%;aspect-ratio:1/1.1;object-fit:cover}
   .member .info{background:#fff;margin:-36px 18px 0;position:relative;padding:20px 16px;text-align:center;box-shadow:0 10px 26px rgba(15,34,96,.10)}
   .member h4{font-family:var(--serif);font-size:17px}
@@ -251,7 +251,7 @@
     .split,.contact-grid{grid-template-columns:1fr;gap:56px}
     .split .img::after{inset:16px -12px -16px 12px}
     .cards,.courses{grid-template-columns:1fr 1fr}
-    .team{grid-template-columns:1fr 1fr}
+    .team{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
     .steps{grid-template-columns:1fr 1fr;row-gap:44px}
     .step::after{display:none}
     footer.big .cols{grid-template-columns:1fr 1fr}
@@ -273,7 +273,8 @@
   .course .more.alt{color:var(--navy);font-weight:600;text-decoration:underline;text-underline-offset:3px}
 
   /* Page détail formation */
-  .detail{display:grid;grid-template-columns:1fr 360px;gap:60px;max-width:1180px;align-items:start}
+  .detail{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:60px;max-width:1180px;align-items:start}
+  .detail-main{min-width:0}
   .detail-img{width:100%;aspect-ratio:16/8;object-fit:cover}
   .lead-p{color:var(--muted);margin-top:24px;font-size:16.5px}
   .h3{font-family:var(--serif);font-size:24px;margin:48px 0 6px}
@@ -312,7 +313,7 @@
   #search-results .empty{color:rgba(255,255,255,.7);padding:14px 0}
 
   @media (max-width:900px){
-    .detail{grid-template-columns:1fr}
+    .detail{grid-template-columns:minmax(0,1fr)}
     .detail-side{position:static}
     .modules{grid-template-columns:1fr}
   }
@@ -533,4 +534,34 @@
     .h-quote-grid{grid-template-columns:1fr;gap:28px;justify-items:center;text-align:center}
     .h-quote img{width:150px;height:150px}
     .h-cta + .map{padding-top:48px}
+  }
+
+  /* =========================================================
+     Ajustements responsive (tablettes et petits écrans)
+     ========================================================= */
+  h1,h2,h3,h4,.ladder li,.chips span,.r-txt b{overflow-wrap:break-word}
+  @media (max-width:1100px) and (min-width:901px){
+    nav.main{gap:22px}
+    nav.main a{font-size:15px}
+    .detail{grid-template-columns:minmax(0,1fr) 300px;gap:40px}
+    .ladder{grid-template-columns:1fr 1fr}
+    .ladder li::after{display:none}
+    .modules{grid-template-columns:1fr}
+  }
+  @media (max-width:480px){
+    .team{grid-template-columns:minmax(0,1fr);max-width:320px;margin-inline:auto}
+    .ladder{gap:12px}
+    .ladder li{padding:14px 12px;font-size:14px}
+    .timeline li{padding-left:20px;gap:10px}
+    .page-hero h1{font-size:30px}
+    .btn{padding:14px 22px}
+  }
+  /* Écrans moyens : le texte du hero occupe plus de la moitié de la largeur, le voile s'étend */
+  @media (max-width:1280px) and (min-width:1001px){
+    .h-hero-text{max-width:540px}
+    .h-hero-media::before{background:linear-gradient(90deg,rgba(10,22,64,.95) 0,rgba(10,22,64,.88) 42%,rgba(10,22,64,.45) 66%,rgba(10,22,64,.08) 90%)}
+  }
+  @media (max-width:400px){
+    .wa-float{font-size:12.5px;padding:8px 14px 8px 10px}
+    .wa-float small{font-size:10px}
   }
