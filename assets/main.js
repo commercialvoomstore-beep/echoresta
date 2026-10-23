@@ -83,3 +83,42 @@
   input.addEventListener('input',()=>render(input.value));
   input.addEventListener('keydown',e=>{if(e.key==='Enter'){const a=list.querySelector('a');if(a)location.href=a.href;}});
 })();
+
+// Test d'orientation « Quel métier est fait pour vous ? »
+(function(){
+  const card=document.getElementById('quiz-card');
+  if(!card||!window.QUIZ||!window.METIERS) return;
+  const metiers=window.METIERS, quiz=window.QUIZ;
+  const rank=slug=>metiers.findIndex(m=>m.slug===slug);
+  let step=0, score={};
+  const progress=p=>`<div class="quiz-progress"><span style="width:${p}%"></span></div>`;
+  const render=()=>{
+    if(step<quiz.length){
+      const q=quiz[step];
+      card.innerHTML=progress(step/quiz.length*100)+
+        `<p class="quiz-count">Question ${step+1} / ${quiz.length}</p><h3>${q.q}</h3>`+
+        `<div class="quiz-answers">${q.r.map((r,i)=>`<button type="button" data-i="${i}">${r[0]}</button>`).join('')}</div>`;
+      bind();
+      if(step>0) card.querySelector('.quiz-answers button').focus();
+      return;
+    }
+    const best=Object.keys(score).sort((a,b)=>score[b]-score[a]||rank(a)-rank(b))[0];
+    const m=metiers[rank(best)];
+    card.innerHTML=progress(100)+
+      `<p class="quiz-count">Votre résultat</p>`+
+      `<div class="quiz-result"><span class="m-ico"><svg class="ic"><use href="#${m.icon}"/></svg></span>`+
+      `<div><h3>${m.titre}</h3><p>${m.accroche}</p><p class="quiz-dur">Formation de ${m.duree}</p></div></div>`+
+      `<div class="quiz-actions"><a class="btn btn-red" href="formation-${m.slug}.html">Découvrir la formation</a>`+
+      `<button type="button" class="btn btn-outline quiz-restart">Refaire le test</button></div>`;
+    const again=card.querySelector('.quiz-restart');
+    again.onclick=()=>{step=0;score={};render();card.querySelector('.quiz-answers button').focus();};
+    card.querySelector('.quiz-actions a').focus();
+  };
+  // Les réponses de la première question sont déjà dans la page
+  const bind=()=>card.querySelectorAll('.quiz-answers button').forEach(b=>b.onclick=()=>{
+    const pts=quiz[step].r[+b.dataset.i][1];
+    for(const k in pts) score[k]=(score[k]||0)+pts[k];
+    step++; render();
+  });
+  bind();
+})();
