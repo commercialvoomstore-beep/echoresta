@@ -422,6 +422,14 @@
   .h-hero-media img{width:100%;height:100%;object-fit:cover;object-position:center 20%}
   .h-hero-media::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--navy-dark) 0,rgba(15,34,96,0) 28%)}
   .h-hero .container{position:relative}
+  /* Mosaïque de 4 photos à la place d'une seule image */
+  .h-mosaic{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:6px;background:var(--navy-dark);padding-left:6px}
+  .h-mosaic::before{display:none}
+  .h-mosaic figure{position:relative;overflow:hidden;margin:0;min-height:0}
+  .h-mosaic img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+  .h-mosaic figure:first-child img{object-position:center 30%}
+  .h-mosaic figure:hover img{transform:scale(1.04)}
+  .h-mosaic figcaption{position:absolute;left:14px;top:14px;background:rgba(15,34,96,.88);color:#fff;font-size:11.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:7px 11px;line-height:1.2}
   .h-hero-text{max-width:600px;padding:84px 0 140px}
   .h-kicker{display:flex;align-items:center;gap:12px;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:22px}
   .h-kicker::before{content:"";width:32px;height:2px;background:var(--red)}
@@ -502,13 +510,16 @@
   .h-quote figcaption span{color:var(--muted);font-size:14.5px}
 
   .quiz-band{padding:100px 0}
-  .h-cta{padding:110px 0 120px}
+  .h-cta{padding:110px 0 120px;background:radial-gradient(circle at 85% 15%,rgba(192,21,47,.2) 0,rgba(192,21,47,0) 38%),radial-gradient(circle at 10% 100%,rgba(255,255,255,.06) 0,rgba(255,255,255,0) 35%),var(--navy-dark)}
+  .h-cta::before{display:none}
   .h-cta .h-actions{justify-content:center}
   .h-cta p{margin:30px 0 40px}
   .h-cta + .map{padding-top:72px}
 
   @media (max-width:1000px){
     .h-hero-media{position:relative;left:auto;height:300px}
+    .h-mosaic{padding-left:0;height:340px}
+    .h-mosaic figcaption{left:10px;top:10px;font-size:10.5px;padding:6px 9px}
     .h-hero-media::before{background:linear-gradient(0deg,var(--navy-dark) 0,rgba(15,34,96,0) 45%)}
     .h-hero-text{padding:28px 0 120px;max-width:none}
     .h-figures-card{grid-template-columns:1fr 1fr}
