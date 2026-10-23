@@ -188,7 +188,7 @@ def page(file, title, desc, body, active, wa_text='Bonjour, je souhaite contacte
 {header(active)}
 {body}
 {FOOTER}
-<a class="wa-float" href="{wa_link(wa_text)}" target="_blank" rel="noopener" aria-label="Contactez le service commercial sur WhatsApp"><svg class="ic"><use href="#i-chat"/></svg><span><small>WhatsApp</small>Contactez le service commercial</span></a>
+<a class="wa-float" href="{wa_link(wa_text)}" target="_blank" rel="noopener" aria-label="Contactez-nous sur WhatsApp"><svg class="ic"><use href="#i-chat"/></svg><span><small>WhatsApp</small>Contactez-nous</span></a>
 
 <div class="search-overlay" id="search" hidden>
   <div class="search-box">
@@ -246,14 +246,12 @@ APPROCHE = [('i-building', 'Stage garanti en entreprise', 'Chaque stagiaire qui 
             ('i-users', 'Des formateurs du métier', 'Chefs, maîtres d’hôtel, gouvernantes : des praticiens qui exercent dans les établissements d’Abidjan.'),
             ('i-chef', 'La pratique avant tout', 'Ateliers en cuisine, en salle, au bar et en chambre : vous pratiquez à chaque séance.')]
 
-MOIS = sorted(int(m['duree'].split()[0]) for m in METIERS)
 
 
 def pole_html(titre, icon, desc, items):
     rows = '\n'.join(f'''          <li><a href="{url(m)}">
             <span class="r-ico"><svg class="ic"><use href="#{m['icon']}"/></svg></span>
             <span class="r-txt"><b>{m['titre']}</b><small>{m['court']}</small></span>
-            <span class="r-dur">{m['duree']}</span>
             <svg class="ic r-go"><use href="#i-arrow"/></svg>
           </a></li>''' for m in items)
     return f'''      <div class="h-pole">
@@ -318,7 +316,7 @@ home = f'''<section class="h-hero">
         <div class="eyebrow">Nos formations</div>
         <h2>Deux pôles, {len(METIERS)} métiers</h2>
       </div>
-      <p>Des parcours courts et pratiques, de {MOIS[0]} à {MOIS[-1]} mois, pour entrer rapidement dans la vie active ou évoluer vers l’encadrement.</p>
+      <p>Des parcours pratiques, animés par des professionnels, pour entrer rapidement dans la vie active ou évoluer vers l’encadrement.</p>
     </div>
     <div class="h-poles-grid">
 {chr(10).join(pole_html(*p) for p in POLES)}
@@ -461,7 +459,6 @@ cards = '\n'.join(f'''      <article class="course" id="{m['slug']}" data-cat="{
           <h3><a href="{url(m)}">{m['titre']}</a></h3>
           <p>{m['resume']}</p>
           <div class="meta">
-            <span><svg class="ic"><use href="#i-clock"/></svg>{m['duree']}</span>
             <span><svg class="ic"><use href="#i-level"/></svg>{m['niveau']}</span>
             <span><svg class="ic"><use href="#i-award"/></svg>Certifiante</span>
           </div>
@@ -578,7 +575,6 @@ for m in METIERS:
       <div class="side-box">
         <h4>Infos pratiques</h4>
         <dl>
-          <div><dt><svg class="ic"><use href="#i-clock"/></svg>Durée</dt><dd>{m['duree']}</dd></div>
           <div><dt><svg class="ic"><use href="#i-level"/></svg>Niveau</dt><dd>{m['niveau']}</dd></div>
           <div><dt><svg class="ic"><use href="#i-clock2"/></svg>Rythme</dt><dd>{m['rythme']}</dd></div>
           <div><dt><svg class="ic"><use href="#i-users"/></svg>Public</dt><dd>{m['public']}</dd></div>
@@ -688,7 +684,7 @@ for m in METIERS:
     index.append({'t': m['titre'], 'u': url(m), 'd': m['resume'], 'k': kw})
 data = {
     'SEARCH_INDEX': index,
-    'METIERS': [{'slug': m['slug'], 'titre': m['titre'], 'icon': m['icon'], 'accroche': m['accroche'], 'duree': m['duree']} for m in METIERS],
+    'METIERS': [{'slug': m['slug'], 'titre': m['titre'], 'icon': m['icon'], 'accroche': m['accroche']} for m in METIERS],
     'QUIZ': [{'q': q['q'], 'r': [[label, pts] for label, pts in q['r']]} for q in QUIZ],
 }
 (OUT / 'assets' / 'data.js').write_text(''.join(f'window.{k}={json.dumps(v, ensure_ascii=False)};\n' for k, v in data.items()))

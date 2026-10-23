@@ -95,7 +95,7 @@
     card.innerHTML=progress(100)+
       `<p class="quiz-count">Votre résultat</p>`+
       `<div class="quiz-result"><span class="m-ico"><svg class="ic"><use href="#${m.icon}"/></svg></span>`+
-      `<div><h3>${m.titre}</h3><p>${m.accroche}</p><p class="quiz-dur">Formation de ${m.duree}</p></div></div>`+
+      `<div><h3>${m.titre}</h3><p>${m.accroche}</p></div></div>`+
       `<div class="quiz-actions"><a class="btn btn-red" href="formation-${m.slug}.html">Découvrir la formation</a>`+
       `<button type="button" class="btn btn-outline quiz-restart">Refaire le test</button></div>`;
     const again=card.querySelector('.quiz-restart');

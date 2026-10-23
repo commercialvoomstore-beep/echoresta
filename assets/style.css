@@ -351,7 +351,6 @@
   .quiz-result .m-ico svg{width:32px;height:32px}
   .quiz-result h3{margin:0 0 8px}
   .quiz-result p{color:var(--muted)}
-  .quiz-result .quiz-dur{color:var(--navy);font-weight:700;font-size:14px;margin-top:10px}
   .quiz-actions{display:flex;gap:14px;flex-wrap:wrap}
 
   /* Bouton WhatsApp flottant */
@@ -465,7 +464,7 @@
   .h-pole-head p{color:var(--muted);font-size:14.5px;margin-top:4px}
   .h-count{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);white-space:nowrap;align-self:start}
   .h-rows{list-style:none}
-  .h-rows a{display:grid;grid-template-columns:40px 1fr auto 18px;gap:16px;align-items:center;padding:17px 30px;border-bottom:1px solid var(--line);transition:background .2s}
+  .h-rows a{display:grid;grid-template-columns:40px 1fr 18px;gap:16px;align-items:center;padding:17px 30px;border-bottom:1px solid var(--line);transition:background .2s}
   .h-rows li:last-child a{border-bottom:0}
   .h-rows a:hover,.h-rows a:focus-visible{background:#f6f7fb}
   .r-ico{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--navy)}
@@ -473,7 +472,6 @@
   .r-txt{min-width:0}
   .r-txt b{display:block;font-family:var(--serif);font-size:16.5px;color:var(--ink)}
   .r-txt small{font-size:13.5px;color:var(--muted)}
-  .r-dur{font-size:13px;font-weight:700;color:var(--navy);background:#eef1f8;padding:5px 10px;white-space:nowrap;font-variant-numeric:tabular-nums}
   .r-go{width:18px;height:18px;color:var(--red);transition:transform .2s}
   .h-rows a:hover .r-go{transform:translateX(4px)}
   .h-more{display:flex;align-items:center;justify-content:center;gap:16px 28px;flex-wrap:wrap;margin-top:44px}
@@ -528,7 +526,7 @@
     .h-figures .num{font-size:30px}
     .h-pole-head{grid-template-columns:auto 1fr;padding:22px 20px}
     .h-count{grid-column:1/-1;align-self:auto}
-    .h-rows a{grid-template-columns:36px 1fr auto;padding:15px 20px;gap:12px}
+    .h-rows a{grid-template-columns:36px 1fr;padding:15px 20px;gap:12px}
     .r-go{display:none}
     .h-points{grid-template-columns:1fr}
     .h-quote-grid{grid-template-columns:1fr;gap:28px;justify-items:center;text-align:center}
