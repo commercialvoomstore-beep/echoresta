@@ -573,3 +573,5 @@
     .brand-logo img{width:58px;height:58px}
     .brand-name{font-size:20px}
   }
+  /* Photos de bandeau : cadrage un peu plus haut pour garder les visages */
+  .page-hero{background-position:center 25%}

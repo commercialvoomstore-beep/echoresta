@@ -13,7 +13,7 @@ METIERS = [
     # ---------------------------------------------------------------- Hôtellerie
     {
         'slug': 'valet-femme-chambre', 'cat': 'hotellerie', 'titre': 'Valet / Femme de chambre',
-        'icon': 'i-bed', 'photo': None, 'fond': 'galerie-3.jpg',
+        'icon': 'i-bed', 'photo': 'valet-femme-chambre.jpg', 'fond': 'valet-femme-chambre.jpg',
         'court': 'Un métier qui recrute toute l’année',
         'accroche': 'Le premier secret d’un séjour réussi, c’est une chambre impeccable. Un métier accessible rapidement, qui recrute toute l’année.',
         'resume': 'Préparer des chambres irréprochables selon les standards des grands hôtels, du lit « au carré » aux petites attentions.',
