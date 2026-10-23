@@ -14,7 +14,8 @@
   if(!slides.length) return;
   let i=0, timer;
   const show=n=>{slides[i].classList.remove('active');i=(n+slides.length)%slides.length;slides[i].classList.add('active');};
-  const auto=()=>{clearInterval(timer);timer=setInterval(()=>show(i+1),7000);};
+  const still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const auto=()=>{clearInterval(timer);if(!still)timer=setInterval(()=>show(i+1),7000);};
   document.querySelector('.arrow.prev').onclick=()=>{show(i-1);auto();};
   document.querySelector('.arrow.next').onclick=()=>{show(i+1);auto();};
   auto();

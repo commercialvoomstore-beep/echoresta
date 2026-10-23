@@ -96,10 +96,11 @@
 
   /* ---------- Témoignages ---------- */
   .testimonials{background:var(--navy);color:#fff;padding:84px 0 100px;position:relative;overflow:hidden}
-  .slides{position:relative;max-width:900px;margin:0 auto;padding:0 16px}
-  .slide{display:none;grid-template-columns:1fr 224px;gap:44px;align-items:center}
-  .slide.active{display:grid;animation:fade .6s ease}
-  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  /* Toutes les diapositives occupent la même case : la hauteur du carrousel reste celle de la plus haute */
+  .slides{position:relative;max-width:900px;margin:0 auto;padding:0 16px;display:grid}
+  .slide{grid-area:1/1;display:grid;grid-template-columns:1fr 224px;gap:44px;align-items:center;visibility:hidden;opacity:0;transition:opacity .6s ease,visibility 0s .6s}
+  .slide.active{visibility:visible;opacity:1;transition:opacity .6s ease}
+  @media (prefers-reduced-motion:reduce){.slide,.slide.active{transition:none}}
   .quote{position:relative;padding-left:20px}
   .quote::before{content:"\201D";position:absolute;left:-20px;top:-38px;font-family:var(--serif);font-size:88px;color:rgba(255,255,255,.55);line-height:1}
   .quote blockquote{font-family:var(--serif);font-style:italic;font-weight:700;font-size:clamp(20px,1.6vw,25px);line-height:1.58}
