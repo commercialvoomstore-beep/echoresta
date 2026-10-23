@@ -49,4 +49,5 @@ Sur vercel.com : **Add New… → Project → Import Git Repository**, choisir c
 
 - Remplacer les photos de `images/` par les originales (mêmes noms de fichiers).
 - Vérifier les durées, niveaux et rythmes des formations dans `_build/metiers.py`.
-- Brancher le formulaire de contact sur un service d'envoi (voir le commentaire dans `assets/main.js`).
+- Formulaires Contact et Rendez-vous : envoyés par e-mail à l'adresse `EMAIL` de `_build/build.py` via FormSubmit.
+  À la première demande reçue, FormSubmit envoie un e-mail « Activate Form » à cette adresse : cliquer sur le lien pour activer l'envoi.

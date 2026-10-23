@@ -16,6 +16,7 @@ from PIL import Image  # noqa: E402
 PHONE = '+225 07 68 84 20 38'
 WHATSAPP = '2250768842038'  # numéro WhatsApp au format international, sans + ni espaces
 WHATSAPP_AFFICHE = '+225 07 68 84 20 38'
+EMAIL = 'contact@echoresta.ci'  # adresse qui reçoit les demandes de rendez-vous et de contact
 PLUS_CODE = '92JH+FW'  # code de localisation Google (Plus Code) du centre, à Abidjan
 GPS = '5.381188,-3.970187'  # coordonnées correspondant au Plus Code
 LIEU = quote(f'{PLUS_CODE} Abidjan')  # Google Maps reconnaît le Plus Code et y place son repère
@@ -677,8 +678,8 @@ MOTIFS = [('orientation', 'i-target', 'Entretien d’orientation', 'Être consei
           ('entreprise', 'i-case', 'Entreprise ou partenariat', 'Former vos équipes, accueillir nos stagiaires')]
 CRENEAUX = [f'{h}h00 – {h + 1}h00' for h in range(8, 17)]
 ETAPES_RDV = [('Choisissez votre créneau', 'Indiquez le motif, le jour et l’heure qui vous conviennent, du lundi au vendredi.'),
-              ('Envoyez la demande', 'Votre demande s’ouvre dans WhatsApp, déjà rédigée : il ne reste qu’à appuyer sur Envoyer.'),
-              ('Recevez la confirmation', 'Notre équipe vous confirme le rendez-vous par WhatsApp ou par téléphone.'),
+              ('Envoyez la demande', 'Remplissez vos coordonnées : votre demande nous est envoyée par e-mail.'),
+              ('Recevez la confirmation', 'Notre équipe vous confirme le rendez-vous par e-mail ou par téléphone.'),
               ('Rencontrez un conseiller', 'À l’école, Angré Star 14, Cocody — ou par téléphone si vous préférez.')]
 options_rdv = '\n'.join(
     f'              <optgroup label="{CATEGORIES[c]}">\n' +
@@ -689,7 +690,7 @@ motifs_html = '\n'.join(f'''            <label class="choice"><input type="radio
 creneaux_html = '\n'.join(f'            <label class="slot"><input type="radio" name="creneau" value="{c}" required><span>{c}</span></label>' for c in CRENEAUX)
 
 rdv = page_hero('Prendre rendez-vous avec notre école à Abidjan', 'Rendez-vous', 'images/hero-cuisine.jpg',
-                'Entretien d’orientation, inscription ou visite de l’école : choisissez votre créneau, nous vous confirmons le rendez-vous sur WhatsApp.') + f'''
+                'Entretien d’orientation, inscription ou visite de l’école : choisissez votre créneau, nous vous confirmons le rendez-vous par e-mail.') + f'''
 <section>
   <div class="container rdv-grid">
     <aside class="rdv-side">
@@ -702,13 +703,14 @@ rdv = page_hero('Prendre rendez-vous avec notre école à Abidjan', 'Rendez-vous
       <div class="info-box rdv-info">
         <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-pin"/></svg></div><div><strong>Adresse</strong><span>Angré Star 14, Cocody — Abidjan<br>Code de localisation : <a href="{MAPS_OUVRIR}" target="_blank" rel="noopener">{PLUS_CODE}</a></span></div></div>
         <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-clock"/></svg></div><div><strong>Horaires</strong><span>Lundi – Vendredi : 8h00 – 17h00</span></div></div>
-        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-phone"/></svg></div><div><strong>Téléphone et WhatsApp</strong><span>{PHONE}</span></div></div>
+        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-mail"/></svg></div><div><strong>E-mail</strong><span>{EMAIL}</span></div></div>
+        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-phone"/></svg></div><div><strong>Téléphone</strong><span>{PHONE}</span></div></div>
         <a class="btn btn-ghost" href="{MAPS_ITINERAIRE}" target="_blank" rel="noopener">Itinéraire jusqu’à l’école</a>
       </div>
     </aside>
 
     <div class="form rdv-form" id="rendez-vous" style="scroll-margin-top:140px">
-      <form id="form-rdv" data-wa="{WHATSAPP}" novalidate>
+      <form id="form-rdv" data-mail="{EMAIL}" novalidate>
         <div class="eyebrow">Formulaire de rendez-vous</div>
         <h3>Réservez votre créneau</h3>
 
@@ -744,24 +746,24 @@ rdv = page_hero('Prendre rendez-vous avec notre école à Abidjan', 'Rendez-vous
           <div class="row">
             <div><label for="rdv-nom">Nom complet *</label><input id="rdv-nom" name="nom" required autocomplete="name"></div>
             <div><label for="rdv-tel">Téléphone *</label><input id="rdv-tel" name="tel" type="tel" required autocomplete="tel" placeholder="+225"></div>
-            <div><label for="rdv-email">E-mail</label><input id="rdv-email" name="email" type="email" autocomplete="email"></div>
+            <div><label for="rdv-email">E-mail *</label><input id="rdv-email" name="email" type="email" required autocomplete="email"></div>
             <div><label for="rdv-conf">Confirmation par</label>
-              <select id="rdv-conf" name="confirmation"><option>WhatsApp</option><option>Appel téléphonique</option></select></div>
+              <select id="rdv-conf" name="confirmation"><option>E-mail</option><option>Appel téléphonique</option></select></div>
             <div class="full"><label for="rdv-msg">Message (facultatif)</label><textarea id="rdv-msg" name="message" placeholder="Une question, une précision…"></textarea></div>
           </div>
         </fieldset>
 
-        <button type="submit" class="btn btn-red rdv-submit"><svg class="ic"><use href="#i-chat"/></svg>Envoyer ma demande sur WhatsApp</button>
-        <p class="rdv-note">La demande s’ouvre dans WhatsApp au {WHATSAPP_AFFICHE}. Vous pouvez aussi nous appeler au même numéro.</p>
+        <button type="submit" class="btn btn-red rdv-submit"><svg class="ic"><use href="#i-mail"/></svg>Envoyer ma demande de rendez-vous</button>
+        <p class="rdv-note">Votre demande est envoyée par e-mail à {EMAIL}. Vous pouvez aussi nous appeler au {PHONE}.</p>
+        <p class="field-error" id="rdv-err" hidden></p>
       </form>
 
       <div class="form-ok" id="rdv-ok" hidden>
-        <h3>Votre demande est prête dans WhatsApp</h3>
-        <p class="muted">Appuyez sur <b>Envoyer</b> dans WhatsApp pour nous la transmettre. Nous vous confirmons ensuite le rendez-vous.</p>
+        <h3>Votre demande de rendez-vous est envoyée</h3>
+        <p class="muted">Merci ! Nous vous confirmons le rendez-vous par e-mail ou par téléphone dans les meilleurs délais.</p>
         <pre class="rdv-recap" id="rdv-recap"></pre>
         <div class="quiz-actions" style="justify-content:center">
-          <a class="btn btn-red" id="rdv-wa" href="#" target="_blank" rel="noopener">Ouvrir WhatsApp</a>
-          <button type="button" class="btn btn-outline" id="rdv-again">Modifier la demande</button>
+          <button type="button" class="btn btn-outline" id="rdv-again">Faire une autre demande</button>
         </div>
       </div>
     </div>
@@ -791,7 +793,7 @@ contact = page_hero('Contact et inscription : votre école hôtelière à Abidja
     </aside>
 
     <div class="form" id="formulaire" style="scroll-margin-top:140px">
-      <form id="form-contact" novalidate>
+      <form id="form-contact" data-mail="{EMAIL}" novalidate>
         <div class="eyebrow">Formulaire</div>
         <h3>Envoyez-nous un message</h3>
         <div class="row">
@@ -813,6 +815,7 @@ contact = page_hero('Contact et inscription : votre école hôtelière à Abidja
         </div>
         <label class="consent"><input type="checkbox" required> J’accepte d’être recontacté(e) par EchoResta au sujet de ma demande.</label>
         <button type="submit" class="btn btn-red">Envoyer ma demande</button>
+        <p class="field-error" id="contact-err" hidden></p>
       </form>
       <div class="form-ok" id="form-ok" hidden>
         <h3>Merci, votre demande est envoyée !</h3>

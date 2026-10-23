@@ -34,19 +34,41 @@
   });
 })();
 
+// Envoi des formulaires par e-mail (service FormSubmit, sans serveur à gérer).
+// En cas d'échec, le visiteur peut envoyer la même demande depuis sa messagerie.
+const envoyerEmail=(dest,sujet,champs)=>fetch('https://formsubmit.co/ajax/'+dest,{
+  method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
+  body:JSON.stringify(Object.assign({},champs,{_subject:sujet,_template:'table',_replyto:champs['E-mail']||''}))
+}).then(r=>r.json()).then(d=>d.success===true||d.success==='true').catch(()=>false);
+const texteDemande=champs=>Object.entries(champs).filter(([,v])=>v).map(([k,v])=>k+' : '+v).join('\n');
+const lienMail=(dest,sujet,texte)=>'mailto:'+dest+'?subject='+encodeURIComponent(sujet)+'&body='+encodeURIComponent(texte);
+const afficherEchec=(el,dest,sujet,texte)=>{
+  el.innerHTML='L’envoi n’a pas abouti. <a class="link" href="'+lienMail(dest,sujet,texte)+'">Envoyez la demande depuis votre messagerie</a> ou appelez-nous au +225 07 68 84 20 38.';
+  el.hidden=false;
+};
+
 // Formulaire de contact / inscription
 (function(){
   const form=document.getElementById('form-contact');
   if(!form) return;
-  // Pré-sélection de la formation via ?formation=cuisine
+  // Pré-sélection de la formation via ?formation=cuisinier
   const f=new URLSearchParams(location.search).get('formation');
   if(f && form.formation.querySelector(`option[value="${CSS.escape(f)}"]`)){form.formation.value=f;form.objet.value='inscription';}
+  const btn=form.querySelector('button[type="submit"]'), err=document.getElementById('contact-err');
   form.addEventListener('submit',e=>{
     e.preventDefault();
     if(!form.checkValidity()){form.reportValidity();return;}
-    // À brancher sur votre service d'envoi (Formspree, PHP, etc.)
-    form.hidden=true;
-    document.getElementById('form-ok').hidden=false;
+    const champs={'Nom':form.nom.value.trim(),'Téléphone':form.tel.value.trim(),'E-mail':form.email.value.trim(),
+      'Objet':form.objet.selectedOptions[0].textContent,
+      'Formation':form.formation.value?form.formation.selectedOptions[0].textContent:'Je ne sais pas encore',
+      'Message':form.message.value.trim()};
+    const sujet='Site EchoResta : '+champs['Objet']+' – '+champs['Nom'];
+    btn.disabled=true; btn.textContent='Envoi en cours…'; err.hidden=true;
+    envoyerEmail(form.dataset.mail,sujet,champs).then(ok=>{
+      btn.disabled=false; btn.textContent='Envoyer ma demande';
+      if(ok){form.hidden=true;document.getElementById('form-ok').hidden=false;}
+      else afficherEchec(err,form.dataset.mail,sujet,texteDemande(champs));
+    });
   });
 })();
 
@@ -111,12 +133,13 @@
   bind();
 })();
 
-// Prise de rendez-vous : la demande est rédigée puis ouverte dans WhatsApp
+// Prise de rendez-vous : la demande est envoyée par e-mail à l'école
 (function(){
   const form=document.getElementById('form-rdv');
   if(!form) return;
   const date=form.elements.date, dateErr=document.getElementById('rdv-date-err'), slotErr=document.getElementById('rdv-slot-err');
-  const ok=document.getElementById('rdv-ok');
+  const ok=document.getElementById('rdv-ok'), err=document.getElementById('rdv-err'), btn=form.querySelector('.rdv-submit');
+  const btnHtml=btn.innerHTML;
   const pad=n=>String(n).padStart(2,'0');
   const demain=new Date(); demain.setDate(demain.getDate()+1);
   date.min=demain.getFullYear()+'-'+pad(demain.getMonth()+1)+'-'+pad(demain.getDate());
@@ -130,25 +153,23 @@
     e.preventDefault();
     const el=form.elements, slot=form.querySelector('input[name="creneau"]:checked');
     const mauvaisJour=!!date.value&&weekend(date.value);
-    dateErr.hidden=!mauvaisJour; slotErr.hidden=!!slot;
+    dateErr.hidden=!mauvaisJour; slotErr.hidden=!!slot; err.hidden=true;
     if(!form.checkValidity()){form.reportValidity();return;}
     if(mauvaisJour){date.focus();return;}
     const jour=new Date(date.value+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    const formation=el.formation.value?el.formation.selectedOptions[0].textContent:'Je ne sais pas encore';
-    const lignes=['Bonjour EchoResta, je souhaite prendre rendez-vous.','',
-      'Motif : '+form.querySelector('input[name="motif"]:checked').value,
-      'Formation : '+formation,
-      'Date souhaitée : '+jour+', '+slot.value,
-      'Nom : '+el.nom.value.trim(),
-      'Téléphone : '+el.tel.value.trim()];
-    if(el.email.value.trim()) lignes.push('E-mail : '+el.email.value.trim());
-    lignes.push('Confirmation par : '+el.confirmation.value);
-    if(el.message.value.trim()) lignes.push('','Message : '+el.message.value.trim());
-    const texte=lignes.join('\n'), lien='https://wa.me/'+form.dataset.wa+'?text='+encodeURIComponent(texte);
-    document.getElementById('rdv-recap').textContent=texte;
-    document.getElementById('rdv-wa').href=lien;
-    form.hidden=true; ok.hidden=false; ok.scrollIntoView({block:'start'});
-    window.open(lien,'_blank','noopener');
+    const champs={'Motif':form.querySelector('input[name="motif"]:checked').value,
+      'Formation':el.formation.value?el.formation.selectedOptions[0].textContent:'Je ne sais pas encore',
+      'Date souhaitée':jour+', '+slot.value,
+      'Nom':el.nom.value.trim(),'Téléphone':el.tel.value.trim(),'E-mail':el.email.value.trim(),
+      'Confirmation par':el.confirmation.value,'Message':el.message.value.trim()};
+    const sujet='Demande de rendez-vous : '+champs['Motif']+' – '+champs['Nom'];
+    btn.disabled=true; btn.textContent='Envoi en cours…';
+    envoyerEmail(form.dataset.mail,sujet,champs).then(envoye=>{
+      btn.disabled=false; btn.innerHTML=btnHtml;
+      if(!envoye){afficherEchec(err,form.dataset.mail,sujet,texteDemande(champs));return;}
+      document.getElementById('rdv-recap').textContent=texteDemande(champs);
+      form.hidden=true; ok.hidden=false; ok.scrollIntoView({block:'start'});
+    });
   });
-  document.getElementById('rdv-again').onclick=()=>{ok.hidden=true;form.hidden=false;form.scrollIntoView({block:'start'});};
+  document.getElementById('rdv-again').onclick=()=>{ok.hidden=true;form.reset();form.hidden=false;form.scrollIntoView({block:'start'});};
 })();

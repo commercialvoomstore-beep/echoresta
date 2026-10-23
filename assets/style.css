@@ -650,3 +650,5 @@
     nav.main .submenu a.all{border:0;margin:0}
   }
   #rdv-ok,#form-rdv{scroll-margin-top:140px}
+  /* Nom de l'école centré au-dessus du slogan */
+  .brand>div:last-child{text-align:center}
