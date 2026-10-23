@@ -246,12 +246,6 @@ APPROCHE = [('i-building', 'Stage garanti en entreprise', 'Chaque stagiaire qui 
             ('i-users', 'Des formateurs du métier', 'Chefs, maîtres d’hôtel, gouvernantes : des praticiens qui exercent dans les établissements d’Abidjan.'),
             ('i-chef', 'La pratique avant tout', 'Ateliers en cuisine, en salle, au bar et en chambre : vous pratiquez à chaque séance.')]
 
-# Photos du hero : une par grand domaine de formation
-MOSAIQUE = [('banner.jpg', 'Cuisine', 'Stagiaire en cuisine'),
-            ('galerie-6.jpg', 'Service en salle', 'Serveur dressant une table'),
-            ('galerie-3.jpg', 'Hébergement', 'Professionnelle de l’hôtellerie dans un hall d’hôtel'),
-            ('galerie-4.jpg', 'Réception &amp; anglais', 'Cours d’anglais hôtelier à la réception')]
-
 MOIS = sorted(int(m['duree'].split()[0]) for m in METIERS)
 
 
@@ -275,9 +269,7 @@ def pole_html(titre, icon, desc, items):
 
 
 home = f'''<section class="h-hero">
-  <div class="h-hero-media h-mosaic">
-{chr(10).join(f'    <figure><img src="images/{img}" alt="{alt}"><figcaption>{cap}</figcaption></figure>' for img, cap, alt in MOSAIQUE)}
-  </div>
+  <div class="h-hero-media"><img src="images/hero-cuisine.jpg" alt="Brigade de cuisine EchoResta au travail" fetchpriority="high"></div>
   <div class="container">
     <div class="h-hero-text">
       <div class="h-kicker">Cabinet de formation · Abidjan</div>
