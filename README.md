@@ -39,5 +39,4 @@ Sur vercel.com : **Add New… → Project → Import Git Repository**, choisir c
 
 - Remplacer les photos de `images/` par les originales (mêmes noms de fichiers).
 - Vérifier les durées, niveaux et rythmes des formations dans `_build/metiers.py`.
-- Remplacer le numéro de téléphone provisoire (+225 07 00 00 00 00). Le WhatsApp est le +225 07 68 84 20 38.
 - Brancher le formulaire de contact sur un service d'envoi (voir le commentaire dans `assets/main.js`).

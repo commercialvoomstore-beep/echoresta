@@ -11,7 +11,7 @@ OUT = S.parent
 sys.path.insert(0, str(S))
 from metiers import CATEGORIES, METIERS, QUIZ  # noqa: E402
 
-PHONE = '+225 07 00 00 00 00'
+PHONE = '+225 07 68 84 20 38'
 WHATSAPP = '2250768842038'  # numéro WhatsApp au format international, sans + ni espaces
 WHATSAPP_AFFICHE = '+225 07 68 84 20 38'
 BY_CAT = {k: [m for m in METIERS if m['cat'] == k] for k in CATEGORIES}
@@ -76,7 +76,7 @@ def header(active):
     return f'''<div class="topbar">
   <div class="container">
     <span><svg class="ic"><use href="#i-phone"/></svg>{PHONE}</span>
-    <span><svg class="ic"><use href="#i-pin"/></svg>Cocody Riviera, Abidjan — Côte d’Ivoire</span>
+    <span><svg class="ic"><use href="#i-pin"/></svg>Angré Star 14, Cocody — Abidjan, Côte d’Ivoire</span>
     <span><svg class="ic"><use href="#i-mail"/></svg>contact@echoresta.ci</span>
   </div>
 </div>
@@ -123,11 +123,11 @@ FOOTER = f'''<footer class="big">
       <div>
         <h5>Nous joindre</h5>
         <ul class="f-contact">
-          <li><svg class="ic"><use href="#i-pin"/></svg>Cocody Riviera, Abidjan — Côte d’Ivoire</li>
+          <li><svg class="ic"><use href="#i-pin"/></svg>Angré Star 14, Cocody — Abidjan, Côte d’Ivoire</li>
           <li><svg class="ic"><use href="#i-phone"/></svg>{PHONE}</li>
           <li><svg class="ic"><use href="#i-chat"/></svg><a href="{wa_link('Bonjour EchoResta')}" target="_blank" rel="noopener">WhatsApp : {WHATSAPP_AFFICHE}</a></li>
           <li><svg class="ic"><use href="#i-mail"/></svg>contact@echoresta.ci</li>
-          <li><svg class="ic"><use href="#i-clock"/></svg>Lun – Sam : 8h00 – 18h00</li>
+          <li><svg class="ic"><use href="#i-clock"/></svg>Lun – Ven : 8h00 – 17h00</li>
         </ul>
       </div>
     </div>
@@ -141,7 +141,7 @@ FOOTER = f'''<footer class="big">
 
 MAP = '''<section class="map">
   <iframe loading="lazy" title="Carte EchoResta"
-    src="https://www.google.com/maps?q=Cocody+Riviera,+Abidjan,+C%C3%B4te+d%27Ivoire&z=11&output=embed"></iframe>
+    src="https://www.google.com/maps?q=Angr%C3%A9+Star+14,+Cocody,+Abidjan,+C%C3%B4te+d%27Ivoire&z=14&output=embed"></iframe>
 </section>
 '''
 
@@ -365,7 +365,7 @@ steps = [('Choisissez', 'Sélectionnez la formation qui correspond à votre proj
 faq = [('Quels sont les prérequis pour s’inscrire ?', 'La plupart de nos formations sont ouvertes dès 16 ans, sans diplôme exigé. Un entretien de motivation est réalisé avant l’inscription.'),
        ('Les formations sont-elles certifiantes ?', 'Oui. Chaque parcours donne lieu à une double certification : l’attestation EchoResta et une certification professionnelle reconnue par le secteur.'),
        ('Le stage est-il vraiment garanti ?', 'Oui, chaque stagiaire ayant validé sa formation est placé en stage dans l’un de nos 40 hôtels et restaurants partenaires.'),
-       ('Proposez-vous des cours du soir ou le week-end ?', 'Oui pour certaines formations, notamment l’anglais et les formations de direction. Contactez-nous pour connaître le prochain calendrier.'),
+       ('Quels sont vos horaires ?', 'Nous vous accueillons du lundi au vendredi, de 8h à 17h. Selon la formation, les cours ont lieu le matin ou l’après-midi : contactez-nous pour connaître le prochain calendrier.'),
        ('Je ne sais pas quel métier choisir. Que faire ?', 'Faites notre test d’orientation en trois questions sur la page d’accueil, ou écrivez-nous sur WhatsApp : un conseiller vous aide à choisir.'),
        ('Peut-on payer en plusieurs fois ?', 'Oui, un échéancier peut être mis en place. Les modalités vous sont présentées lors de l’entretien d’inscription.')]
 formations = page_hero('Nos formations', 'Formations', 'images/hero.jpg',
@@ -516,11 +516,11 @@ contact = page_hero('Contact &amp; inscription', 'Contact', 'images/galerie-3.jp
     <aside class="info-box">
       <h3>Parlons de votre projet</h3>
       <p>Une question sur nos formations ou une inscription ? Notre équipe vous répond sous 48 h.</p>
-      <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-pin"/></svg></div><div><strong>Adresse</strong><span>Cocody Riviera, Abidjan<br>Côte d’Ivoire</span></div></div>
+      <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-pin"/></svg></div><div><strong>Adresse</strong><span>Angré Star 14, Cocody<br>Abidjan, Côte d’Ivoire</span></div></div>
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-phone"/></svg></div><div><strong>Téléphone</strong><span>{PHONE}</span></div></div>
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-chat"/></svg></div><div><strong>WhatsApp</strong><span><a href="{wa_link('Bonjour EchoResta')}" target="_blank" rel="noopener">{WHATSAPP_AFFICHE}</a></span></div></div>
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-mail"/></svg></div><div><strong>E-mail</strong><span>contact@echoresta.ci</span></div></div>
-      <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-clock"/></svg></div><div><strong>Horaires</strong><span>Lundi – Samedi : 8h00 – 18h00</span></div></div>
+      <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-clock"/></svg></div><div><strong>Horaires</strong><span>Lundi – Vendredi : 8h00 – 17h00</span></div></div>
     </aside>
 
     <div class="form" id="formulaire" style="scroll-margin-top:140px">
