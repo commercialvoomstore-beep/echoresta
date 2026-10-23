@@ -3,7 +3,7 @@
 Usage : python3 _build/build.py   (depuis la racine du dépôt)
 En-tête, pied de page, icônes et contenus des formations sont partagés entre toutes les pages.
 """
-import json, pathlib, re, sys
+import json, pathlib, sys
 from urllib.parse import quote
 
 S = pathlib.Path(__file__).resolve().parent
@@ -229,50 +229,144 @@ def quiz_question_html(i):
 
 
 # =========================================================== Accueil
-metier_tiles = '\n'.join(f'''      <a class="metier" href="{url(m)}">
-        <span class="m-ico"><svg class="ic"><use href="#{m['icon']}"/></svg></span>
-        <span class="m-cat">{CATEGORIES[m['cat']]}</span>
-        <b>{m['titre']}</b>
-        <span class="m-court">{m['court']}</span>
-        <span class="m-dur"><svg class="ic"><use href="#i-clock"/></svg>{m['duree']}</span>
-      </a>''' for m in METIERS)
+STEPS = [('Choisissez', 'Sélectionnez la formation qui correspond à votre projet professionnel.'),
+         ('Inscrivez-vous', 'Remplissez le formulaire, nous vous rappelons sous 48 h.'),
+         ('Formez-vous', 'Cours pratiques en petits groupes, encadrés par des professionnels.'),
+         ('Décrochez votre stage', 'Immersion dans un hôtel partenaire et remise de votre double certification.')]
 
-SECTION_METIERS = f'''<section class="metiers center" id="metiers">
+FIGURES = [('97', '%', 'de diplômés'), ('30', '+', 'formateurs certifiés'), ('40', '', 'hôtels partenaires'), ('2500', '', 'stagiaires formés')]
+
+POLES = [('Hôtellerie &amp; tourisme', 'i-building', 'Hébergement, réception, direction d’établissement et anglais professionnel.',
+          BY_CAT['hotellerie'] + BY_CAT['langues']),
+         ('Restauration &amp; arts culinaires', 'i-chef', 'Service en salle, cuisine, bar et direction de restaurant.',
+          BY_CAT['restauration'])]
+
+APPROCHE = [('i-building', 'Stage garanti en entreprise', 'Chaque stagiaire qui valide sa formation part en stage dans l’un de nos 40 hôtels partenaires.'),
+            ('i-award', 'Double certification', 'L’attestation EchoResta et une certification professionnelle reconnue par le secteur.'),
+            ('i-users', 'Des formateurs du métier', 'Chefs, maîtres d’hôtel, gouvernantes : des praticiens qui exercent dans les établissements d’Abidjan.'),
+            ('i-chef', 'La pratique avant tout', 'Ateliers en cuisine, en salle, au bar et en chambre : vous pratiquez à chaque séance.')]
+
+MOIS = sorted(int(m['duree'].split()[0]) for m in METIERS)
+
+
+def pole_html(titre, icon, desc, items):
+    rows = '\n'.join(f'''          <li><a href="{url(m)}">
+            <span class="r-ico"><svg class="ic"><use href="#{m['icon']}"/></svg></span>
+            <span class="r-txt"><b>{m['titre']}</b><small>{m['court']}</small></span>
+            <span class="r-dur">{m['duree']}</span>
+            <svg class="ic r-go"><use href="#i-arrow"/></svg>
+          </a></li>''' for m in items)
+    return f'''      <div class="h-pole">
+        <div class="h-pole-head">
+          <span class="h-pole-ico"><svg class="ic"><use href="#{icon}"/></svg></span>
+          <div><h3>{titre}</h3><p>{desc}</p></div>
+          <span class="h-count">{len(items)} formations</span>
+        </div>
+        <ul class="h-rows">
+{rows}
+        </ul>
+      </div>'''
+
+
+home = f'''<section class="h-hero">
+  <div class="h-hero-media"><img src="images/hero.jpg" alt="Stagiaires EchoResta en atelier de cuisine"></div>
   <div class="container">
-    <div class="eyebrow">{len(METIERS)} formations métiers</div>
-    <h2>Choisissez votre futur métier</h2>
-    <div class="sep"></div>
-    <p class="lead">De la cuisine à la direction d’hôtel : des formations courtes et pratiques pour entrer vite dans la vie active.</p>
-    <div class="metier-grid">
-{metier_tiles}
+    <div class="h-hero-text">
+      <div class="h-kicker">Cabinet de formation · Abidjan</div>
+      <h1>Inspiration, Savoir-faire et Excellence</h1>
+      <p>Toute belle carrière commence par une bonne formation. Avec EchoResta, acquérez les gestes et les standards de l’hôtellerie et de la restauration pour gravir les échelons du métier.</p>
+      <div class="h-actions">
+        <a href="formations.html" class="btn btn-red">Découvrir nos formations</a>
+        <a href="contact.html#formulaire" class="btn btn-ghost">S’inscrire à une session</a>
+      </div>
+      <ul class="h-hero-points">
+        <li><svg class="ic"><use href="#i-check"/></svg>Stage garanti</li>
+        <li><svg class="ic"><use href="#i-check"/></svg>Double certification</li>
+        <li><svg class="ic"><use href="#i-check"/></svg>Formateurs du secteur</li>
+      </ul>
     </div>
-    <a href="formations.html" class="btn btn-outline">Voir toutes les formations <svg class="ic"><use href="#i-arrow"/></svg></a>
   </div>
 </section>
 
-'''
-
-WHY = [('i-building', 'Stage garanti', 'Chaque stagiaire qui valide sa formation part en stage dans l’un de nos 40 hôtels partenaires.'),
-       ('i-users', 'Formateurs du métier', 'Chefs, maîtres d’hôtel, gouvernantes : nos formateurs exercent dans les établissements d’Abidjan.'),
-       ('i-award', 'Double certification', 'L’attestation EchoResta et une certification professionnelle reconnue par le secteur.'),
-       ('i-chef', 'On apprend en faisant', 'Ateliers en cuisine, en salle, au bar et en chambre : vous pratiquez à chaque séance.'),
-       ('i-clock', 'Formations courtes', 'De 2 à 6 mois pour être opérationnel et décrocher un premier poste.'),
-       ('i-target', 'Accompagnement vers l’emploi', 'CV, préparation aux entretiens et mise en relation avec les établissements qui recrutent.')]
-
-SECTION_WHY_QUIZ = f'''<section class="why">
+<section class="h-figures" aria-label="Chiffres clés">
   <div class="container">
-    <div class="center">
-      <div class="eyebrow">Pourquoi EchoResta</div>
-      <h2>Ce qui fait la différence</h2>
+    <div class="h-figures-card">
+{chr(10).join(f'      <div><span class="num" data-to="{n}" data-suffix="{suf}">{n}{suf}</span><span>{label}</span></div>' for n, suf, label in FIGURES)}
+    </div>
+  </div>
+</section>
+
+<section class="h-about">
+  <div class="container h-about-grid">
+    <div>
+      <div class="eyebrow">Le cabinet</div>
+      <h2>Quelques mots sur le cabinet EchoResta</h2>
       <div class="sep"></div>
     </div>
-    <div class="why-grid">
-{chr(10).join(f'      <div class="why-item"><svg class="ic"><use href="#{i}"/></svg><h3>{t}</h3><p>{d}</p></div>' for i, t, d in WHY)}
+    <div>
+      <p class="h-lead">Cabinet de formation en hôtellerie et restauration basé à Abidjan, EchoResta prépare depuis plusieurs années des professionnels opérationnels dès le premier jour. Cuisine, service en salle, bar, réception, hébergement et anglais professionnel : chaque parcours est animé par des praticiens du secteur, avec double certification et stage garanti en entreprise.</p>
+      <blockquote class="h-pull">EchoResta est née d’une conviction : en partageant ce que l’on sait faire, on élève toute la profession.</blockquote>
+      <a class="link-arrow" href="apropos.html">Découvrir le cabinet <svg class="ic"><use href="#i-arrow"/></svg></a>
     </div>
   </div>
 </section>
 
-<section class="quiz-band bg-soft" id="quiz">
+<section class="h-poles bg-soft" id="formations">
+  <div class="container">
+    <div class="h-head">
+      <div>
+        <div class="eyebrow">Nos formations</div>
+        <h2>Deux pôles, {len(METIERS)} métiers</h2>
+      </div>
+      <p>Des parcours courts et pratiques, de {MOIS[0]} à {MOIS[-1]} mois, pour entrer rapidement dans la vie active ou évoluer vers l’encadrement.</p>
+    </div>
+    <div class="h-poles-grid">
+{chr(10).join(pole_html(*p) for p in POLES)}
+    </div>
+    <div class="h-more">
+      <a class="btn btn-outline" href="formations.html">Voir le catalogue complet <svg class="ic"><use href="#i-arrow"/></svg></a>
+      <a class="link" href="#quiz">Vous hésitez ? Faites le test d’orientation</a>
+    </div>
+  </div>
+</section>
+
+<section class="h-approach">
+  <div class="container h-approach-grid">
+    <div>
+      <div class="h-kicker">Notre approche</div>
+      <h2>Une formation tournée vers l’emploi</h2>
+      <p>Chaque parcours associe cours, ateliers pratiques et immersion en entreprise, encadrés par des professionnels du secteur.</p>
+      <a class="btn btn-ghost" href="apropos.html">Notre méthode</a>
+    </div>
+    <ul class="h-points">
+{chr(10).join(f'      <li><svg class="ic"><use href="#{i}"/></svg><h3>{t}</h3><p>{d}</p></li>' for i, t, d in APPROCHE)}
+    </ul>
+  </div>
+</section>
+
+<section class="center h-steps">
+  <div class="container">
+    <div class="eyebrow">Inscription</div>
+    <h2>Votre parcours en 4 étapes</h2>
+    <div class="sep"></div>
+    <div class="steps">
+{chr(10).join(f'      <div class="step"><h4>{t}</h4><p>{d}</p></div>' for t, d in STEPS)}
+    </div>
+  </div>
+</section>
+
+<section class="h-quote bg-soft">
+  <div class="container h-quote-grid">
+    <img src="images/temoin-1.jpg" alt="Aminata Coulibaly">
+    <figure>
+      <div class="eyebrow">Ils témoignent</div>
+      <blockquote>Quand on travaille en hôtellerie et qu’on se forme en parallèle, il faut sacrifier du temps personnel. Mon ambition était non seulement d’obtenir ma certification, mais de tirer le meilleur de chaque heure passée en formation.</blockquote>
+      <figcaption><b>Aminata Coulibaly</b><span>Gouvernante, promotion 2025</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="quiz-band" id="quiz">
   <div class="container quiz-wrap">
     <div class="quiz-intro">
       <div class="eyebrow">Test d’orientation · 30 secondes</div>
@@ -286,22 +380,19 @@ SECTION_WHY_QUIZ = f'''<section class="why">
   </div>
 </section>
 
+<section class="banner h-cta">
+  <div class="container">
+    <h2>Plus de 2500 stagiaires nous font confiance</h2>
+    <p>Rejoignez une communauté de professionnels de l’hôtellerie et de la restauration qui réussissent.</p>
+    <div class="h-actions">
+      <a href="contact.html#formulaire" class="btn btn-red">S’inscrire à une session</a>
+      <a href="{wa_link('Bonjour, je souhaite contacter le service commercial d’EchoResta.')}" target="_blank" rel="noopener" class="btn btn-ghost">Contacter le service commercial</a>
+    </div>
+  </div>
+</section>
 '''
-
-home = (S / 'home-body.html').read_text()
-home = (home.replace('href="#inscription" class="btn btn-red">S’inscrire à une session', 'href="contact.html#formulaire" class="btn btn-red">S’inscrire à une session')
-            .replace('href="#apropos" class="btn btn-ghost"', 'href="apropos.html" class="btn btn-ghost"')
-            .replace('<a href="#" class="btn btn-outline">', '<a href="apropos.html" class="btn btn-outline">')
-            .replace('href="#contact" class="btn btn-red">Commencer', 'href="formations.html" class="btn btn-red">Commencer')
-            .replace('<section class="stats center" id="formations">', SECTION_METIERS + '<section class="stats center" id="chiffres">')
-            .replace('<section class="testimonials">', SECTION_WHY_QUIZ + '<section class="testimonials">'))
-assert 'id="metiers"' in home and 'id="quiz"' in home
-# La galerie renvoie vers les formations correspondantes
-for img, slug in [('galerie-1', 'maitre-hotel'), ('galerie-2', 'cuisinier'), ('galerie-3', 'gouvernante'),
-                  ('galerie-4', 'anglais-tourisme-hotellerie'), ('galerie-5', 'bar-mixology'), ('galerie-6', 'serveur-hotesse')]:
-    home = re.sub(rf'<a href="#"><img src="images/{img}', f'<a href="formation-{slug}.html"><img src="images/{img}', home)
 page('index.html', 'EchoResta — Hôtellerie & Restauration',
-     'Cabinet de formation en hôtellerie et restauration à Abidjan : 10 formations métiers, stage garanti.', home + MAP, 'index.html')
+     'Cabinet de formation en hôtellerie et restauration à Abidjan : 10 formations métiers, stage garanti et double certification.', home + MAP, 'index.html')
 
 # =========================================================== À propos
 values = [('i-target', 'Notre mission', 'Former des professionnels opérationnels dès le premier jour, capables de répondre aux standards de l’hôtellerie internationale.'),
@@ -377,10 +468,7 @@ cards = '\n'.join(f'''      <article class="course" id="{m['slug']}" data-cat="{
           <div class="links"><a class="more" href="{url(m)}">Découvrir <svg class="ic"><use href="#i-arrow"/></svg></a><a class="more alt" href="contact.html?formation={m['slug']}#formulaire">S’inscrire</a></div>
         </div>
       </article>''' for m in METIERS)
-steps = [('Choisissez', 'Sélectionnez la formation qui correspond à votre projet professionnel.'),
-         ('Inscrivez-vous', 'Remplissez le formulaire, nous vous rappelons sous 48 h.'),
-         ('Formez-vous', 'Cours pratiques en petits groupes, encadrés par des professionnels.'),
-         ('Décrochez votre stage', 'Immersion dans un hôtel partenaire et remise de votre double certification.')]
+steps = STEPS
 faq = [('Quels sont les prérequis pour s’inscrire ?', 'La plupart de nos formations sont ouvertes dès 16 ans, sans diplôme exigé. Un entretien de motivation est réalisé avant l’inscription.'),
        ('Les formations sont-elles certifiantes ?', 'Oui. Chaque parcours donne lieu à une double certification : l’attestation EchoResta et une certification professionnelle reconnue par le secteur.'),
        ('Le stage est-il vraiment garanti ?', 'Oui, chaque stagiaire ayant validé sa formation est placé en stage dans l’un de nos 40 hôtels et restaurants partenaires.'),
