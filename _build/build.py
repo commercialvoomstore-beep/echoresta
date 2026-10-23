@@ -16,8 +16,9 @@ WHATSAPP = '2250768842038'  # numéro WhatsApp au format international, sans + n
 WHATSAPP_AFFICHE = '+225 07 68 84 20 38'
 PLUS_CODE = '92JH+FW'  # code de localisation Google (Plus Code) du centre, à Abidjan
 GPS = '5.381188,-3.970187'  # coordonnées correspondant au Plus Code
-MAPS_ITINERAIRE = f'https://www.google.com/maps/dir/?api=1&destination={GPS}'
-MAPS_OUVRIR = f'https://www.google.com/maps/search/?api=1&query={GPS}'
+LIEU = quote(f'{PLUS_CODE} Abidjan')  # Google Maps reconnaît le Plus Code et y place son repère
+MAPS_ITINERAIRE = f'https://www.google.com/maps/dir/?api=1&destination={LIEU}'
+MAPS_OUVRIR = f'https://www.google.com/maps/search/?api=1&query={LIEU}'
 BY_CAT = {k: [m for m in METIERS if m['cat'] == k] for k in CATEGORIES}
 
 icons = (S / 'icons.html').read_text().replace('</svg>', '''  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -155,7 +156,7 @@ MAP = f'''<section class="map">
     </div>
   </div>
   <iframe loading="lazy" title="Carte : EchoResta, Angré Star 14 ({PLUS_CODE})"
-    src="https://www.google.com/maps?q={GPS}&z=16&output=embed"></iframe>
+    src="https://www.google.com/maps?q={LIEU}&z=17&output=embed"></iframe>
 </section>
 '''
 
