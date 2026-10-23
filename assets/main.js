@@ -4,7 +4,7 @@
   if(burger) burger.onclick=()=>nav.classList.toggle('open');
   // Sous-menu « Formations » : ouverture au clic sur mobile
   document.querySelectorAll('.has-sub > a').forEach(a=>a.addEventListener('click',e=>{
-    if(window.innerWidth<=900){e.preventDefault();a.parentElement.classList.toggle('open');}
+    if(window.innerWidth<=1100){e.preventDefault();a.parentElement.classList.toggle('open');}
   }));
 })();
 
@@ -109,4 +109,46 @@
     step++; render();
   });
   bind();
+})();
+
+// Prise de rendez-vous : la demande est rédigée puis ouverte dans WhatsApp
+(function(){
+  const form=document.getElementById('form-rdv');
+  if(!form) return;
+  const date=form.elements.date, dateErr=document.getElementById('rdv-date-err'), slotErr=document.getElementById('rdv-slot-err');
+  const ok=document.getElementById('rdv-ok');
+  const pad=n=>String(n).padStart(2,'0');
+  const demain=new Date(); demain.setDate(demain.getDate()+1);
+  date.min=demain.getFullYear()+'-'+pad(demain.getMonth()+1)+'-'+pad(demain.getDate());
+  const weekend=v=>{const j=new Date(v+'T12:00:00').getDay();return j===0||j===6;};
+  date.addEventListener('change',()=>{dateErr.hidden=!(date.value&&weekend(date.value));});
+  form.addEventListener('change',e=>{if(e.target.name==='creneau') slotErr.hidden=true;});
+  // Formation présélectionnée depuis une fiche métier (?formation=cuisinier)
+  const f=new URLSearchParams(location.search).get('formation');
+  if(f&&form.elements.formation.querySelector(`option[value="${CSS.escape(f)}"]`)) form.elements.formation.value=f;
+  form.addEventListener('submit',e=>{
+    e.preventDefault();
+    const el=form.elements, slot=form.querySelector('input[name="creneau"]:checked');
+    const mauvaisJour=!!date.value&&weekend(date.value);
+    dateErr.hidden=!mauvaisJour; slotErr.hidden=!!slot;
+    if(!form.checkValidity()){form.reportValidity();return;}
+    if(mauvaisJour){date.focus();return;}
+    const jour=new Date(date.value+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    const formation=el.formation.value?el.formation.selectedOptions[0].textContent:'Je ne sais pas encore';
+    const lignes=['Bonjour EchoResta, je souhaite prendre rendez-vous.','',
+      'Motif : '+form.querySelector('input[name="motif"]:checked').value,
+      'Formation : '+formation,
+      'Date souhaitée : '+jour+', '+slot.value,
+      'Nom : '+el.nom.value.trim(),
+      'Téléphone : '+el.tel.value.trim()];
+    if(el.email.value.trim()) lignes.push('E-mail : '+el.email.value.trim());
+    lignes.push('Confirmation par : '+el.confirmation.value);
+    if(el.message.value.trim()) lignes.push('','Message : '+el.message.value.trim());
+    const texte=lignes.join('\n'), lien='https://wa.me/'+form.dataset.wa+'?text='+encodeURIComponent(texte);
+    document.getElementById('rdv-recap').textContent=texte;
+    document.getElementById('rdv-wa').href=lien;
+    form.hidden=true; ok.hidden=false; ok.scrollIntoView({block:'start'});
+    window.open(lien,'_blank','noopener');
+  });
+  document.getElementById('rdv-again').onclick=()=>{ok.hidden=true;form.hidden=false;form.scrollIntoView({block:'start'});};
 })();

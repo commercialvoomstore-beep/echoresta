@@ -85,6 +85,8 @@ PAGES = {
                    '10 formations hôtellerie et restauration à Abidjan : cuisinier, serveur, femme de chambre, gouvernante, réceptionniste, barman, directeur d’hôtel.'),
     'apropos.html': ('EchoResta, école hôtelière à Abidjan : qui sommes-nous ?',
                    'EchoResta forme à Abidjan des professionnels de l’hôtellerie et de la restauration : formateurs du métier, double certification et stage garanti.'),
+    'rendez-vous.html': ('Prendre rendez-vous | École hôtelière EchoResta Abidjan',
+                         'Prenez rendez-vous avec EchoResta, école hôtelière à Abidjan : entretien d’orientation, inscription ou visite de l’école, du lundi au vendredi.'),
     'contact.html': ('Contact et inscription | École hôtelière EchoResta Abidjan',
                      'Inscrivez-vous ou contactez EchoResta, école d’hôtellerie et de restauration à Angré Star 14, '
                      'Cocody (Abidjan). Téléphone et WhatsApp : +225 07 68 84 20 38.'),

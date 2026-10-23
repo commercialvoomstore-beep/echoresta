@@ -52,7 +52,8 @@ icons = (S / 'icons.html').read_text().replace('</svg>', '''  <symbol id="i-chec
   <symbol id="i-chat" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8.5 10.5c0 2.5 2.5 5 5 5l1.5-1.5-2-1-1 .8c-.9-.4-1.6-1.1-2-2l.8-1-1-2Z"/></symbol>
 </svg>''', 1)
 
-NAV = [('index.html', 'Accueil'), ('apropos.html', 'À propos'), ('formations.html', 'Formations'), ('contact.html', 'Contact')]
+NAV = [('index.html', 'Accueil'), ('apropos.html', 'À propos'), ('formations.html', 'Formations'),
+       ('rendez-vous.html', 'Rendez-vous'), ('contact.html', 'Contact')]
 
 
 def url(m):
@@ -435,7 +436,7 @@ home = f'''<section class="h-hero">
     <p>Rejoignez une communauté de professionnels de l’hôtellerie et de la restauration qui réussissent.</p>
     <div class="h-actions">
       <a href="contact.html#formulaire" class="btn btn-red">S’inscrire à une session</a>
-      <a href="{wa_link('Bonjour, je souhaite contacter le service commercial d’EchoResta.')}" target="_blank" rel="noopener" class="btn btn-ghost">Contacter le service commercial</a>
+      <a href="rendez-vous.html" class="btn btn-ghost">Prendre rendez-vous</a>
     </div>
   </div>
 </section>
@@ -569,7 +570,8 @@ LADDER_LABELS = ['Après la formation', 'Avec l’expérience', 'Ensuite', 'À t
 for old in OUT.glob('formation-*.html'):
     old.unlink()
 for m in METIERS:
-    visual = (f'<img class="detail-img" src="images/{m["photo"]}" alt="Formation {m["titre"].lower()} à Abidjan" {taille(m["photo"])} decoding="async">' if m['photo']
+    paysage = m['photo'] and (lambda w, h: w / h >= 1.5)(*Image.open(OUT / 'images' / m['photo']).size)
+    visual = (f'<img class="detail-img{"" if paysage else " crop"}" src="images/{m["photo"]}" alt="Formation {m["titre"].lower()} à Abidjan" {taille(m["photo"])} decoding="async">' if m['photo']
               else f'<div class="icon-panel" role="img" aria-label="{m["titre"]}"><svg class="ic"><use href="#{m["icon"]}"/></svg></div>')
     savoir = '\n'.join(f'        <li><svg class="ic"><use href="#i-check"/></svg>{s}</li>' for s in m['savoir'])
     modules = '\n'.join(f'        <li><b>{t}</b><span>{d}</span></li>' for t, d in m['modules'])
@@ -639,6 +641,7 @@ for m in METIERS:
           <div><dt><svg class="ic"><use href="#i-building"/></svg>Stage</dt><dd>Garanti en entreprise</dd></div>
         </dl>
         <a href="contact.html?formation={m['slug']}#formulaire" class="btn btn-red" style="width:100%;justify-content:center">S’inscrire à cette formation</a>
+        <a href="rendez-vous.html?formation={m['slug']}" class="btn btn-ghost side-rdv">Prendre rendez-vous</a>
         <a href="{wa_link('Bonjour EchoResta, je suis intéressé(e) par la formation ' + m['titre'] + '.')}" target="_blank" rel="noopener" class="side-call"><svg class="ic"><use href="#i-chat"/></svg>Poser une question sur WhatsApp</a>
       </div>
       <div class="side-box light">
@@ -667,6 +670,107 @@ for m in METIERS:
          schemas=[seo.cours_schema(m, meta), seo.fil_ariane(('Accueil', ''), ('Formations', 'formations.html'), (m['titre'], url(m)))],
          image=m['photo'] or 'hero-cuisine.jpg')
 
+# =========================================================== Rendez-vous
+MOTIFS = [('orientation', 'i-target', 'Entretien d’orientation', 'Être conseillé(e) pour choisir sa formation'),
+          ('inscription', 'i-award', 'Inscription', 'Finaliser son inscription à une session'),
+          ('visite', 'i-building', 'Visite de l’école', 'Découvrir nos locaux à Angré Star 14'),
+          ('entreprise', 'i-case', 'Entreprise ou partenariat', 'Former vos équipes, accueillir nos stagiaires')]
+CRENEAUX = [f'{h}h00 – {h + 1}h00' for h in range(8, 17)]
+ETAPES_RDV = [('Choisissez votre créneau', 'Indiquez le motif, le jour et l’heure qui vous conviennent, du lundi au vendredi.'),
+              ('Envoyez la demande', 'Votre demande s’ouvre dans WhatsApp, déjà rédigée : il ne reste qu’à appuyer sur Envoyer.'),
+              ('Recevez la confirmation', 'Notre équipe vous confirme le rendez-vous par WhatsApp ou par téléphone.'),
+              ('Rencontrez un conseiller', 'À l’école, Angré Star 14, Cocody — ou par téléphone si vous préférez.')]
+options_rdv = '\n'.join(
+    f'              <optgroup label="{CATEGORIES[c]}">\n' +
+    '\n'.join(f'                <option value="{m["slug"]}">{m["titre"]}</option>' for m in BY_CAT[c]) +
+    '\n              </optgroup>' for c in CATEGORIES)
+motifs_html = '\n'.join(f'''            <label class="choice"><input type="radio" name="motif" value="{t}" required{' checked' if i == 0 else ''}>
+              <span><svg class="ic"><use href="#{ic}"/></svg><b>{t}</b><small>{d}</small></span></label>''' for i, (v, ic, t, d) in enumerate(MOTIFS))
+creneaux_html = '\n'.join(f'            <label class="slot"><input type="radio" name="creneau" value="{c}" required><span>{c}</span></label>' for c in CRENEAUX)
+
+rdv = page_hero('Prendre rendez-vous avec notre école à Abidjan', 'Rendez-vous', 'images/hero-cuisine.jpg',
+                'Entretien d’orientation, inscription ou visite de l’école : choisissez votre créneau, nous vous confirmons le rendez-vous sur WhatsApp.') + f'''
+<section>
+  <div class="container rdv-grid">
+    <aside class="rdv-side">
+      <div class="eyebrow">Comment ça se passe ?</div>
+      <h2>Votre rendez-vous en 4 étapes</h2>
+      <div class="sep"></div>
+      <ol class="rdv-steps">
+{chr(10).join(f'        <li><b>{t}</b><span>{d}</span></li>' for t, d in ETAPES_RDV)}
+      </ol>
+      <div class="info-box rdv-info">
+        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-pin"/></svg></div><div><strong>Adresse</strong><span>Angré Star 14, Cocody — Abidjan<br>Code de localisation : <a href="{MAPS_OUVRIR}" target="_blank" rel="noopener">{PLUS_CODE}</a></span></div></div>
+        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-clock"/></svg></div><div><strong>Horaires</strong><span>Lundi – Vendredi : 8h00 – 17h00</span></div></div>
+        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-phone"/></svg></div><div><strong>Téléphone et WhatsApp</strong><span>{PHONE}</span></div></div>
+        <a class="btn btn-ghost" href="{MAPS_ITINERAIRE}" target="_blank" rel="noopener">Itinéraire jusqu’à l’école</a>
+      </div>
+    </aside>
+
+    <div class="form rdv-form" id="rendez-vous" style="scroll-margin-top:140px">
+      <form id="form-rdv" data-wa="{WHATSAPP}" novalidate>
+        <div class="eyebrow">Formulaire de rendez-vous</div>
+        <h3>Réservez votre créneau</h3>
+
+        <fieldset>
+          <legend>1. Motif du rendez-vous</legend>
+          <div class="choices">
+{motifs_html}
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>2. Formation qui vous intéresse</legend>
+          <select id="rdv-formation" name="formation" aria-label="Formation qui vous intéresse">
+            <option value="">— Je ne sais pas encore —</option>
+{options_rdv}
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <legend>3. Jour et heure</legend>
+          <label for="rdv-date">Date souhaitée * <small>(du lundi au vendredi)</small></label>
+          <input id="rdv-date" name="date" type="date" required>
+          <p class="field-error" id="rdv-date-err" hidden>Nous recevons du lundi au vendredi : choisissez un autre jour.</p>
+          <p class="slot-label">Créneau horaire *</p>
+          <div class="slots">
+{creneaux_html}
+          </div>
+          <p class="field-error" id="rdv-slot-err" hidden>Choisissez un créneau horaire.</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>4. Vos coordonnées</legend>
+          <div class="row">
+            <div><label for="rdv-nom">Nom complet *</label><input id="rdv-nom" name="nom" required autocomplete="name"></div>
+            <div><label for="rdv-tel">Téléphone *</label><input id="rdv-tel" name="tel" type="tel" required autocomplete="tel" placeholder="+225"></div>
+            <div><label for="rdv-email">E-mail</label><input id="rdv-email" name="email" type="email" autocomplete="email"></div>
+            <div><label for="rdv-conf">Confirmation par</label>
+              <select id="rdv-conf" name="confirmation"><option>WhatsApp</option><option>Appel téléphonique</option></select></div>
+            <div class="full"><label for="rdv-msg">Message (facultatif)</label><textarea id="rdv-msg" name="message" placeholder="Une question, une précision…"></textarea></div>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="btn btn-red rdv-submit"><svg class="ic"><use href="#i-chat"/></svg>Envoyer ma demande sur WhatsApp</button>
+        <p class="rdv-note">La demande s’ouvre dans WhatsApp au {WHATSAPP_AFFICHE}. Vous pouvez aussi nous appeler au même numéro.</p>
+      </form>
+
+      <div class="form-ok" id="rdv-ok" hidden>
+        <h3>Votre demande est prête dans WhatsApp</h3>
+        <p class="muted">Appuyez sur <b>Envoyer</b> dans WhatsApp pour nous la transmettre. Nous vous confirmons ensuite le rendez-vous.</p>
+        <pre class="rdv-recap" id="rdv-recap"></pre>
+        <div class="quiz-actions" style="justify-content:center">
+          <a class="btn btn-red" id="rdv-wa" href="#" target="_blank" rel="noopener">Ouvrir WhatsApp</a>
+          <button type="button" class="btn btn-outline" id="rdv-again">Modifier la demande</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+''' + MAP
+page('rendez-vous.html', *seo.PAGES['rendez-vous.html'], rdv, 'rendez-vous.html',
+     schemas=[seo.ecole_schema(PHONE, LAT, LNG, PLUS_CODE), seo.fil_ariane(('Accueil', ''), ('Rendez-vous', 'rendez-vous.html'))])
+
 # =========================================================== Contact
 options = '\n'.join(
     f'              <optgroup label="{CATEGORIES[c]}">\n' +
@@ -683,6 +787,7 @@ contact = page_hero('Contact et inscription : votre école hôtelière à Abidja
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-chat"/></svg></div><div><strong>WhatsApp</strong><span><a href="{wa_link('Bonjour EchoResta')}" target="_blank" rel="noopener">{WHATSAPP_AFFICHE}</a></span></div></div>
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-mail"/></svg></div><div><strong>E-mail</strong><span>contact@echoresta.ci</span></div></div>
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-clock"/></svg></div><div><strong>Horaires</strong><span>Lundi – Vendredi : 8h00 – 17h00</span></div></div>
+      <a href="rendez-vous.html" class="btn btn-ghost info-rdv">Prendre rendez-vous</a>
     </aside>
 
     <div class="form" id="formulaire" style="scroll-margin-top:140px">
@@ -738,7 +843,8 @@ index = [{'t': 'Accueil', 'u': 'index.html', 'd': 'Présentation du cabinet Echo
          {'t': 'À propos', 'u': 'apropos.html', 'd': 'Histoire, mission, valeurs et formateurs'},
          {'t': 'Nos formations', 'u': 'formations.html', 'd': 'Les 10 formations, étapes d’inscription et FAQ'},
          {'t': 'Test d’orientation', 'u': 'index.html#quiz', 'd': 'Quel métier est fait pour vous ? Trois questions'},
-         {'t': 'Contact & inscription', 'u': 'contact.html', 'd': 'Coordonnées, formulaire et plan d’accès'}]
+         {'t': 'Contact & inscription', 'u': 'contact.html', 'd': 'Coordonnées, formulaire et plan d’accès'},
+         {'t': 'Prendre rendez-vous', 'u': 'rendez-vous.html', 'd': 'Entretien d’orientation, inscription ou visite de l’école'}]
 for m in METIERS:
     kw = ' '.join([CATEGORIES[m['cat']], *(t for t, _ in m['modules']), *m['carriere'], *m['lieux']])
     index.append({'t': m['titre'], 'u': url(m), 'd': m['resume'], 'k': kw})
@@ -756,7 +862,7 @@ print('ok :', len(list(OUT.glob('*.html'))), 'pages')
 # =========================================================== Plan du site (sitemap.xml) et robots.txt
 import datetime  # noqa: E402
 jour = datetime.date.today().isoformat()
-PRIORITE = {'index.html': '1.0', 'formations.html': '0.9', 'contact.html': '0.8', 'apropos.html': '0.7'}
+PRIORITE = {'index.html': '1.0', 'formations.html': '0.9', 'rendez-vous.html': '0.8', 'contact.html': '0.8', 'apropos.html': '0.7'}
 urls = '\n'.join(
     f'  <url><loc>{seo.BASE_URL}{"" if f == "index.html" else f}</loc><lastmod>{jour}</lastmod>'
     f'<priority>{PRIORITE.get(f, "0.8")}</priority></url>'
