@@ -146,7 +146,7 @@ MAP = '''<section class="map">
 '''
 
 
-def page(file, title, desc, body, active, wa_text='Bonjour EchoResta, je voudrais des informations sur vos formations.'):
+def page(file, title, desc, body, active, wa_text='Bonjour, je souhaite contacter le service commercial d’EchoResta.'):
     html = f'''<!doctype html>
 <html lang="fr">
 <head>
@@ -169,7 +169,7 @@ def page(file, title, desc, body, active, wa_text='Bonjour EchoResta, je voudrai
 {header(active)}
 {body}
 {FOOTER}
-<a class="wa-float" href="{wa_link(wa_text)}" target="_blank" rel="noopener" aria-label="Écrire à EchoResta sur WhatsApp"><svg class="ic"><use href="#i-chat"/></svg><span>Une question ?</span></a>
+<a class="wa-float" href="{wa_link(wa_text)}" target="_blank" rel="noopener" aria-label="Contactez le service commercial sur WhatsApp"><svg class="ic"><use href="#i-chat"/></svg><span><small>WhatsApp</small>Contactez le service commercial</span></a>
 
 <div class="search-overlay" id="search" hidden>
   <div class="search-box">
@@ -503,7 +503,7 @@ for m in METIERS:
 </section>
 '''
     page(url(m), f'Formation {m["titre"]} — EchoResta', m['resume'], body, 'formations.html',
-         f'Bonjour EchoResta, je suis intéressé(e) par la formation {m["titre"]}.')
+         f'Bonjour, je souhaite contacter le service commercial d’EchoResta au sujet de la formation {m["titre"]}.')
 
 # =========================================================== Contact
 options = '\n'.join(

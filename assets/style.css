@@ -423,9 +423,11 @@
   .quiz-actions{display:flex;gap:14px;flex-wrap:wrap}
 
   /* Bouton WhatsApp flottant */
-  .wa-float{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:max(20px,env(safe-area-inset-bottom,0px));z-index:90;display:flex;align-items:center;gap:10px;background:#15803d;color:#fff;font-weight:700;font-size:14.5px;padding:12px 20px 12px 14px;border-radius:999px;box-shadow:0 10px 26px rgba(0,0,0,.2);transition:transform .2s,background .2s}
+  .wa-float{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:max(20px,env(safe-area-inset-bottom,0px));z-index:90;display:flex;align-items:center;gap:10px;background:#15803d;color:#fff;font-weight:700;font-size:14.5px;padding:10px 22px 10px 14px;border-radius:999px;line-height:1.25;box-shadow:0 10px 26px rgba(0,0,0,.2);transition:transform .2s,background .2s}
   .wa-float:hover{transform:translateY(-2px);background:#116a32}
-  .wa-float svg{width:24px;height:24px}
+  .wa-float svg{width:28px;height:28px;flex:none}
+  .wa-float span{display:flex;flex-direction:column}
+  .wa-float small{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;opacity:.85}
 
   /* Mega-menu Formations */
   .submenu.mega{display:grid;grid-template-columns:1fr 1fr;min-width:540px;left:50%;transform:translate(-50%,8px);padding:14px 8px 8px}
@@ -482,7 +484,8 @@
     .quiz-card h3{font-size:21px}
     .course{grid-template-columns:1fr}
     .c-ico{height:96px}
-    .wa-float{padding:14px}
-    .wa-float span{display:none}
+    .wa-float{font-size:13.5px;padding:9px 18px 9px 12px;right:max(12px,env(safe-area-inset-right,0px));bottom:max(12px,env(safe-area-inset-bottom,0px))}
+    .wa-float svg{width:24px;height:24px}
+    footer.big{padding-bottom:70px}
     .timeline li{grid-template-columns:56px 1fr}
   }
