@@ -12,7 +12,8 @@ sys.path.insert(0, str(S))
 from metiers import CATEGORIES, METIERS, QUIZ  # noqa: E402
 
 PHONE = '+225 07 00 00 00 00'
-WHATSAPP = '2250700000000'  # numéro WhatsApp au format international, sans + ni espaces
+WHATSAPP = '2250768842038'  # numéro WhatsApp au format international, sans + ni espaces
+WHATSAPP_AFFICHE = '+225 07 68 84 20 38'
 BY_CAT = {k: [m for m in METIERS if m['cat'] == k] for k in CATEGORIES}
 
 icons = (S / 'icons.html').read_text().replace('</svg>', '''  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -124,7 +125,7 @@ FOOTER = f'''<footer class="big">
         <ul class="f-contact">
           <li><svg class="ic"><use href="#i-pin"/></svg>Cocody Riviera, Abidjan — Côte d’Ivoire</li>
           <li><svg class="ic"><use href="#i-phone"/></svg>{PHONE}</li>
-          <li><svg class="ic"><use href="#i-chat"/></svg><a href="{wa_link('Bonjour EchoResta')}" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><svg class="ic"><use href="#i-chat"/></svg><a href="{wa_link('Bonjour EchoResta')}" target="_blank" rel="noopener">WhatsApp : {WHATSAPP_AFFICHE}</a></li>
           <li><svg class="ic"><use href="#i-mail"/></svg>contact@echoresta.ci</li>
           <li><svg class="ic"><use href="#i-clock"/></svg>Lun – Sam : 8h00 – 18h00</li>
         </ul>
@@ -517,7 +518,7 @@ contact = page_hero('Contact &amp; inscription', 'Contact', 'images/galerie-3.jp
       <p>Une question sur nos formations ou une inscription ? Notre équipe vous répond sous 48 h.</p>
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-pin"/></svg></div><div><strong>Adresse</strong><span>Cocody Riviera, Abidjan<br>Côte d’Ivoire</span></div></div>
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-phone"/></svg></div><div><strong>Téléphone</strong><span>{PHONE}</span></div></div>
-      <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-chat"/></svg></div><div><strong>WhatsApp</strong><span><a href="{wa_link('Bonjour EchoResta')}" target="_blank" rel="noopener">Écrivez-nous, réponse rapide</a></span></div></div>
+      <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-chat"/></svg></div><div><strong>WhatsApp</strong><span><a href="{wa_link('Bonjour EchoResta')}" target="_blank" rel="noopener">{WHATSAPP_AFFICHE}</a></span></div></div>
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-mail"/></svg></div><div><strong>E-mail</strong><span>contact@echoresta.ci</span></div></div>
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-clock"/></svg></div><div><strong>Horaires</strong><span>Lundi – Samedi : 8h00 – 18h00</span></div></div>
     </aside>
