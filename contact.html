@@ -179,8 +179,12 @@
       <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=92JH%2BFW%20Abidjan" target="_blank" rel="noopener">Ouvrir dans Google Maps</a>
     </div>
   </div>
-  <iframe loading="lazy" title="Carte : EchoResta, Angré Star 14 (92JH+FW)"
-    src="https://www.google.com/maps?q=92JH%2BFW%20Abidjan&z=17&output=embed"></iframe>
+  <!-- inert : la carte ne peut pas prendre le focus ni faire défiler la page ; un clic l'ouvre dans Google Maps -->
+  <div class="map-frame">
+    <iframe inert tabindex="-1" loading="lazy" title="Carte : EchoResta, Angré Star 14 (92JH+FW)"
+      src="https://www.google.com/maps?q=92JH%2BFW%20Abidjan&z=17&output=embed"></iframe>
+    <a class="map-overlay" href="https://www.google.com/maps/search/?api=1&query=92JH%2BFW%20Abidjan" target="_blank" rel="noopener"><span><svg class="ic"><use href="#i-pin"/></svg>Voir 92JH+FW dans Google Maps</span></a>
+  </div>
 </section>
 
 <footer class="big">

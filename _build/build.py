@@ -155,8 +155,12 @@ MAP = f'''<section class="map">
       <a class="btn btn-outline" href="{MAPS_OUVRIR}" target="_blank" rel="noopener">Ouvrir dans Google Maps</a>
     </div>
   </div>
-  <iframe loading="lazy" title="Carte : EchoResta, Angré Star 14 ({PLUS_CODE})"
-    src="https://www.google.com/maps?q={LIEU}&z=17&output=embed"></iframe>
+  <!-- inert : la carte ne peut pas prendre le focus ni faire défiler la page ; un clic l'ouvre dans Google Maps -->
+  <div class="map-frame">
+    <iframe inert tabindex="-1" loading="lazy" title="Carte : EchoResta, Angré Star 14 ({PLUS_CODE})"
+      src="https://www.google.com/maps?q={LIEU}&z=17&output=embed"></iframe>
+    <a class="map-overlay" href="{MAPS_OUVRIR}" target="_blank" rel="noopener"><span><svg class="ic"><use href="#i-pin"/></svg>Voir {PLUS_CODE} dans Google Maps</span></a>
+  </div>
 </section>
 '''
 
