@@ -92,7 +92,7 @@ def header(active):
       <div class="brand-logo"><img src="images/logo.png" alt="Logo EchoResta" width="92" height="92"></div>
       <div>
         <div class="brand-name">EchoResta</div>
-        <div class="brand-tag">Hôtellerie &amp; Restauration</div>
+        <div class="brand-tag">École de l’Hôtellerie &amp; Restauration</div>
       </div>
     </a>
     <nav class="main" id="nav">
@@ -137,7 +137,7 @@ FOOTER = f'''<footer class="big">
       </div>
     </div>
     <div class="bottom">
-      <span>© 2026 EchoResta — Hôtellerie &amp; Restauration. Tous droits réservés.</span>
+      <span>© 2026 EchoResta — École de l’Hôtellerie &amp; Restauration. Tous droits réservés.</span>
       <span>Abidjan, Côte d’Ivoire</span>
     </div>
   </div>
@@ -389,7 +389,7 @@ home = f'''<section class="h-hero">
   </div>
 </section>
 '''
-page('index.html', 'EchoResta — Hôtellerie & Restauration',
+page('index.html', 'EchoResta — École de l’Hôtellerie & Restauration',
      'Cabinet de formation en hôtellerie et restauration à Abidjan : 10 formations métiers, stage garanti et double certification.', home + MAP, 'index.html')
 
 # =========================================================== À propos
