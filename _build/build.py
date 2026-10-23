@@ -14,6 +14,10 @@ from metiers import CATEGORIES, METIERS, QUIZ  # noqa: E402
 PHONE = '+225 07 68 84 20 38'
 WHATSAPP = '2250768842038'  # numéro WhatsApp au format international, sans + ni espaces
 WHATSAPP_AFFICHE = '+225 07 68 84 20 38'
+PLUS_CODE = '92JH+FW'  # code de localisation Google (Plus Code) du centre, à Abidjan
+GPS = '5.381188,-3.970187'  # coordonnées correspondant au Plus Code
+MAPS_ITINERAIRE = f'https://www.google.com/maps/dir/?api=1&destination={GPS}'
+MAPS_OUVRIR = f'https://www.google.com/maps/search/?api=1&query={GPS}'
 BY_CAT = {k: [m for m in METIERS if m['cat'] == k] for k in CATEGORIES}
 
 icons = (S / 'icons.html').read_text().replace('</svg>', '''  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -123,7 +127,7 @@ FOOTER = f'''<footer class="big">
       <div>
         <h5>Nous joindre</h5>
         <ul class="f-contact">
-          <li><svg class="ic"><use href="#i-pin"/></svg>Angré Star 14, Cocody — Abidjan, Côte d’Ivoire</li>
+          <li><svg class="ic"><use href="#i-pin"/></svg><a href="{MAPS_OUVRIR}" target="_blank" rel="noopener">Angré Star 14, Cocody — Abidjan<br>Localisation : {PLUS_CODE}</a></li>
           <li><svg class="ic"><use href="#i-phone"/></svg>{PHONE}</li>
           <li><svg class="ic"><use href="#i-chat"/></svg><a href="{wa_link('Bonjour EchoResta')}" target="_blank" rel="noopener">WhatsApp : {WHATSAPP_AFFICHE}</a></li>
           <li><svg class="ic"><use href="#i-mail"/></svg>contact@echoresta.ci</li>
@@ -139,9 +143,19 @@ FOOTER = f'''<footer class="big">
 </footer>
 '''
 
-MAP = '''<section class="map">
-  <iframe loading="lazy" title="Carte EchoResta"
-    src="https://www.google.com/maps?q=Angr%C3%A9+Star+14,+Cocody,+Abidjan,+C%C3%B4te+d%27Ivoire&z=14&output=embed"></iframe>
+MAP = f'''<section class="map">
+  <div class="container map-head">
+    <div class="map-info">
+      <span class="map-pin"><svg class="ic"><use href="#i-pin"/></svg></span>
+      <div><b>Angré Star 14, Cocody — Abidjan</b><span>Code de localisation Google : <strong>{PLUS_CODE}</strong> · Lun – Ven, 8h – 17h</span></div>
+    </div>
+    <div class="map-actions">
+      <a class="btn btn-red" href="{MAPS_ITINERAIRE}" target="_blank" rel="noopener">Itinéraire</a>
+      <a class="btn btn-outline" href="{MAPS_OUVRIR}" target="_blank" rel="noopener">Ouvrir dans Google Maps</a>
+    </div>
+  </div>
+  <iframe loading="lazy" title="Carte : EchoResta, Angré Star 14 ({PLUS_CODE})"
+    src="https://www.google.com/maps?q={GPS}&z=16&output=embed"></iframe>
 </section>
 '''
 
@@ -516,7 +530,7 @@ contact = page_hero('Contact &amp; inscription', 'Contact', 'images/galerie-3.jp
     <aside class="info-box">
       <h3>Parlons de votre projet</h3>
       <p>Une question sur nos formations ou une inscription ? Notre équipe vous répond sous 48 h.</p>
-      <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-pin"/></svg></div><div><strong>Adresse</strong><span>Angré Star 14, Cocody<br>Abidjan, Côte d’Ivoire</span></div></div>
+      <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-pin"/></svg></div><div><strong>Adresse</strong><span>Angré Star 14, Cocody<br>Abidjan, Côte d’Ivoire<br>Code de localisation : <a href="{MAPS_OUVRIR}" target="_blank" rel="noopener">{PLUS_CODE}</a></span></div></div>
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-phone"/></svg></div><div><strong>Téléphone</strong><span>{PHONE}</span></div></div>
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-chat"/></svg></div><div><strong>WhatsApp</strong><span><a href="{wa_link('Bonjour EchoResta')}" target="_blank" rel="noopener">{WHATSAPP_AFFICHE}</a></span></div></div>
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-mail"/></svg></div><div><strong>E-mail</strong><span>contact@echoresta.ci</span></div></div>
