@@ -89,7 +89,7 @@ def header(active):
 <header class="site">
   <div class="container">
     <a href="index.html" class="brand">
-      <div class="brand-logo"><img src="images/logo.jpg" alt="Logo EchoResta"></div>
+      <div class="brand-logo"><img src="images/logo.png" alt="Logo EchoResta" width="92" height="92"></div>
       <div>
         <div class="brand-name">EchoResta</div>
         <div class="brand-tag">Hôtellerie &amp; Restauration</div>
