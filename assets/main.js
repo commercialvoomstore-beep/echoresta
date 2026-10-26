@@ -67,16 +67,18 @@
   });
 })();
 
-// Envoi des formulaires par e-mail (service FormSubmit, sans serveur à gérer).
-// En cas d'échec, le visiteur peut envoyer la même demande depuis sa messagerie.
-const envoyerEmail=(dest,sujet,champs)=>fetch('https://formsubmit.co/ajax/'+dest,{
+// Envoi des formulaires par e-mail (service Web3Forms, sans serveur à gérer) :
+// la clé du formulaire désigne la boîte qui reçoit les demandes, l'adresse n'apparaît pas dans la page.
+// En cas d'échec, le visiteur peut envoyer la même demande sur WhatsApp.
+const envoyerEmail=(form,sujet,champs)=>fetch('https://api.web3forms.com/submit',{
   method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
-  body:JSON.stringify(Object.assign({},champs,{_subject:sujet,_template:'table',_replyto:champs['E-mail']||''}))
-}).then(r=>r.json()).then(d=>d.success===true||d.success==='true').catch(()=>false);
+  body:JSON.stringify(Object.assign({access_key:form.dataset.key,subject:sujet,from_name:'Site EchoResta',
+    replyto:champs['E-mail']||'',botcheck:!!(form.elements.botcheck&&form.elements.botcheck.checked)},champs))
+}).then(r=>r.json()).then(d=>d.success===true).catch(()=>false);
 const texteDemande=champs=>Object.entries(champs).filter(([,v])=>v).map(([k,v])=>k+' : '+v).join('\n');
-const lienMail=(dest,sujet,texte)=>'mailto:'+dest+'?subject='+encodeURIComponent(sujet)+'&body='+encodeURIComponent(texte);
-const afficherEchec=(el,dest,sujet,texte)=>{
-  el.innerHTML='L’envoi n’a pas abouti. <a class="link" href="'+lienMail(dest,sujet,texte)+'">Envoyez la demande depuis votre messagerie</a> ou appelez-nous au +225 07 68 84 20 38.';
+const afficherEchec=(el,form,sujet,texte)=>{
+  const wa='https://wa.me/'+form.dataset.wa+'?text='+encodeURIComponent(sujet+'\n\n'+texte);
+  el.innerHTML='L’envoi n’a pas abouti. <a class="link" href="'+wa+'" target="_blank" rel="noopener">Envoyez la demande sur WhatsApp</a> (message déjà rédigé) ou appelez-nous au +225 07 68 84 20 38.';
   el.hidden=false;
 };
 
@@ -97,10 +99,10 @@ const afficherEchec=(el,dest,sujet,texte)=>{
       'Message':form.message.value.trim()};
     const sujet='Site EchoResta : '+champs['Objet']+' – '+champs['Nom'];
     btn.disabled=true; btn.textContent='Envoi en cours…'; err.hidden=true;
-    envoyerEmail(form.dataset.mail,sujet,champs).then(ok=>{
+    envoyerEmail(form,sujet,champs).then(ok=>{
       btn.disabled=false; btn.textContent='Envoyer ma demande';
       if(ok){form.hidden=true;document.getElementById('form-ok').hidden=false;}
-      else afficherEchec(err,form.dataset.mail,sujet,texteDemande(champs));
+      else afficherEchec(err,form,sujet,texteDemande(champs));
     });
   });
 })();
@@ -201,9 +203,9 @@ const afficherEchec=(el,dest,sujet,texte)=>{
       'Rendez-vous':jour+' à '+heure.value,'Remarques ou questions':el.message.value.trim()};
     const sujet='Demande de rendez-vous : '+jour+' à '+heure.value+' – '+champs['Nom et prénom'];
     btn.disabled=true; btn.textContent='Envoi en cours…';
-    envoyerEmail(form.dataset.mail,sujet,champs).then(envoye=>{
+    envoyerEmail(form,sujet,champs).then(envoye=>{
       btn.disabled=false; btn.textContent=btnTexte;
-      if(!envoye){afficherEchec(err,form.dataset.mail,sujet,texteDemande(champs));return;}
+      if(!envoye){afficherEchec(err,form,sujet,texteDemande(champs));return;}
       document.getElementById('rdv-recap').textContent=texteDemande(champs);
       form.hidden=true; ok.hidden=false; ok.scrollIntoView({block:'start'});
     });
@@ -305,9 +307,9 @@ const listesDrapeaux={};
     Object.assign(champs,{'Contact en cas d’urgence':val(el.urgence),'Connu par':choix(el.connu),'Projet professionnel':val(el.motivation)});
     const sujet='Candidature : '+champs['Formation']+' – '+champs['Prénom(s)']+' '+champs['Nom'];
     btn.disabled=true; btn.textContent='Envoi en cours…';
-    envoyerEmail(form.dataset.mail,sujet,champs).then(ok=>{
+    envoyerEmail(form,sujet,champs).then(ok=>{
       btn.disabled=false; btn.textContent='Envoyer ma candidature';
-      if(!ok){afficherEchec(err,form.dataset.mail,sujet,texteDemande(champs));return;}
+      if(!ok){afficherEchec(err,form,sujet,texteDemande(champs));return;}
       document.getElementById('ins-recap').textContent=texteDemande(champs);
       form.hidden=true; const box=document.getElementById('ins-ok'); box.hidden=false; box.scrollIntoView({block:'start'});
     });
