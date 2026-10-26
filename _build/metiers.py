@@ -67,7 +67,7 @@ METIERS = [
     },
     {
         'slug': 'audit-nuit', 'cat': 'hotellerie', 'titre': 'Audit de nuit / Réceptionniste',
-        'icon': 'i-moon', 'photo': None, 'fond': 'galerie-4.jpg',
+        'icon': 'i-moon', 'photo': 'audit-nuit.jpg', 'fond': 'audit-nuit.jpg',
         'court': 'La réception, de jour comme de nuit',
         'accroche': 'Quand l’hôtel s’endort, l’auditeur de nuit veille : il accueille, sécurise et boucle les comptes de la journée.',
         'resume': 'Accueillir les clients à la réception, tenir la réception de nuit, contrôler les encaissements et clôturer la journée comptable de l’hôtel.',
