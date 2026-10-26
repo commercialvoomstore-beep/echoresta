@@ -82,6 +82,14 @@ def whatsapp(id_, etiquette, accent, requis=True):
             f'class="{classes_champ(accent)} tw-rounded-l-none" aria-labelledby="{id_}-label" data-label="{etiquette}" data-indicatif="{id_}_ind"></div></div>')
 
 
+def pays(id_, etiquette, accent):
+    """Liste des pays avec drapeaux (composant du site), obligatoire."""
+    bloc_ = liste_drapeaux(id_, id_ + '-label', 'pays').replace(
+        f'<input type="hidden" name="{id_}" id="{id_}">', f'<input type="hidden" name="{id_}" id="{id_}" data-label="{etiquette}" data-pays-requis>')
+    bloc_ = bloc_.replace('class="fs-other"', f'class="fs-other {classes_champ(accent)}"')
+    return f'<div><span class="{LABEL}" id="{id_}-label">{etiquette} *</span><div class="tw-fs tw-fs-{accent}">{bloc_}</div></div>'
+
+
 def salaire(id_, etiquette, accent, periodes):
     return (f'<div class="sm:tw-col-span-2"><label class="{LABEL}" for="{id_}">{etiquette}</label>'
             f'<div class="tw-grid tw-grid-cols-1 tw-gap-3 sm:tw-grid-cols-[minmax(0,1fr)_200px]">'
@@ -272,7 +280,7 @@ candidat_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec 
       + '<div class="tw-hidden sm:tw-block"></div>'
       + champ('cd-nom', 'Nom', A, True, attrs='autocomplete="family-name"')
       + champ('cd-prenoms', 'Prénoms', A, True, attrs='autocomplete="given-name"')
-      + liste('cd-nationalite', 'Nationalité', [pays for _, pays, _, _ in drapeaux.PAYS] + ['Autre pays'], A, True)
+      + pays('cd-nationalite', 'Nationalité', A)
       + liste('cd-lieu', 'Lieu d’habitation', ZONES, A, True)
       + liste('cd-niveau', 'Niveau d’enseignement général', ['Aucun', 'Primaire', 'Secondaire (collège)', 'Secondaire (lycée)', 'Baccalauréat',
                                                             'Supérieur (BTS, licence…)', 'Formation professionnelle'], A)

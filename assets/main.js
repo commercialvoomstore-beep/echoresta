@@ -338,10 +338,12 @@ const listesDrapeaux={};
     const valeurs=()=>{
       const champs={}, vus=new Set();
       [...form.elements].forEach(el=>{
-        if(!el.name||el.name==='botcheck'||vus.has(el.name)||el.type==='hidden'||(el.type==='checkbox'&&!el.closest('[data-groupe]'))||el.closest('[data-si].tw-hidden')) return;
+        if(!el.name||el.name==='botcheck'||vus.has(el.name)||(el.type==='hidden'&&!el.dataset.label)||(el.type==='checkbox'&&!el.closest('[data-groupe]'))||el.closest('[data-si].tw-hidden')) return;
         const g=el.closest('[data-groupe]');
         if(g){vus.add(el.name);const v=[...g.querySelectorAll('input:checked')].map(x=>x.value).join(', ');if(v)champs[g.dataset.label]=v;return;}
         let v=el.type==='file'?[...el.files].map(f=>f.name).join(', '):el.tagName==='SELECT'?(el.value?el.selectedOptions[0].textContent:''):el.value.trim();
+        if('paysRequis' in el.dataset&&/^Autre/.test(v)){const a=form.elements[el.name+'_autre'];if(a&&a.value.trim())v=a.value.trim();}
+        if('paysRequis' in el.dataset) vus.add(el.name+'_autre');
         if(el.dataset.indicatif&&v){const ind=form.elements[el.dataset.indicatif].value;if(ind&&ind!=='Autre'&&!v.startsWith('+'))v=ind+' '+v;}
         if('fcfa' in el.dataset&&v){const per=form.elements[el.name+'_periode'];v+=' FCFA'+(per&&per.value?' '+per.value:'');vus.add(el.name+'_periode');}
         if(v) champs[el.dataset.label||el.name]=v;
@@ -354,7 +356,9 @@ const listesDrapeaux={};
       mauvais.forEach(g=>g.querySelector('[data-erreur]').classList.remove('tw-hidden'));
       form.querySelectorAll('input[type="file"][required]').forEach(i=>{const zone=form.querySelector(`[data-fichiers="${i.id}"]`);
         if(!i.files.length&&zone){zone.textContent='Fichier obligatoire';zone.classList.add('tw-text-red-700');}});
+      const paysKo=[...form.querySelectorAll('[data-pays-requis]')].filter(i=>!listesDrapeaux[i.name].valide());
       if(!form.checkValidity()){form.reportValidity();return;}
+      if(paysKo.length){const l=listesDrapeaux[paysKo[0].name];l.btn.scrollIntoView({block:'center'});l.btn.focus();return;}
       if(mauvais.length){mauvais[0].scrollIntoView({block:'center'});return;}
       const champs=valeurs();
       const nom=champs['Établissement ou société']||[champs['Prénoms'],champs['Nom']].filter(Boolean).join(' ');
