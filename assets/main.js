@@ -8,6 +8,39 @@
   }));
 })();
 
+// Dates au format jj/mm/aaaa, quelle que soit la langue du navigateur (saisie au clavier ou calendrier)
+(function(){
+  const pad=n=>String(n).padStart(2,'0'), versFr=iso=>iso.split('-').reverse().join('/');
+  document.querySelectorAll('.date-fr').forEach(box=>{
+    const txt=box.querySelector('input[type="text"]'), nat=box.querySelector('.date-native');
+    let interne=false;
+    const valider=()=>{
+      const d=txt.value.replace(/\D/g,'');let iso='', msg='';
+      if(d.length===8){
+        const j=+d.slice(0,2), m=+d.slice(2,4), a=+d.slice(4), dt=new Date(a,m-1,j);
+        if(a<1900||dt.getFullYear()!==a||dt.getMonth()!==m-1||dt.getDate()!==j) msg='Cette date n’existe pas : vérifiez le jour et le mois.';
+        else{iso=a+'-'+pad(m)+'-'+pad(j);
+          if(nat.min&&iso<nat.min) msg='Choisissez une date à partir du '+versFr(nat.min)+'.';
+          else if(nat.max&&iso>nat.max) msg='La date ne peut pas dépasser le '+versFr(nat.max)+'.';}
+      } else if(d.length) msg='Saisissez la date au format jj/mm/aaaa.';
+      txt.setCustomValidity(msg);
+      const v=msg?'':iso;
+      if(nat.value!==v){nat.value=v;interne=true;nat.dispatchEvent(new Event('change',{bubbles:true}));interne=false;}
+    };
+    txt.addEventListener('input',e=>{
+      if(!(e.inputType||'').startsWith('delete')){
+        const d=txt.value.replace(/\D/g,'').slice(0,8);
+        txt.value=d.length>4?d.slice(0,2)+'/'+d.slice(2,4)+'/'+d.slice(4):d.length>2?d.slice(0,2)+'/'+d.slice(2):d;
+      }
+      valider();
+    });
+    // Date choisie dans le calendrier du navigateur
+    nat.addEventListener('change',()=>{if(!interne){txt.value=nat.value?versFr(nat.value):'';valider();}});
+    nat.addEventListener('click',()=>{try{nat.showPicker();}catch(_){}});
+    if(txt.form) txt.form.addEventListener('reset',()=>setTimeout(valider,0));
+  });
+})();
+
 // Compteurs animés des chiffres clés
 (function(){
   const nums=document.querySelectorAll('.num[data-to]');
@@ -157,7 +190,7 @@ const afficherEchec=(el,dest,sujet,texte)=>{
   if(f&&el.formation.querySelector(`option[value="${CSS.escape(f)}"]`)) el.formation.value=f;
   form.addEventListener('submit',e=>{
     e.preventDefault(); err.hidden=true; majHeure();
-    if(date.value&&weekend(date.value)){date.focus();return;}
+    if(date.value&&weekend(date.value)){document.getElementById('rdv-date').focus();return;}
     if(!form.checkValidity()){form.reportValidity();return;}
     const tel=el.rdv_tel.value.trim(), ind=el.rdv_tel_ind.value;
     const jour=new Date(date.value+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});

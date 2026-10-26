@@ -716,3 +716,10 @@
   .rdv-form .row{margin-top:22px}
   .rdv-form label small{font-weight:600}
   .rdv-form select:disabled{background:#f3f5fb;color:var(--muted);cursor:not-allowed}
+
+  /* Champ date jj/mm/aaaa avec bouton calendrier */
+  .date-fr{position:relative}
+  .form .date-fr input[type="text"]{padding-right:50px;font-variant-numeric:tabular-nums}
+  .form .date-fr .date-native{position:absolute;top:0;right:0;bottom:0;width:50px;height:100%;padding:0;border:0;opacity:0;cursor:pointer;z-index:1}
+  .date-btn{position:absolute;right:15px;top:50%;transform:translateY(-50%);display:grid;color:var(--navy);pointer-events:none}
+  .date-btn svg{width:20px;height:20px}

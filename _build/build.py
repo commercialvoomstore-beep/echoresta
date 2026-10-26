@@ -729,6 +729,15 @@ LIENS_PARENTE = ['Père', 'Mère', 'Tuteur / tutrice', 'Frère / sœur', 'Autre'
 GLOBE = '<svg class="flag flag-globe" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>'
 
 
+def date_fr(champ_id, nom, autocomplete='off'):
+    """Date saisie au format jj/mm/aaaa (quelle que soit la langue du navigateur), avec calendrier.
+    Le champ caché de type date garde la valeur au format AAAA-MM-JJ pour les scripts."""
+    return (f'<div class="date-fr"><input id="{champ_id}" type="text" inputmode="numeric" placeholder="jj/mm/aaaa" maxlength="10" '
+            f'autocomplete="{autocomplete}" required pattern="\\d{{2}}/\\d{{2}}/\\d{{4}}">'
+            f'<input class="date-native" type="date" name="{nom}" tabindex="-1" aria-hidden="true">'
+            f'<span class="date-btn" aria-hidden="true"><svg class="ic"><use href="#i-clock2"/></svg></span></div>')
+
+
 def liste_drapeaux(champ, label, mode='pays', requis=True, defaut=''):
     """Liste déroulante avec drapeaux, gérée par assets/main.js.
     mode 'pays' : choix d'un pays ; mode 'indicatif' : indicatif téléphonique (drapeau + code)."""
@@ -798,7 +807,7 @@ FORMULAIRE_INSCRIPTION = f'''      <form id="form-inscription" data-mail="{EMAIL
           <div class="row">
             <div><label for="ins-nom">Nom de famille *</label><input id="ins-nom" name="nom" required autocomplete="family-name" placeholder="Nom"></div>
             <div><label for="ins-prenoms">Prénom(s) *</label><input id="ins-prenoms" name="prenoms" required autocomplete="given-name" placeholder="Prénoms"></div>
-            <div><label for="ins-naissance">Date de naissance *</label><input id="ins-naissance" name="naissance" type="date" required autocomplete="bday"></div>
+            <div><label for="ins-naissance">Date de naissance *</label>{date_fr('ins-naissance', 'naissance', 'bday')}</div>
             <div><label for="ins-lieu">Lieu de naissance *</label><input id="ins-lieu" name="lieu_naissance" required placeholder="Lieu"></div>
             <div><span class="flab" id="pays-label">Pays *</span>
           {liste_drapeaux('pays', 'pays-label')}</div>
@@ -946,7 +955,7 @@ rdv = page_hero('Prendre rendez-vous avec notre école à Abidjan', 'Rendez-vous
 {options_formations}
             </select></div>
           <div><label for="rdv-date">Date * <small>(lundi — vendredi)</small></label>
-            <input id="rdv-date" name="date" type="date" required>
+            {date_fr('rdv-date', 'date')}
             <p class="field-error" id="rdv-date-err" hidden>Nous recevons du lundi au vendredi : choisissez un autre jour.</p></div>
           <div><label for="rdv-heure">Heure * <small>(9 h — 16 h, 15 min)</small></label>
             <select id="rdv-heure" name="heure" required disabled>

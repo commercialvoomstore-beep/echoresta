@@ -157,7 +157,7 @@
           <div class="row">
             <div><label for="ins-nom">Nom de famille *</label><input id="ins-nom" name="nom" required autocomplete="family-name" placeholder="Nom"></div>
             <div><label for="ins-prenoms">Prénom(s) *</label><input id="ins-prenoms" name="prenoms" required autocomplete="given-name" placeholder="Prénoms"></div>
-            <div><label for="ins-naissance">Date de naissance *</label><input id="ins-naissance" name="naissance" type="date" required autocomplete="bday"></div>
+            <div><label for="ins-naissance">Date de naissance *</label><div class="date-fr"><input id="ins-naissance" type="text" inputmode="numeric" placeholder="jj/mm/aaaa" maxlength="10" autocomplete="bday" required pattern="\d{2}/\d{2}/\d{4}"><input class="date-native" type="date" name="naissance" tabindex="-1" aria-hidden="true"><span class="date-btn" aria-hidden="true"><svg class="ic"><use href="#i-clock2"/></svg></span></div></div>
             <div><label for="ins-lieu">Lieu de naissance *</label><input id="ins-lieu" name="lieu_naissance" required placeholder="Lieu"></div>
             <div><span class="flab" id="pays-label">Pays *</span>
           <div class="flag-select" data-field="pays" data-default="">

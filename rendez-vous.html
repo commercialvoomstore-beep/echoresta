@@ -203,7 +203,7 @@
               </optgroup>
             </select></div>
           <div><label for="rdv-date">Date * <small>(lundi — vendredi)</small></label>
-            <input id="rdv-date" name="date" type="date" required>
+            <div class="date-fr"><input id="rdv-date" type="text" inputmode="numeric" placeholder="jj/mm/aaaa" maxlength="10" autocomplete="off" required pattern="\d{2}/\d{2}/\d{4}"><input class="date-native" type="date" name="date" tabindex="-1" aria-hidden="true"><span class="date-btn" aria-hidden="true"><svg class="ic"><use href="#i-clock2"/></svg></span></div>
             <p class="field-error" id="rdv-date-err" hidden>Nous recevons du lundi au vendredi : choisissez un autre jour.</p></div>
           <div><label for="rdv-heure">Heure * <small>(9 h — 16 h, 15 min)</small></label>
             <select id="rdv-heure" name="heure" required disabled>
