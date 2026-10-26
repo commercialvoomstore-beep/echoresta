@@ -9,6 +9,12 @@ import json
 # Adresse publique du site. À changer si le site passe sur un nom de domaine (ex. https://www.echoresta.ci/).
 BASE_URL = 'https://commercialvoomstore-beep.github.io/echoresta/'
 SITE_NAME = 'EchoResta'
+# Code fourni par Google Search Console (méthode « Balise HTML »), par ex. 'AbCdEf123…'. Vide = pas de balise.
+GOOGLE_VERIFICATION = ''
+
+
+def verification():
+    return f'\n<meta name="google-site-verification" content="{GOOGLE_VERIFICATION}">' if GOOGLE_VERIFICATION else ''
 
 ADRESSE = {
     '@type': 'PostalAddress',

@@ -24,6 +24,7 @@ LIEU = quote(f'{PLUS_CODE} Abidjan')  # Google Maps reconnaît le Plus Code et y
 MAPS_ITINERAIRE = f'https://www.google.com/maps/dir/?api=1&destination={LIEU}'
 MAPS_OUVRIR = f'https://www.google.com/maps/search/?api=1&query={LIEU}'
 BY_CAT = {k: [m for m in METIERS if m['cat'] == k] for k in CATEGORIES}
+PIECES_DOSSIER = ['2 photos d’identité récentes', '1 copie de la pièce d’identité', '1 CV']
 LAT, LNG = (float(x) for x in GPS.split(','))
 PAGES_PUBLIEES = []  # (fichier, robots) : sert au plan du site (sitemap.xml)
 
@@ -189,7 +190,7 @@ def page(file, title, desc, body, active, wa_text='Bonjour, je souhaite contacte
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<meta name="robots" content="{robots}">
+<meta name="robots" content="{robots}, max-image-preview:large, max-snippet:-1">{seo.verification()}
 <link rel="canonical" href="{canonical}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{seo.SITE_NAME}">
@@ -475,7 +476,22 @@ about = page_hero('EchoResta, école hôtelière à Abidjan', 'À propos', 'imag
   </div>
 </section>
 
-<section class="bg-soft center">
+<section class="intro-seo bg-soft">
+  <div class="container intro-grid">
+    <div>
+      <div class="eyebrow">Ce que nous enseignons</div>
+      <h2>Dix métiers de l’hôtellerie et de la restauration</h2>
+      <div class="sep"></div>
+    </div>
+    <div class="story">
+      <p>EchoResta forme aux métiers les plus recherchés par les hôtels, restaurants, lounges et traiteurs d’Abidjan : <a class="link" href="formation-cuisinier.html">cuisinier</a>, <a class="link" href="formation-serveur-hotesse.html">serveur et hôtesse</a>, <a class="link" href="formation-maitre-hotel.html">maître d’hôtel</a>, <a class="link" href="formation-bar-mixology.html">barman</a>, <a class="link" href="formation-audit-nuit.html">réceptionniste</a>, <a class="link" href="formation-valet-femme-chambre.html">femme et valet de chambre</a> et <a class="link" href="formation-gouvernante.html">gouvernante</a>.</p>
+      <p>Pour les professionnels qui veulent évoluer, l’école propose aussi des formations au <a class="link" href="formation-directeur-hotel.html">management hôtelier</a>, à la <a class="link" href="formation-directeur-restaurant.html">gestion de restaurant</a> et à l’<a class="link" href="formation-anglais-tourisme-hotellerie.html">anglais du tourisme et de l’hôtellerie</a>.</p>
+      <p>L’école est située à Angré Star 14, dans la commune de Cocody. Ses formations sont ouvertes aux candidats de toutes les communes d’Abidjan — Cocody, Yopougon, Abobo, Adjamé, Plateau, Marcory, Koumassi, Treichville, Port-Bouët, Bingerville… — ainsi qu’à ceux de l’intérieur du pays et des pays d’Afrique de l’Ouest.</p>
+    </div>
+  </div>
+</section>
+
+<section class="center">
   <div class="container">
     <h2>Mission, vision et valeurs</h2>
     <div class="sep"></div>
@@ -517,8 +533,26 @@ faq = [('Quels sont les prérequis pour s’inscrire ?', 'La plupart de nos form
        ('Quels sont vos horaires ?', 'Nous vous accueillons du lundi au vendredi, de 8h à 17h. Selon la formation, les cours ont lieu le matin ou l’après-midi : contactez-nous pour connaître le prochain calendrier.'),
        ('Je ne sais pas quel métier choisir. Que faire ?', 'Faites notre test d’orientation en trois questions sur la page d’accueil, ou écrivez-nous sur WhatsApp : un conseiller vous aide à choisir.'),
        ('Peut-on payer en plusieurs fois ?', 'Oui, un échéancier peut être mis en place. Les modalités vous sont présentées lors de l’entretien d’inscription.')]
+INTRO_FORMATIONS = '''<section class="intro-seo">
+  <div class="container intro-grid">
+    <div>
+      <div class="eyebrow">Se former à Abidjan</div>
+      <h2>Formations professionnelles en hôtellerie et restauration</h2>
+      <div class="sep"></div>
+    </div>
+    <div class="story">
+      <p>EchoResta, école de l’hôtellerie et de la restauration à Abidjan, propose dix formations professionnelles réparties en deux pôles. Chaque parcours associe cours, ateliers pratiques et immersion en entreprise, et se termine par une double certification internationale (Côte d’Ivoire et Australie) et un stage de 6 mois garanti dans les plus grands hôtels.</p>
+      <p><b>Hôtellerie et tourisme :</b> <a class="link" href="formation-valet-femme-chambre.html">valet et femme de chambre</a>, <a class="link" href="formation-gouvernante.html">gouvernante d’hôtel</a>, <a class="link" href="formation-audit-nuit.html">réceptionniste et audit de nuit</a>, <a class="link" href="formation-directeur-hotel.html">directeur d’hôtel</a> et <a class="link" href="formation-anglais-tourisme-hotellerie.html">anglais pour l’hôtellerie et le tourisme</a>.</p>
+      <p><b>Restauration et arts culinaires :</b> <a class="link" href="formation-serveur-hotesse.html">serveur et hôtesse</a>, <a class="link" href="formation-maitre-hotel.html">maître d’hôtel</a>, <a class="link" href="formation-cuisinier.html">cuisinier</a>, <a class="link" href="formation-bar-mixology.html">barman et mixologie</a> et <a class="link" href="formation-directeur-restaurant.html">directeur de restaurant</a>.</p>
+      <p>Les formations ont lieu à Angré Star 14, Cocody, du lundi au vendredi. Elles sont ouvertes aux candidats de toutes les communes d’Abidjan, de l’intérieur du pays et des pays d’Afrique de l’Ouest.</p>
+    </div>
+  </div>
+</section>
+
+'''
 formations = page_hero('Formations en hôtellerie et restauration à Abidjan', 'Formations', 'images/formations-bandeau.jpg',
                        f'{len(METIERS)} métiers de l’hôtellerie et de la restauration, avec double certification internationale et stage de 6 mois garanti.') + f'''
+{INTRO_FORMATIONS}
 <section class="center">
   <div class="container">
     <h2>Choisissez votre parcours</h2>
@@ -558,6 +592,33 @@ page('formations.html', *seo.PAGES['formations.html'], formations, 'formations.h
      schemas=[seo.fil_ariane(('Accueil', ''), ('Formations', 'formations.html')), seo.faq_schema(faq)])
 
 # =========================================================== Pages métier
+def liste_fr(items, mot='et'):
+    items = list(items)
+    return items[0] if len(items) == 1 else ', '.join(items[:-1]) + f' {mot} ' + items[-1]
+
+
+def faq_metier(m):
+    """Questions fréquentes d'une fiche, construites à partir des informations validées de la formation."""
+    t, c = m['titre'], m['carriere']
+    return [
+        (f'À qui s’adresse la formation « {t} » à Abidjan ?',
+         f'Niveau demandé : {m["niveau"]}. La formation est ouverte aux candidats d’Abidjan, de toute la Côte d’Ivoire et des pays '
+         f'd’Afrique de l’Ouest. Les candidats de moins de 18 ans s’inscrivent avec l’accord d’un parent ou d’un tuteur.'),
+        (f'Quels métiers exercer après la formation « {t} » ?',
+         f'Après la formation, vous pouvez débuter comme {c[0].lower()}, puis évoluer vers {liste_fr(x.lower() for x in c[1:])}. '
+         f'Vous pouvez travailler dans : {liste_fr((x[0].lower() + x[1:] for x in m["lieux"]), "ou")}.'),
+        (f'La formation « {t} » est-elle certifiante ?',
+         'Oui. Elle donne lieu à une double certification internationale (Côte d’Ivoire et Australie) et se termine par un stage '
+         'de 6 mois garanti dans les plus grands hôtels.'),
+        ('Où se déroule la formation ?',
+         'À l’école EchoResta, Angré Star 14, Cocody (Abidjan), du lundi au vendredi entre 8h et 17h. Les cours associent théorie, '
+         'ateliers pratiques et immersion en entreprise, encadrés par des professionnels du secteur.'),
+        (f'Comment s’inscrire à la formation « {t} » ?',
+         f'Remplissez la fiche d’inscription en ligne, puis préparez votre dossier : {liste_fr(d.lower() if i else d for i, d in enumerate(PIECES_DOSSIER))}. '
+         f'Vous pouvez aussi prendre rendez-vous ou nous appeler au {PHONE}.'),
+    ]
+
+
 LADDER_LABELS = ['Après la formation', 'Avec l’expérience', 'Ensuite', 'À terme']
 for old in OUT.glob('formation-*.html'):
     old.unlink()
@@ -618,6 +679,11 @@ for m in METIERS:
           <div class="chips">{lieux}</div>
         </div>
       </div>
+
+      <h2 class="h3">Questions fréquentes sur la formation {m['titre'].lower() if m['cat'] != 'langues' else 'd’anglais'}</h2>
+      <div class="faq faq-left">
+{chr(10).join(f'        <details><summary>{q}</summary><p>{r}</p></details>' for q, r in faq_metier(m))}
+      </div>
     </div>
 
     <aside class="detail-side">
@@ -655,11 +721,11 @@ for m in METIERS:
 '''
     page(url(m), meta['title'], meta['desc'], body, 'formations.html',
          f'Bonjour, je souhaite contacter le service commercial d’EchoResta au sujet de la formation {m["titre"]}.',
-         schemas=[seo.cours_schema(m, meta), seo.fil_ariane(('Accueil', ''), ('Formations', 'formations.html'), (m['titre'], url(m)))],
+         schemas=[seo.cours_schema(m, meta), seo.fil_ariane(('Accueil', ''), ('Formations', 'formations.html'), (m['titre'], url(m))),
+                  seo.faq_schema(faq_metier(m))],
          image=m['photo'] or 'hero-cuisine.jpg')
 
 # =========================================================== Contact
-PIECES_DOSSIER = ['2 photos d’identité récentes', '1 copie de la pièce d’identité', '1 CV']
 options = '\n'.join(
     f'              <optgroup label="{CATEGORIES[c]}">\n' +
     '\n'.join(f'                <option value="{m["slug"]}">{m["titre"]}</option>' for m in BY_CAT[c]) +
@@ -793,6 +859,18 @@ DOCS_HTML = f'''      <div class="info-box docs-box">
 # Nationalité proposée automatiquement selon le pays et le sexe
 NATIONALITES = {pays: {'Féminin': nat, 'Masculin': masc} for (_, pays, nat, _), masc in zip(drapeaux.PAYS, drapeaux.NATIONALITES_MASC)}
 
+FAQ_INSCRIPTION = [
+    ('Quelles pièces faut-il pour le dossier d’inscription ?',
+     f'{liste_fr(PIECES_DOSSIER)}. Notre équipe vous indique comment les transmettre après l’étude de votre fiche.'),
+    ('Peut-on s’inscrire avant 18 ans ?',
+     'Oui. Les candidats de moins de 18 ans indiquent les coordonnées d’un parent ou d’un tuteur dans la fiche d’inscription.'),
+    ('Peut-on candidater depuis un autre pays d’Afrique de l’Ouest ?',
+     'Oui. La fiche accepte les candidats de tous les pays d’Afrique de l’Ouest ; les formations ont lieu à Abidjan, Angré Star 14, Cocody.'),
+    ('Que se passe-t-il après l’envoi de la fiche ?',
+     f'Notre équipe étudie votre demande puis vous appelle pour fixer un entretien d’inscription à l’école. Pour toute question : {PHONE}.'),
+]
+FAQ_INSCRIPTION_HTML = '\n'.join(f'        <details><summary>{q}</summary><p>{r}</p></details>' for q, r in FAQ_INSCRIPTION)
+
 FORMULAIRE_INSCRIPTION = f'''      <form id="form-inscription" data-mail="{EMAIL}" data-nationalites='{json.dumps(NATIONALITES, ensure_ascii=False).replace("'", "&#39;")}' novalidate>
         <h3 class="ins-title">Formulaire de candidature</h3>
         <div class="sep"></div>
@@ -905,9 +983,22 @@ inscription = page_hero('Inscription à une formation en hôtellerie et restaura
     </div>
   </div>
 </section>
+
+<section class="bg-soft">
+  <div class="container intro-grid">
+    <div>
+      <div class="eyebrow">Inscription</div>
+      <h2>Questions fréquentes sur l’inscription</h2>
+      <div class="sep"></div>
+    </div>
+    <div class="faq faq-left">
+{FAQ_INSCRIPTION_HTML}
+    </div>
+  </div>
+</section>
 '''
 page('inscription.html', *seo.PAGES['inscription.html'], inscription, '',
-     schemas=[seo.fil_ariane(('Accueil', ''), ('Inscription', 'inscription.html'))])
+     schemas=[seo.fil_ariane(('Accueil', ''), ('Inscription', 'inscription.html')), seo.faq_schema(FAQ_INSCRIPTION)])
 
 # =========================================================== Rendez-vous
 # Créneaux de 15 minutes, de 9 h à 16 h
@@ -1019,12 +1110,28 @@ print('ok :', len(list(OUT.glob('*.html'))), 'pages')
 import datetime  # noqa: E402
 jour = datetime.date.today().isoformat()
 PRIORITE = {'index.html': '1.0', 'formations.html': '0.9', 'rendez-vous.html': '0.8', 'inscription.html': '0.9', 'contact.html': '0.8', 'apropos.html': '0.7'}
-urls = '\n'.join(
-    f'  <url><loc>{seo.BASE_URL}{"" if f == "index.html" else f}</loc><lastmod>{jour}</lastmod>'
-    f'<priority>{PRIORITE.get(f, "0.8")}</priority></url>'
-    for f, robots in PAGES_PUBLIEES if robots.startswith('index'))
+import html as _html, re as _re  # noqa: E402
+
+
+def images_page(f):
+    """Images visibles d'une page (balises img et photo du bandeau), pour le plan du site."""
+    code = (OUT / f).read_text()
+    vues = []
+    for src in _re.findall(r'<img [^>]*src="(images/[^"]+)"', code) + _re.findall(r"background-image:url\('(images/[^']+)'\)", code):
+        if src not in vues and not src.endswith(('logo.jpg', 'logo.png')):
+            vues.append(src)
+    return vues
+
+
+def url_xml(f):
+    imgs = ''.join(f'<image:image><image:loc>{seo.BASE_URL}{_html.escape(i)}</image:loc></image:image>' for i in images_page(f))
+    return (f'  <url><loc>{seo.BASE_URL}{"" if f == "index.html" else f}</loc><lastmod>{jour}</lastmod>'
+            f'<priority>{PRIORITE.get(f, "0.8")}</priority>{imgs}</url>')
+
+
+urls = '\n'.join(url_xml(f) for f, robots in PAGES_PUBLIEES if robots.startswith('index'))
 (OUT / 'sitemap.xml').write_text(f'''<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 {urls}
 </urlset>
 ''')

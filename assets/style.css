@@ -725,3 +725,13 @@
   .date-btn{position:absolute;right:15px;top:50%;transform:translateY(-50%);display:grid;color:var(--navy);pointer-events:none}
   .date-btn svg{width:20px;height:20px}
   .lead-p.lead-first{margin-top:10px}
+
+  /* Textes de présentation et questions fréquentes alignées à gauche */
+  .intro-seo{padding:90px 0}
+  .intro-grid{display:grid;grid-template-columns:5fr 7fr;gap:64px;max-width:1180px}
+  .intro-grid .story p a.link{font-weight:600}
+  .faq.faq-left{margin:20px 0 0;max-width:none}
+  .intro-grid .faq.faq-left{margin:0}
+  .faq.faq-left summary{font-size:16.5px}
+  @media (max-width:1000px){.intro-grid{grid-template-columns:minmax(0,1fr);gap:28px}}
+  @media (max-width:600px){.intro-seo{padding:64px 0}}
