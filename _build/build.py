@@ -92,6 +92,14 @@ def header(active):
 {submenu()}
         </div>
       </div>''')
+        elif href == 'recrutement.html':
+            links.append(f'''      <div class="has-sub">
+        <a href="recrutement.html"{cls}>Recrutement <svg class="ic"><use href="#i-down"/></svg></a>
+        <div class="submenu">
+          <a href="espace_client.html">Recherche du personnel</a>
+          <a href="espace_candidat.html">Recherche un emploi</a>
+        </div>
+      </div>''')
         else:
             links.append(f'      <a href="{href}"{cls}>{label}</a>')
     links = '\n'.join(links)
