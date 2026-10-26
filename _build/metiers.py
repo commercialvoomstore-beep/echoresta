@@ -122,7 +122,7 @@ METIERS = [
     # ------------------------------------------------------------- Restauration
     {
         'slug': 'serveur-hotesse', 'cat': 'restauration', 'titre': 'Serveur / Hôtesse',
-        'icon': 'i-bell', 'photo': 'galerie-6.jpg', 'fond': 'galerie-6.jpg',
+        'icon': 'i-bell', 'photo': 'serveur-hotesse.jpg', 'fond': 'serveur-hotesse.jpg',
         'court': 'Le contact client avant tout',
         'accroche': 'Le sourire qui donne envie de revenir : un métier de contact, accessible rapidement et recherché partout.',
         'resume': 'Accueillir, conseiller et servir avec élégance, de la mise en place de la salle jusqu’à l’encaissement.',
@@ -149,7 +149,7 @@ METIERS = [
     },
     {
         'slug': 'maitre-hotel', 'cat': 'restauration', 'titre': 'Maître d’hôtel',
-        'icon': 'i-utensils', 'photo': 'galerie-1.jpg', 'fond': 'galerie-1.jpg',
+        'icon': 'i-utensils', 'photo': 'maitre-hotel.jpg', 'fond': 'maitre-hotel.jpg',
         'court': 'Orchestrez le service en salle',
         'accroche': 'Le maître d’hôtel orchestre la salle : avec lui, un simple repas devient une expérience.',
         'resume': 'Diriger le service en salle, accueillir les clients de marque et garantir un service sans fausse note.',
@@ -176,7 +176,7 @@ METIERS = [
     },
     {
         'slug': 'cuisinier', 'cat': 'restauration', 'titre': 'Cuisinier',
-        'icon': 'i-chef', 'photo': 'galerie-2.jpg', 'fond': 'hero.jpg',
+        'icon': 'i-chef', 'photo': 'cuisinier.jpg', 'fond': 'cuisinier.jpg',
         'court': 'Faites de votre passion un métier',
         'accroche': 'Du kedjenou au plat signature : apprenez les gestes des chefs et faites de votre passion un métier.',
         'resume': 'Techniques de base, cuisine ivoirienne et internationale, pâtisserie, hygiène et organisation d’une brigade.',
@@ -203,7 +203,7 @@ METIERS = [
     },
     {
         'slug': 'bar-mixology', 'cat': 'restauration', 'titre': 'Bar & mixologie',
-        'icon': 'i-cocktail', 'photo': 'galerie-5.jpg', 'fond': 'galerie-5.jpg',
+        'icon': 'i-cocktail', 'photo': 'bar-mixology.jpg', 'fond': 'bar-mixology.jpg',
         'court': 'Créez vos cocktails signatures',
         'accroche': 'Shaker, créativité et sens du show : le bar est la scène la plus animée de l’hôtel.',
         'resume': 'Spiritueux, cocktails classiques et créations signatures, gestion du bar et service responsable.',
@@ -230,7 +230,7 @@ METIERS = [
     },
     {
         'slug': 'directeur-restaurant', 'cat': 'restauration', 'titre': 'Directeur de restaurant',
-        'icon': 'i-trend', 'photo': None, 'fond': 'galerie-1.jpg',
+        'icon': 'i-trend', 'photo': 'directeur-restaurant.jpg', 'fond': 'directeur-restaurant.jpg',
         'court': 'Dirigez une table rentable',
         'accroche': 'Faire d’une belle table une entreprise rentable : le métier de celles et ceux qui dirigent.',
         'resume': 'Équipes, carte, achats, rentabilité, marketing et qualité : la gestion complète d’un restaurant.',
