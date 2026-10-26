@@ -55,3 +55,14 @@ Sur vercel.com : **Add New… → Project → Import Git Repository**, choisir c
 - Formulaires Contact, Rendez-vous et Inscription : envoyés par e-mail via Web3Forms (clé `WEB3FORMS_KEY` dans
   `_build/build.py`) à contact@voomnetformation.ci ; l'adresse affichée sur le site reste contact@echoresta.ci.
   En cas d'échec d'envoi, le visiteur peut transmettre sa demande sur WhatsApp.
+
+## Espace recrutement
+
+- `recrutement.html` : page d'accueil du recrutement avec deux boutons, vers `espace_client.html`
+  (fiche de besoin de personnel, pour les établissements) et `espace_candidat.html` (fiche d'inscription candidat).
+- Ces pages sont générées par `_build/recrutement.py` et envoyées par e-mail via Web3Forms, comme les autres formulaires.
+  Les pièces jointes (CV, photo, diplômes) ne passent pas par e-mail avec l'offre gratuite de Web3Forms :
+  après l'envoi, le candidat les transmet en un clic sur WhatsApp.
+- Le style vient de Tailwind CSS, compilé dans `assets/recrutement.css` (classes préfixées `tw-`).
+  Après avoir modifié les classes de ces pages, recompiler :
+  `npx tailwindcss@3.4.17 -c _build/tailwind.config.js -i _build/tailwind.css -o assets/recrutement.css --minify`

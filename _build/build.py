@@ -54,11 +54,12 @@ icons = (S / 'icons.html').read_text().replace('</svg>', '''  <symbol id="i-chec
   <symbol id="i-cocktail" viewBox="0 0 24 24"><path d="M8 22h8M12 11v11M19 3l-7 8-7-8Z"/></symbol>
   <symbol id="i-trend" viewBox="0 0 24 24"><path d="M22 7 13.5 15.5l-5-5L2 17"/><path d="M16 7h6v6"/></symbol>
   <symbol id="i-lang" viewBox="0 0 24 24"><path d="m5 8 6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
   <symbol id="i-chat" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8.5 10.5c0 2.5 2.5 5 5 5l1.5-1.5-2-1-1 .8c-.9-.4-1.6-1.1-2-2l.8-1-1-2Z"/></symbol>
 </svg>''', 1)
 
 NAV = [('index.html', 'Accueil'), ('formations.html', 'Formations'), ('apropos.html', 'À propos'),
-       ('rendez-vous.html', 'Rendez-vous'), ('contact.html', 'Contact')]
+       ('rendez-vous.html', 'Rendez-vous'), ('recrutement.html', 'Recrutement'), ('contact.html', 'Contact')]
 
 
 def url(m):
@@ -182,7 +183,7 @@ MAP = f'''<section class="map">
 
 
 def page(file, title, desc, body, active, wa_text='Bonjour, je souhaite contacter le service commercial d’EchoResta.',
-         schemas=(), image='hero-cuisine.jpg', robots='index, follow'):
+         schemas=(), image='hero-cuisine.jpg', robots='index, follow', head_extra=''):
     canonical = seo.BASE_URL + ('' if file == 'index.html' else file)
     PAGES_PUBLIEES.append((file, robots))
     html = f'''<!doctype html>
@@ -211,6 +212,7 @@ def page(file, title, desc, body, active, wa_text='Bonjour, je souhaite contacte
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 {seo.balises_json_ld(schemas)}
+{head_extra}
 </head>
 <body>
 
@@ -1065,6 +1067,9 @@ rdv = page_hero('Prendre rendez-vous avec notre école à Abidjan', 'Rendez-vous
 page('rendez-vous.html', *seo.PAGES['rendez-vous.html'], rdv, 'rendez-vous.html',
      schemas=[seo.ecole_schema(PHONE, LAT, LNG, PLUS_CODE), seo.fil_ariane(('Accueil', ''), ('Rendez-vous', 'rendez-vous.html'))])
 
+# =========================================================== Recrutement (espace client, espace candidat)
+exec((S / 'recrutement.py').read_text())
+
 # =========================================================== 404
 page('404.html', 'Page introuvable — EchoResta', 'Page introuvable.', '''
 <section class="center" style="padding:140px 0">
@@ -1085,7 +1090,10 @@ index = [{'t': 'Accueil', 'u': 'index.html', 'd': 'Présentation de l’école E
          {'t': 'Test d’orientation', 'u': 'index.html#quiz', 'd': 'Quel métier est fait pour vous ? Trois questions'},
          {'t': 'Contact & inscription', 'u': 'contact.html', 'd': 'Coordonnées, formulaire et plan d’accès'},
          {'t': 'Prendre rendez-vous', 'u': 'rendez-vous.html', 'd': 'Entretien d’orientation, inscription ou visite de l’école'},
-         {'t': 'Inscription', 'u': 'inscription.html', 'd': 'Fiche d’inscription en ligne et pièces à joindre au dossier'}]
+         {'t': 'Inscription', 'u': 'inscription.html', 'd': 'Fiche d’inscription en ligne et pièces à joindre au dossier'},
+         {'t': 'Recrutement', 'u': 'recrutement.html', 'd': 'Espace client et espace candidat'},
+         {'t': 'Espace client : je cherche du personnel', 'u': 'espace_client.html', 'd': 'Fiche de besoin de personnel pour hôtels et restaurants', 'k': 'recruter employeur placement serveur cuisinier réceptionniste'},
+         {'t': 'Espace candidat : je cherche un emploi', 'u': 'espace_candidat.html', 'd': 'Fiche d’inscription candidat pour les professionnels', 'k': 'emploi travail offre cuisine salle bar réception étages CV'}]
 for m in METIERS:
     kw = ' '.join([CATEGORIES[m['cat']], *(t for t, _ in m['modules']), *m['carriere'], *m['lieux']])
     index.append({'t': m['titre'], 'u': url(m), 'd': m['resume'], 'k': kw})
@@ -1103,7 +1111,7 @@ print('ok :', len(list(OUT.glob('*.html'))), 'pages')
 # =========================================================== Plan du site (sitemap.xml) et robots.txt
 import datetime  # noqa: E402
 jour = datetime.date.today().isoformat()
-PRIORITE = {'index.html': '1.0', 'formations.html': '0.9', 'rendez-vous.html': '0.8', 'inscription.html': '0.9', 'contact.html': '0.8', 'apropos.html': '0.7'}
+PRIORITE = {'index.html': '1.0', 'formations.html': '0.9', 'rendez-vous.html': '0.8', 'inscription.html': '0.9', 'recrutement.html': '0.8', 'contact.html': '0.8', 'apropos.html': '0.7'}
 import html as _html, re as _re  # noqa: E402
 
 

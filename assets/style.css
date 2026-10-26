@@ -585,8 +585,8 @@
   .rdv-recap{white-space:pre-wrap;text-align:left;background:#f6f7fb;padding:18px 20px;font:14px/1.6 var(--sans);margin:22px 0;color:var(--ink);overflow-wrap:anywhere}
   @media (max-width:1000px){.rdv-grid{grid-template-columns:minmax(0,1fr);gap:48px}}
 
-  /* Menu replié (bouton ☰) jusqu'à 1100 px : avec 5 liens, il ne tient pas à côté du logo sur tablette */
-  @media (max-width:1100px){
+  /* Menu replié (bouton ☰) jusqu’à 1280 px : avec 6 liens, il ne tient pas à côté du logo sur tablette et petit portable */
+  @media (max-width:1280px){
     .burger{display:block}
     nav.main{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;flex-direction:column;align-items:flex-start;gap:0;padding:8px 16px 20px;box-shadow:0 10px 20px rgba(0,0,0,.08)}
     nav.main.open{display:flex}
@@ -733,3 +733,12 @@
   /* Barre des coordonnées (téléphone, adresse, e-mail) fixe en haut, avec le menu juste en dessous */
   .topbar{position:sticky;top:0;z-index:51}
   header.site{top:41px}
+
+  /* Espace recrutement (Tailwind) : indicatif téléphonique arrondi comme les champs */
+  .tw-tel .fs-btn{border-radius:.5rem 0 0 .5rem;border-color:#cbd5e1;height:100%;background:#f8fafc}
+  .tw-tel-or .fs-btn:focus-visible,.tw-tel-or .fs-btn[aria-expanded="true"]{border-color:#d97706;box-shadow:0 0 0 4px rgba(245,158,11,.15)}
+  .ec [data-echec] a{color:inherit;text-decoration:underline}
+  .ec,.ec-or{scroll-margin-top:180px}
+  [data-merci]{scroll-margin-top:180px}
+  nav.main a{white-space:nowrap}
+  @media (min-width:1281px) and (max-width:1440px){nav.main{gap:22px}}

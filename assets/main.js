@@ -4,7 +4,7 @@
   if(burger) burger.onclick=()=>nav.classList.toggle('open');
   // Sous-menu « Formations » : ouverture au clic sur mobile
   document.querySelectorAll('.has-sub > a').forEach(a=>a.addEventListener('click',e=>{
-    if(window.innerWidth<=1100){e.preventDefault();a.parentElement.classList.toggle('open');}
+    if(window.innerWidth<=1280){e.preventDefault();a.parentElement.classList.toggle('open');}
   }));
 })();
 
@@ -312,6 +312,56 @@ const listesDrapeaux={};
       if(!ok){afficherEchec(err,form,sujet,texteDemande(champs));return;}
       document.getElementById('ins-recap').textContent=texteDemande(champs);
       form.hidden=true; const box=document.getElementById('ins-ok'); box.hidden=false; box.scrollIntoView({block:'start'});
+    });
+  });
+})();
+
+// Fiches de l'espace recrutement (employeurs et candidats) : envoi par e-mail, récapitulatif
+(function(){
+  document.querySelectorAll('form.fiche').forEach(form=>{
+    const merci=form.parentElement.querySelector('[data-merci]'), echec=form.querySelector('[data-echec]'), btn=form.querySelector('[data-envoyer]');
+    const btnTexte=btn.textContent;
+    // Montants en FCFA : espaces des milliers pendant la saisie
+    form.querySelectorAll('[data-fcfa]').forEach(i=>i.addEventListener('input',()=>{const d=i.value.replace(/\D/g,'').slice(0,10);i.value=d?Number(d).toLocaleString('fr-FR').replace(/ | /g,' '):'';}));
+    // Noms des fichiers choisis
+    form.querySelectorAll('input[type="file"]').forEach(i=>i.addEventListener('change',()=>{
+      const zone=form.querySelector(`[data-fichiers="${i.id}"]`); if(zone) zone.textContent=[...i.files].map(f=>f.name).join(', ');}));
+    // Groupes de choix obligatoires
+    const groupes=[...form.querySelectorAll('[data-groupe]')];
+    const groupeOk=g=>!g.dataset.requis||!!g.querySelector('input:checked');
+    groupes.forEach(g=>g.addEventListener('change',()=>{if(groupeOk(g))g.querySelector('[data-erreur]').classList.add('tw-hidden');}));
+    const valeurs=()=>{
+      const champs={}, vus=new Set();
+      [...form.elements].forEach(el=>{
+        if(!el.name||el.name==='botcheck'||vus.has(el.name)||el.type==='hidden'||(el.type==='checkbox'&&!el.closest('[data-groupe]'))) return;
+        const g=el.closest('[data-groupe]');
+        if(g){vus.add(el.name);const v=[...g.querySelectorAll('input:checked')].map(x=>x.value).join(', ');if(v)champs[g.dataset.label]=v;return;}
+        let v=el.type==='file'?[...el.files].map(f=>f.name).join(', '):el.tagName==='SELECT'?(el.value?el.selectedOptions[0].textContent:''):el.value.trim();
+        if(el.dataset.indicatif&&v){const ind=form.elements[el.dataset.indicatif].value;if(ind&&ind!=='Autre'&&!v.startsWith('+'))v=ind+' '+v;}
+        if('fcfa' in el.dataset&&v){const per=form.elements[el.name+'_periode'];v+=' FCFA'+(per&&per.value?' '+per.value:'');vus.add(el.name+'_periode');}
+        if(v) champs[el.dataset.label||el.name]=v;
+      });
+      return champs;
+    };
+    form.addEventListener('submit',e=>{
+      e.preventDefault(); echec.classList.add('tw-hidden');
+      const mauvais=groupes.filter(g=>!groupeOk(g));
+      mauvais.forEach(g=>g.querySelector('[data-erreur]').classList.remove('tw-hidden'));
+      if(!form.checkValidity()){form.reportValidity();return;}
+      if(mauvais.length){mauvais[0].scrollIntoView({block:'center'});return;}
+      const champs=valeurs();
+      const nom=champs['Nom de l’hôtel ou du restaurant']||[champs['Prénoms'],champs['Nom']].filter(Boolean).join(' ');
+      const objet=champs['Profil(s) recherché(s)']?(champs['Nombre de personnes']+' × '+champs['Profil(s) recherché(s)']):(champs['Poste recherché']||'');
+      const sujet=form.dataset.sujet+' : '+objet+' – '+nom;
+      btn.disabled=true; btn.textContent='Envoi en cours…';
+      envoyerEmail(form,sujet,champs).then(ok=>{
+        btn.disabled=false; btn.textContent=btnTexte;
+        if(!ok){afficherEchec(echec,form,sujet,texteDemande(champs));echec.classList.remove('tw-hidden');return;}
+        merci.querySelector('[data-recap]').textContent=texteDemande(champs);
+        const wa=merci.querySelector('[data-wa-fichiers]');
+        if(wa) wa.href='https://wa.me/'+form.dataset.wa+'?text='+encodeURIComponent('Bonjour EchoResta, voici les justificatifs de ma candidature ('+nom+', '+objet+') : CV, photo et diplômes.');
+        form.classList.add('tw-hidden'); merci.classList.remove('tw-hidden'); merci.scrollIntoView({block:'start'});
+      });
     });
   });
 })();
