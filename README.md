@@ -52,5 +52,6 @@ Sur vercel.com : **Add New… → Project → Import Git Repository**, choisir c
 
 - Remplacer les photos de `images/` par les originales (mêmes noms de fichiers).
 - Vérifier les durées, niveaux et rythmes des formations dans `_build/metiers.py`.
-- Formulaires Contact, Rendez-vous et Inscription : envoyés par e-mail à l'adresse `EMAIL` de `_build/build.py` via FormSubmit.
+- Formulaires Contact, Rendez-vous et Inscription : envoyés par e-mail via FormSubmit à `EMAIL_RECEPTION`
+  (contact@voomnetformation.ci) ; l'adresse affichée sur le site reste `EMAIL` (contact@echoresta.ci).
   À la première demande reçue, FormSubmit envoie un e-mail « Activate Form » à cette adresse : cliquer sur le lien pour activer l'envoi.
