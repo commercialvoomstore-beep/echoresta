@@ -721,3 +721,11 @@
   .about-photo{max-width:1180px;margin-top:64px}
   .about-photo img{width:100%;height:auto;box-shadow:0 24px 50px rgba(15,34,96,.14)}
   @media (max-width:600px){.about-photo{margin-top:40px}}
+
+  /* Accueil : deux photos en fondu dans le hero (brigade de cuisine, puis remise des diplômes) */
+  .h-hero-media{z-index:0}
+  .h-hero-media::before{z-index:1}
+  .h-hero-media img{position:absolute;inset:0}
+  .h-hero-media .h-hero-alt{object-position:center 35%;opacity:0;animation:hero-fondu 14s ease-in-out infinite}
+  @keyframes hero-fondu{0%,40%{opacity:0}50%,90%{opacity:1}100%{opacity:0}}
+  @media (prefers-reduced-motion:reduce){.h-hero-media .h-hero-alt{animation:none}}

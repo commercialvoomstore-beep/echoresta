@@ -321,7 +321,8 @@ LOCAL_HTML = '''<section class="h-local" id="ecole-abidjan">
 '''.format(liens_metiers=liens_metiers, faq='\n'.join(f'        <details><summary>{q}</summary><p>{r}</p></details>' for q, r in seo.ACCUEIL_FAQ))
 
 home = f'''<section class="h-hero">
-  <div class="h-hero-media"><img src="images/hero-cuisine.jpg" alt="Brigade de cuisine en formation à l’école hôtelière EchoResta d’Abidjan" {taille("hero-cuisine.jpg")} fetchpriority="high"></div>
+  <div class="h-hero-media"><img src="images/hero-cuisine.jpg" alt="Brigade de cuisine en formation à l’école hôtelière EchoResta d’Abidjan" {taille("hero-cuisine.jpg")} fetchpriority="high">
+    <img class="h-hero-alt" src="images/apropos-diplomes.jpg" alt="Remise des diplômes des stagiaires de l’école hôtelière EchoResta à Abidjan" {taille("apropos-diplomes.jpg")} decoding="async"></div>
   <div class="container">
     <div class="h-hero-text">
       <h1 class="h-kicker">École de l’hôtellerie et de la restauration à Abidjan</h1>
