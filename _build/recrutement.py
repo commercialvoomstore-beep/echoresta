@@ -227,6 +227,7 @@ client_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec">
                                            '50 ans et +', 'Peu importe l’âge'], A, type_='radio', requis=True, grille=True)
       + groupe('ec-sachant', 'Sachant', ['Lire', 'Écrire', 'Peu importe'], A, requis=True)
       + groupe('ec-niveau', 'Ayant le niveau minimum', ['Bac +2', 'Bac +3', 'Bac +4', 'Bac +5'], A, type_='radio', requis=True)
+      + groupe('ec-langues', 'Langues parlées', ['Français', 'Anglais'], A)
       + groupe('ec-anglais', 'Niveau d’anglais', ['Élémentaire', 'Débutant', 'Moyen', 'Avancé'], A, type_='radio')
       + intertitre('Pour exécuter les tâches suivantes', 'Tous les services de l’hôtellerie et de la restauration : cochez les métiers qui correspondent à votre besoin.')
       + groupe_services('ec-taches', 'Métier(s) recherché(s)', A)
@@ -309,6 +310,7 @@ candidat_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec 
       + liste('cd-niveau', 'Niveau d’enseignement général', ['Bac +2 (BTS, DUT)', 'Bac +3 (Licence)', 'Bac +4 (Master 1)',
                                                             'Bac +5 (Master 2, ingénieur)'], A)
       + liste('cd-experience', 'Années d’expérience', ['Aucune (débutant)', 'Moins d’un an', '1 à 2 ans', '3 à 5 ans', '6 à 10 ans', 'Plus de 10 ans'], A)
+      + groupe('cd-langues', 'Langues parlées', ['Français', 'Anglais'], A)
       + groupe('cd-anglais', 'Niveau d’anglais', ['Élémentaire', 'Débutant', 'Moyen', 'Avancé'], A, type_='radio')
       + zone_texte('cd-formations', 'Autres formations', A, 'Ex. formation EchoResta, CAP cuisine, permis de conduire, langues parlées…')
       + zone_texte('cd-emplois', 'Emplois précédents', A, 'Vos trois derniers emplois : employeur, poste occupé et période. Ex. Hôtel X, femme de chambre, 2023–2025')

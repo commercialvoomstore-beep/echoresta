@@ -66,3 +66,13 @@ Sur vercel.com : **Add New… → Project → Import Git Repository**, choisir c
 - Le style vient de Tailwind CSS, compilé dans `assets/recrutement.css` (classes préfixées `tw-`).
   Après avoir modifié les classes de ces pages, recompiler :
   `npx tailwindcss@3.4.17 -c _build/tailwind.config.js -i _build/tailwind.css -o assets/recrutement.css --minify`
+
+## Version anglaise (dossier `en/`)
+
+- Le bouton **FR / EN** de la barre du haut passe d'une langue à l'autre sur la même page.
+- Les pages anglaises sont créées automatiquement à chaque `python3 _build/build.py`, à partir des pages françaises
+  et du dictionnaire `_build/traduction_en.json` (texte français → texte anglais). Voir `_build/traduction.py`.
+- Après une modification d'un texte français, la construction affiche « N texte(s) à traduire » : la liste est dans
+  `_build/traduction_manquante.json`. Ajoutez chaque texte et sa traduction dans `_build/traduction_en.json`, puis relancez.
+  Tant qu'un texte n'est pas traduit, il reste en français sur la page anglaise.
+- Les balises `hreflang`, l'adresse canonique et le plan du site (`sitemap.xml`) indiquent à Google les deux versions.

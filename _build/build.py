@@ -81,7 +81,7 @@ def submenu():
                       '        <a class="all" href="formations.html">Toutes les formations →</a>'])
 
 
-def header(active):
+def header(active, file='index.html'):
     links = []
     for href, label in NAV:
         cls = ' class="active"' if href == active else ''
@@ -108,6 +108,7 @@ def header(active):
     <span><svg class="ic"><use href="#i-phone"/></svg>{PHONE}</span>
     <span><svg class="ic"><use href="#i-pin"/></svg>Angré Star 14, Cocody — Abidjan, Côte d’Ivoire</span>
     <span><svg class="ic"><use href="#i-mail"/></svg>contact@echoresta.ci</span>
+    <div class="langs" aria-label="Langue du site"><a href="{file}" data-lang="fr" lang="fr" hreflang="fr" aria-current="true">FR</a><a href="en/{file}" data-lang="en" lang="en" hreflang="en">EN</a></div>
   </div>
 </div>
 
@@ -203,6 +204,9 @@ def page(file, title, desc, body, active, wa_text='Bonjour, je souhaite contacte
 <meta name="description" content="{desc}">
 <meta name="robots" content="{robots}, max-image-preview:large, max-snippet:-1">{seo.verification()}
 <link rel="canonical" href="{canonical}">
+<link rel="alternate" hreflang="fr" href="{canonical}">
+<link rel="alternate" hreflang="en" href="{seo.BASE_URL}en/{'' if file == 'index.html' else file}">
+<link rel="alternate" hreflang="x-default" href="{canonical}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{seo.SITE_NAME}">
 <meta property="og:locale" content="fr_FR">
@@ -226,7 +230,7 @@ def page(file, title, desc, body, active, wa_text='Bonjour, je souhaite contacte
 
 {icons}
 
-{header(active)}
+{header(active, file)}
 {body}
 {FOOTER}
 <a class="wa-float" href="{wa_link(wa_text)}" target="_blank" rel="noopener" aria-label="Contactez-nous sur WhatsApp"><svg class="ic"><use href="#i-chat"/></svg><span><small>WhatsApp</small>Contactez-nous</span></a>
@@ -1111,6 +1115,7 @@ data = {
     'QUIZ': [{'q': q['q'], 'r': [[label, pts] for label, pts in q['r']]} for q in QUIZ],
 }
 (OUT / 'assets' / 'data.js').write_text(''.join(f'window.{k}={json.dumps(v, ensure_ascii=False)};\n' for k, v in data.items()))
+exec((S / 'traduction.py').read_text())  # version anglaise (dossier en/)
 old_index = OUT / 'assets' / 'search-index.js'
 if old_index.exists():
     old_index.unlink()
@@ -1133,15 +1138,20 @@ def images_page(f):
     return vues
 
 
-def url_xml(f):
+def url_xml(f, langue):
+    """Une page du plan du site, en français ou en anglais, avec le lien vers l'autre langue."""
+    chemin = '' if f == 'index.html' else f
+    fr, en = seo.BASE_URL + chemin, seo.BASE_URL + 'en/' + chemin
+    alternatives = (f'<xhtml:link rel="alternate" hreflang="fr" href="{fr}"/>'
+                    f'<xhtml:link rel="alternate" hreflang="en" href="{en}"/>')
     imgs = ''.join(f'<image:image><image:loc>{seo.BASE_URL}{_html.escape(i)}</image:loc></image:image>' for i in images_page(f))
-    return (f'  <url><loc>{seo.BASE_URL}{"" if f == "index.html" else f}</loc><lastmod>{jour}</lastmod>'
-            f'<priority>{PRIORITE.get(f, "0.8")}</priority>{imgs}</url>')
+    return (f'  <url><loc>{fr if langue == "fr" else en}</loc><lastmod>{jour}</lastmod>'
+            f'<priority>{PRIORITE.get(f, "0.8")}</priority>{alternatives}{imgs}</url>')
 
 
-urls = '\n'.join(url_xml(f) for f, robots in PAGES_PUBLIEES if robots.startswith('index'))
+urls = '\n'.join(url_xml(f, langue) for langue in ('fr', 'en') for f, robots in PAGES_PUBLIEES if robots.startswith('index'))
 (OUT / 'sitemap.xml').write_text(f'''<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 {urls}
 </urlset>
 ''')
