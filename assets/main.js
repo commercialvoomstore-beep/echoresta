@@ -137,41 +137,45 @@ const afficherEchec=(el,dest,sujet,texte)=>{
 (function(){
   const form=document.getElementById('form-rdv');
   if(!form) return;
-  const date=form.elements.date, dateErr=document.getElementById('rdv-date-err'), slotErr=document.getElementById('rdv-slot-err');
+  const el=form.elements, date=el.date, heure=el.heure, dateErr=document.getElementById('rdv-date-err');
   const ok=document.getElementById('rdv-ok'), err=document.getElementById('rdv-err'), btn=form.querySelector('.rdv-submit');
-  const btnHtml=btn.innerHTML;
+  const btnTexte=btn.textContent, premiere=heure.options[0];
   const pad=n=>String(n).padStart(2,'0');
   const demain=new Date(); demain.setDate(demain.getDate()+1);
   date.min=demain.getFullYear()+'-'+pad(demain.getMonth()+1)+'-'+pad(demain.getDate());
   const weekend=v=>{const j=new Date(v+'T12:00:00').getDay();return j===0||j===6;};
-  date.addEventListener('change',()=>{dateErr.hidden=!(date.value&&weekend(date.value));});
-  form.addEventListener('change',e=>{if(e.target.name==='creneau') slotErr.hidden=true;});
+  // L'heure se choisit une fois un jour ouvré sélectionné
+  const majHeure=()=>{
+    const okJour=!!date.value&&!weekend(date.value);
+    dateErr.hidden=!(date.value&&weekend(date.value));
+    heure.disabled=!okJour; premiere.textContent=okJour?'— Choisir l’heure —':'Choisissez d’abord une date';
+    if(!okJour) heure.value='';
+  };
+  date.addEventListener('change',majHeure); date.addEventListener('input',majHeure);
   // Formation présélectionnée depuis une fiche métier (?formation=cuisinier)
   const f=new URLSearchParams(location.search).get('formation');
-  if(f&&form.elements.formation.querySelector(`option[value="${CSS.escape(f)}"]`)) form.elements.formation.value=f;
+  if(f&&el.formation.querySelector(`option[value="${CSS.escape(f)}"]`)) el.formation.value=f;
   form.addEventListener('submit',e=>{
-    e.preventDefault();
-    const el=form.elements, slot=form.querySelector('input[name="creneau"]:checked');
-    const mauvaisJour=!!date.value&&weekend(date.value);
-    dateErr.hidden=!mauvaisJour; slotErr.hidden=!!slot; err.hidden=true;
+    e.preventDefault(); err.hidden=true; majHeure();
+    if(date.value&&weekend(date.value)){date.focus();return;}
     if(!form.checkValidity()){form.reportValidity();return;}
-    if(mauvaisJour){date.focus();return;}
+    const tel=el.rdv_tel.value.trim(), ind=el.rdv_tel_ind.value;
     const jour=new Date(date.value+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    const champs={'Motif':form.querySelector('input[name="motif"]:checked').value,
-      'Formation':el.formation.value?el.formation.selectedOptions[0].textContent:'Je ne sais pas encore',
-      'Date souhaitée':jour+', '+slot.value,
-      'Nom':el.nom.value.trim(),'Téléphone':el.tel.value.trim(),'E-mail':el.email.value.trim(),
-      'Confirmation par':el.confirmation.value,'Message':el.message.value.trim()};
-    const sujet='Demande de rendez-vous : '+champs['Motif']+' – '+champs['Nom'];
+    const champs={'Nom et prénom':el.nom.value.trim(),
+      'Téléphone / WhatsApp':ind&&ind!=='Autre'&&!tel.startsWith('+')?ind+' '+tel:tel,
+      'E-mail':el.email.value.trim(),
+      'Formation souhaitée':el.formation.value?el.formation.selectedOptions[0].textContent:'Non précisée',
+      'Rendez-vous':jour+' à '+heure.value,'Remarques ou questions':el.message.value.trim()};
+    const sujet='Demande de rendez-vous : '+jour+' à '+heure.value+' – '+champs['Nom et prénom'];
     btn.disabled=true; btn.textContent='Envoi en cours…';
     envoyerEmail(form.dataset.mail,sujet,champs).then(envoye=>{
-      btn.disabled=false; btn.innerHTML=btnHtml;
+      btn.disabled=false; btn.textContent=btnTexte;
       if(!envoye){afficherEchec(err,form.dataset.mail,sujet,texteDemande(champs));return;}
       document.getElementById('rdv-recap').textContent=texteDemande(champs);
       form.hidden=true; ok.hidden=false; ok.scrollIntoView({block:'start'});
     });
   });
-  document.getElementById('rdv-again').onclick=()=>{ok.hidden=true;form.reset();form.hidden=false;form.scrollIntoView({block:'start'});};
+  document.getElementById('rdv-again').onclick=()=>{ok.hidden=true;form.reset();majHeure();form.hidden=false;form.scrollIntoView({block:'start'});};
 })();
 
 // Listes déroulantes avec drapeaux (pays, indicatif téléphonique)

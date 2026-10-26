@@ -662,108 +662,6 @@ for m in METIERS:
          schemas=[seo.cours_schema(m, meta), seo.fil_ariane(('Accueil', ''), ('Formations', 'formations.html'), (m['titre'], url(m)))],
          image=m['photo'] or 'hero-cuisine.jpg')
 
-# =========================================================== Rendez-vous
-MOTIFS = [('orientation', 'i-target', 'Entretien d’orientation', 'Être conseillé(e) pour choisir sa formation'),
-          ('inscription', 'i-award', 'Inscription', 'Finaliser son inscription à une session'),
-          ('visite', 'i-building', 'Visite de l’école', 'Découvrir nos locaux à Angré Star 14'),
-          ('entreprise', 'i-case', 'Entreprise ou partenariat', 'Former vos équipes, accueillir nos stagiaires')]
-CRENEAUX = [f'{h}h00 – {h + 1}h00' for h in range(8, 17)]
-ETAPES_RDV = [('Choisissez votre créneau', 'Indiquez le motif, le jour et l’heure qui vous conviennent, du lundi au vendredi.'),
-              ('Envoyez la demande', 'Remplissez vos coordonnées : votre demande nous est envoyée par e-mail.'),
-              ('Recevez la confirmation', 'Notre équipe vous confirme le rendez-vous par e-mail ou par téléphone.'),
-              ('Rencontrez un conseiller', 'À l’école, Angré Star 14, Cocody — ou par téléphone si vous préférez.')]
-options_rdv = '\n'.join(
-    f'              <optgroup label="{CATEGORIES[c]}">\n' +
-    '\n'.join(f'                <option value="{m["slug"]}">{m["titre"]}</option>' for m in BY_CAT[c]) +
-    '\n              </optgroup>' for c in CATEGORIES)
-motifs_html = '\n'.join(f'''            <label class="choice"><input type="radio" name="motif" value="{t}" required{' checked' if i == 0 else ''}>
-              <span><svg class="ic"><use href="#{ic}"/></svg><b>{t}</b><small>{d}</small></span></label>''' for i, (v, ic, t, d) in enumerate(MOTIFS))
-creneaux_html = '\n'.join(f'            <label class="slot"><input type="radio" name="creneau" value="{c}" required><span>{c}</span></label>' for c in CRENEAUX)
-
-rdv = page_hero('Prendre rendez-vous avec notre école à Abidjan', 'Rendez-vous', 'images/hero-cuisine.jpg',
-                'Entretien d’orientation, inscription ou visite de l’école : choisissez votre créneau, nous vous confirmons le rendez-vous par e-mail.') + f'''
-<section>
-  <div class="container rdv-grid">
-    <aside class="rdv-side">
-      <div class="eyebrow">Comment ça se passe ?</div>
-      <h2>Votre rendez-vous en 4 étapes</h2>
-      <div class="sep"></div>
-      <ol class="rdv-steps">
-{chr(10).join(f'        <li><b>{t}</b><span>{d}</span></li>' for t, d in ETAPES_RDV)}
-      </ol>
-      <div class="info-box rdv-info">
-        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-pin"/></svg></div><div><strong>Adresse</strong><span>Angré Star 14, Cocody — Abidjan<br>Code de localisation : <a href="{MAPS_OUVRIR}" target="_blank" rel="noopener">{PLUS_CODE}</a></span></div></div>
-        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-clock"/></svg></div><div><strong>Horaires</strong><span>Lundi – Vendredi : 8h00 – 17h00</span></div></div>
-        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-mail"/></svg></div><div><strong>E-mail</strong><span>{EMAIL}</span></div></div>
-        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-phone"/></svg></div><div><strong>Téléphone</strong><span>{PHONE}</span></div></div>
-        <a class="btn btn-ghost" href="{MAPS_ITINERAIRE}" target="_blank" rel="noopener">Itinéraire jusqu’à l’école</a>
-      </div>
-    </aside>
-
-    <div class="form rdv-form" id="rendez-vous" style="scroll-margin-top:140px">
-      <form id="form-rdv" data-mail="{EMAIL}" novalidate>
-        <div class="eyebrow">Formulaire de rendez-vous</div>
-        <h3>Réservez votre créneau</h3>
-
-        <fieldset>
-          <legend>1. Motif du rendez-vous</legend>
-          <div class="choices">
-{motifs_html}
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>2. Formation qui vous intéresse</legend>
-          <select id="rdv-formation" name="formation" aria-label="Formation qui vous intéresse">
-            <option value="">— Je ne sais pas encore —</option>
-{options_rdv}
-          </select>
-        </fieldset>
-
-        <fieldset>
-          <legend>3. Jour et heure</legend>
-          <label for="rdv-date">Date souhaitée * <small>(du lundi au vendredi)</small></label>
-          <input id="rdv-date" name="date" type="date" required>
-          <p class="field-error" id="rdv-date-err" hidden>Nous recevons du lundi au vendredi : choisissez un autre jour.</p>
-          <p class="slot-label">Créneau horaire *</p>
-          <div class="slots">
-{creneaux_html}
-          </div>
-          <p class="field-error" id="rdv-slot-err" hidden>Choisissez un créneau horaire.</p>
-        </fieldset>
-
-        <fieldset>
-          <legend>4. Vos coordonnées</legend>
-          <div class="row">
-            <div><label for="rdv-nom">Nom complet *</label><input id="rdv-nom" name="nom" required autocomplete="name"></div>
-            <div><label for="rdv-tel">Téléphone *</label><input id="rdv-tel" name="tel" type="tel" required autocomplete="tel" placeholder="+225"></div>
-            <div><label for="rdv-email">E-mail *</label><input id="rdv-email" name="email" type="email" required autocomplete="email"></div>
-            <div><label for="rdv-conf">Confirmation par</label>
-              <select id="rdv-conf" name="confirmation"><option>E-mail</option><option>Appel téléphonique</option></select></div>
-            <div class="full"><label for="rdv-msg">Message (facultatif)</label><textarea id="rdv-msg" name="message" placeholder="Une question, une précision…"></textarea></div>
-          </div>
-        </fieldset>
-
-        <button type="submit" class="btn btn-red rdv-submit"><svg class="ic"><use href="#i-mail"/></svg>Envoyer ma demande de rendez-vous</button>
-        <p class="rdv-note">Votre demande est envoyée par e-mail à {EMAIL}. Vous pouvez aussi nous appeler au {PHONE}.</p>
-        <p class="field-error" id="rdv-err" hidden></p>
-      </form>
-
-      <div class="form-ok" id="rdv-ok" hidden>
-        <h3>Votre demande de rendez-vous est envoyée</h3>
-        <p class="muted">Merci ! Nous vous confirmons le rendez-vous par e-mail ou par téléphone dans les meilleurs délais.</p>
-        <pre class="rdv-recap" id="rdv-recap"></pre>
-        <div class="quiz-actions" style="justify-content:center">
-          <button type="button" class="btn btn-outline" id="rdv-again">Faire une autre demande</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-''' + MAP
-page('rendez-vous.html', *seo.PAGES['rendez-vous.html'], rdv, 'rendez-vous.html',
-     schemas=[seo.ecole_schema(PHONE, LAT, LNG, PLUS_CODE), seo.fil_ariane(('Accueil', ''), ('Rendez-vous', 'rendez-vous.html'))])
-
 # =========================================================== Contact
 PIECES_DOSSIER = ['2 photos d’identité récentes', '1 copie de la pièce d’identité', '1 CV']
 options = '\n'.join(
@@ -1005,6 +903,77 @@ inscription = page_hero('Inscription à une formation en hôtellerie et restaura
 '''
 page('inscription.html', *seo.PAGES['inscription.html'], inscription, '',
      schemas=[seo.fil_ariane(('Accueil', ''), ('Inscription', 'inscription.html'))])
+
+# =========================================================== Rendez-vous
+# Créneaux de 15 minutes, de 9 h à 16 h
+HEURES_RDV = [f'{h} h {m:02d}' for h in range(9, 17) for m in (0, 15, 30, 45) if (h, m) <= (16, 0)]
+ETAPES_RDV = [('Choisissez votre créneau', 'Indiquez le jour et l’heure qui vous conviennent : du lundi au vendredi, de 9 h à 16 h.'),
+              ('Envoyez la demande', 'Vos coordonnées et votre créneau nous sont envoyés par e-mail.'),
+              ('Recevez la confirmation', 'Notre équipe vous confirme le rendez-vous par e-mail, téléphone ou WhatsApp.'),
+              ('Rencontrez un conseiller', 'À l’école, Angré Star 14, Cocody — ou par téléphone si vous préférez.')]
+
+rdv = page_hero('Prendre rendez-vous avec notre école à Abidjan', 'Rendez-vous', 'images/hero-cuisine.jpg',
+                'Entretien d’orientation, inscription ou visite de l’école : choisissez votre créneau, nous vous confirmons le rendez-vous.') + f'''
+<section>
+  <div class="container rdv-grid">
+    <aside class="rdv-side">
+      <div class="eyebrow">Comment ça se passe ?</div>
+      <h2>Votre rendez-vous en 4 étapes</h2>
+      <div class="sep"></div>
+      <ol class="rdv-steps">
+{chr(10).join(f'        <li><b>{t}</b><span>{d}</span></li>' for t, d in ETAPES_RDV)}
+      </ol>
+      <div class="info-box rdv-info">
+        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-pin"/></svg></div><div><strong>Adresse</strong><span>Angré Star 14, Cocody — Abidjan<br>Code de localisation : <a href="{MAPS_OUVRIR}" target="_blank" rel="noopener">{PLUS_CODE}</a></span></div></div>
+        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-clock"/></svg></div><div><strong>Horaires</strong><span>Lundi – Vendredi : 8h00 – 17h00</span></div></div>
+        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-mail"/></svg></div><div><strong>E-mail</strong><span>{EMAIL}</span></div></div>
+        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-phone"/></svg></div><div><strong>Téléphone</strong><span>{PHONE}</span></div></div>
+        <a class="btn btn-ghost" href="{MAPS_ITINERAIRE}" target="_blank" rel="noopener">Itinéraire jusqu’à l’école</a>
+      </div>
+    </aside>
+
+    <div class="form rdv-form" id="rendez-vous" style="scroll-margin-top:140px">
+      <form id="form-rdv" data-mail="{EMAIL}" novalidate>
+        <div class="eyebrow">Formulaire de rendez-vous</div>
+        <h3>Réservez votre créneau</h3>
+        <div class="row">
+          <div><label for="rdv-nom">Nom et prénom *</label><input id="rdv-nom" name="nom" required autocomplete="name"></div>
+          {telephone('rdv_tel', 'Téléphone / WhatsApp', True)}
+          <div class="full"><label for="rdv-email">E-mail *</label><input id="rdv-email" name="email" type="email" required autocomplete="email"></div>
+          <div class="full"><label for="rdv-formation">Formation souhaitée</label>
+            <select id="rdv-formation" name="formation">
+              <option value="">— Choisir —</option>
+{options_formations}
+            </select></div>
+          <div><label for="rdv-date">Date * <small>(lundi — vendredi)</small></label>
+            <input id="rdv-date" name="date" type="date" required>
+            <p class="field-error" id="rdv-date-err" hidden>Nous recevons du lundi au vendredi : choisissez un autre jour.</p></div>
+          <div><label for="rdv-heure">Heure * <small>(9 h — 16 h, 15 min)</small></label>
+            <select id="rdv-heure" name="heure" required disabled>
+              <option value="">Choisissez d’abord une date</option>
+{chr(10).join(f'              <option>{h}</option>' for h in HEURES_RDV)}
+            </select></div>
+          <div class="full"><label for="rdv-msg">Remarques ou questions</label><textarea id="rdv-msg" name="message"></textarea></div>
+        </div>
+        <button type="submit" class="btn btn-navy btn-block rdv-submit">Confirmer mon rendez-vous</button>
+        <p class="rdv-note">Votre demande est envoyée par e-mail à {EMAIL}. Vous pouvez aussi nous appeler au {PHONE}.</p>
+        <p class="field-error" id="rdv-err" hidden></p>
+      </form>
+
+      <div class="form-ok" id="rdv-ok" hidden>
+        <h3>Votre demande de rendez-vous est envoyée</h3>
+        <p class="muted">Merci ! Nous vous confirmons le rendez-vous dans les meilleurs délais.</p>
+        <pre class="rdv-recap" id="rdv-recap"></pre>
+        <div class="quiz-actions" style="justify-content:center">
+          <button type="button" class="btn btn-outline" id="rdv-again">Faire une autre demande</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+''' + MAP
+page('rendez-vous.html', *seo.PAGES['rendez-vous.html'], rdv, 'rendez-vous.html',
+     schemas=[seo.ecole_schema(PHONE, LAT, LNG, PLUS_CODE), seo.fil_ariane(('Accueil', ''), ('Rendez-vous', 'rendez-vous.html'))])
 
 # =========================================================== 404
 page('404.html', 'Page introuvable — EchoResta', 'Page introuvable.', '''
