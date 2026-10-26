@@ -227,7 +227,7 @@
   footer.big ul{list-style:none;display:grid;gap:10px}
   footer.big a:hover{color:#fff}
   footer.big .f-brand{display:flex;align-items:center;gap:14px;margin-bottom:20px}
-  footer.big .f-brand img{width:56px;height:56px;background:#fff;padding:4px}
+  footer.big .f-brand img{width:64px;height:64px;object-fit:contain}
   footer.big .f-brand b{font-family:var(--serif);font-size:24px;color:#fff}
   footer.big .f-contact li{display:flex;gap:10px}
   footer.big .f-contact svg{width:16px;height:16px;margin-top:4px;flex:none}
