@@ -765,7 +765,7 @@ options = '\n'.join(
     f'              <optgroup label="{CATEGORIES[c]}">\n' +
     '\n'.join(f'                <option value="{m["slug"]}">{m["titre"]}</option>' for m in BY_CAT[c]) +
     '\n              </optgroup>' for c in CATEGORIES)
-contact = page_hero('Contact et inscription : votre école hôtelière à Abidjan', 'Contact', 'images/galerie-3.jpg') + f'''
+contact = page_hero('Contact et inscription : votre école hôtelière à Abidjan', 'Contact', 'images/audit-nuit.jpg') + f'''
 <section>
   <div class="container contact-grid">
     <aside class="info-box">
