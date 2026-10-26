@@ -226,8 +226,10 @@ client_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec">
       + groupe('ec-age', 'Tranche d’âge', ['18 à 25 ans', '25 à 30 ans', '30 à 35 ans', '35 à 40 ans', '40 à 45 ans', '45 à 50 ans',
                                            '50 ans et +', 'Peu importe l’âge'], A, type_='radio', requis=True, grille=True)
       + groupe('ec-sachant', 'Sachant', ['Lire', 'Écrire', 'Peu importe'], A, requis=True)
-      + groupe('ec-niveau', 'Ayant le niveau', ['Élémentaire', 'Secondaire', 'Supérieur', 'Peu importe', 'Autre'], A, type_='radio', requis=True)
+      + groupe('ec-niveau', 'Ayant le niveau minimum', ['Élémentaire', 'Secondaire', 'Bac', 'Bac +2', 'Bac +3', 'Bac +4', 'Bac +5',
+                                                       'Peu importe', 'Autre'], A, type_='radio', requis=True)
       + si('ec-niveau=Autre', champ('ec-niveau-autre', 'Précisez la formation', A, large=True, attrs='placeholder="Ex. CAP cuisine, BTS hôtellerie…"'))
+      + groupe('ec-anglais', 'Niveau d’anglais', ['Élémentaire', 'Débutant', 'Moyen', 'Avancé'], A, type_='radio')
       + intertitre('Pour exécuter les tâches suivantes', 'Tous les services de l’hôtellerie et de la restauration : cochez les métiers qui correspondent à votre besoin.')
       + groupe_services('ec-taches', 'Métier(s) recherché(s)', A)
       + intertitre('Niveau d’aptitude recherché')
@@ -309,9 +311,11 @@ candidat_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec 
       + champ('cd-prenoms', 'Prénoms', A, True, attrs='autocomplete="given-name"')
       + pays('cd-nationalite', 'Nationalité', A)
       + liste('cd-lieu', 'Lieu d’habitation', ZONES, A, True)
-      + liste('cd-niveau', 'Niveau d’enseignement général', ['Aucun', 'Primaire', 'Secondaire (collège)', 'Secondaire (lycée)', 'Baccalauréat',
-                                                            'Supérieur (BTS, licence…)', 'Formation professionnelle'], A)
+      + liste('cd-niveau', 'Niveau d’enseignement général', ['Aucun', 'Primaire', 'Secondaire (collège)', 'Secondaire (lycée)', 'Bac',
+                                                            'Bac +2 (BTS, DUT)', 'Bac +3 (Licence)', 'Bac +4 (Master 1)', 'Bac +5 (Master 2, ingénieur)',
+                                                            'Formation professionnelle'], A)
       + liste('cd-experience', 'Années d’expérience', ['Aucune (débutant)', 'Moins d’un an', '1 à 2 ans', '3 à 5 ans', '6 à 10 ans', 'Plus de 10 ans'], A)
+      + groupe('cd-anglais', 'Niveau d’anglais', ['Élémentaire', 'Débutant', 'Moyen', 'Avancé'], A, type_='radio')
       + zone_texte('cd-formations', 'Autres formations', A, 'Ex. formation EchoResta, CAP cuisine, permis de conduire, langues parlées…')
       + zone_texte('cd-emplois', 'Emplois précédents', A, 'Vos trois derniers emplois : employeur, poste occupé et période. Ex. Hôtel X, femme de chambre, 2023–2025')
       + whatsapp('cd-tel', 'Téléphone 1', A)
