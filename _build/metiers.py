@@ -94,7 +94,7 @@ METIERS = [
     },
     {
         'slug': 'directeur-hotel', 'cat': 'hotellerie', 'titre': 'Directeur d’hôtel',
-        'icon': 'i-building', 'photo': None, 'fond': 'galerie-3.jpg',
+        'icon': 'i-building', 'photo': 'directeur-hotel.jpg', 'fond': 'directeur-hotel.jpg',
         'court': 'Pilotez tout un établissement',
         'accroche': 'Diriger un hôtel, c’est piloter une petite ville : clients, équipes, budget et réputation.',
         'resume': 'Stratégie, finances, revenue management, ressources humaines et qualité : tout pour diriger un établissement hôtelier.',
