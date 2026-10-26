@@ -700,3 +700,20 @@
     .ins-grid .ins-form{order:2}
     .ins-grid .ins-after{order:3}
   }
+
+  /* Formulaire de candidature : titre, sections en bandeau, téléphones avec indicatif */
+  .ins-title{font-size:clamp(26px,2.6vw,32px)}
+  .ins-form .sep{margin-top:16px}
+  .ins-form legend{background:#f3f5fb;border:0;border-left:3px solid var(--red);padding:12px 16px;font-size:16.5px;margin-bottom:6px}
+  .ins-form .tuteur legend{background:none;border:0;padding:0 0 4px}
+  .tel-field{display:grid;grid-template-columns:auto minmax(0,1fr)}
+  .tel-field input{border-left:0}
+  .tel-select .fs-btn{min-width:116px;padding:12px 12px;gap:8px;background:#f6f7fb}
+  .tel-select .fs-current .fs-name{display:none}
+  .fs-code{font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
+  .tel-select .fs-list{right:auto;width:290px}
+  .tel-select .fs-list .fs-code{margin-left:auto}
+  .tel-select .fs-list li .fs-name{flex:1}
+  @media (max-width:400px){.tel-select .fs-list{width:min(290px,calc(100vw - 32px))}}
+  .row .flab{margin-top:0}
+  .field-hint{font-size:13px;color:var(--muted);margin-top:6px}

@@ -174,9 +174,10 @@ const afficherEchec=(el,dest,sujet,texte)=>{
   document.getElementById('rdv-again').onclick=()=>{ok.hidden=true;form.reset();form.hidden=false;form.scrollIntoView({block:'start'});};
 })();
 
-// Listes déroulantes avec drapeaux (pays, nationalité)
+// Listes déroulantes avec drapeaux (pays, indicatif téléphonique)
 const listesDrapeaux={};
 (function(){
+  const sans=t=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
   document.querySelectorAll('.flag-select').forEach(box=>{
     const btn=box.querySelector('.fs-btn'), list=box.querySelector('.fs-list'), input=box.querySelector('input[type="hidden"]');
     const opts=[...list.querySelectorAll('[role="option"]')], courant=btn.querySelector('.fs-current');
@@ -186,11 +187,12 @@ const listesDrapeaux={};
       list.setAttribute('aria-activedescendant',opts[actif].id);opts[actif].scrollIntoView({block:'nearest'});};
     const ouvrir=()=>{list.hidden=false;btn.setAttribute('aria-expanded','true');const sel=opts.findIndex(o=>o.getAttribute('aria-selected')==='true');marquer(sel<0?0:sel);list.focus();};
     const fermer=(focus=true)=>{list.hidden=true;btn.setAttribute('aria-expanded','false');if(focus)btn.focus();};
-    const choisir=i=>{const o=opts[i];opts.forEach(x=>x.setAttribute('aria-selected',x===o?'true':'false'));
+    const choisir=(i,parUtilisateur=true)=>{const o=opts[i];opts.forEach(x=>x.setAttribute('aria-selected',x===o?'true':'false'));
       input.value=o.dataset.value;courant.innerHTML=o.innerHTML;box.classList.add('filled');if(err)err.hidden=true;
-      const estAutre=!o.dataset.tel&&/^Autre/.test(o.dataset.value);
-      if(autre){autre.hidden=!estAutre;autre.required=estAutre;if(estAutre)setTimeout(()=>autre.focus(),0);}
-      input.dispatchEvent(new CustomEvent('change',{bubbles:true,detail:{tel:o.dataset.tel}}));};
+      const estAutre=!o.dataset.tel;
+      if(autre){autre.hidden=!estAutre;autre.required=estAutre;if(estAutre&&parUtilisateur)setTimeout(()=>autre.focus(),0);}
+      if(parUtilisateur) box.dataset.manuel='1';
+      input.dispatchEvent(new CustomEvent('change',{bubbles:true,detail:{tel:o.dataset.tel,autre:estAutre}}));};
     btn.addEventListener('click',()=>list.hidden?ouvrir():fermer());
     btn.addEventListener('keydown',e=>{if(['ArrowDown','ArrowUp'].includes(e.key)){e.preventDefault();ouvrir();}});
     opts.forEach((o,i)=>{o.addEventListener('click',()=>{choisir(i);fermer();});o.addEventListener('mousemove',()=>marquer(i));});
@@ -202,21 +204,25 @@ const listesDrapeaux={};
       else if(e.key==='Enter'||e.key===' '){e.preventDefault();choisir(actif);fermer();}
       else if(e.key==='Escape'||e.key==='Tab'){fermer(e.key==='Escape');}
       else if(e.key.length===1){clearTimeout(minuterie);recherche+=e.key.toLowerCase();minuterie=setTimeout(()=>recherche='',700);
-        const sans=t=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
-        const k=opts.findIndex(o=>sans(o.dataset.value).startsWith(sans(recherche)));if(k>=0)marquer(k);}
+        const k=opts.findIndex(o=>sans(o.textContent).startsWith(sans(recherche))||o.dataset.value.startsWith(recherche));if(k>=0)marquer(k);}
     });
     document.addEventListener('click',e=>{if(!list.hidden&&!box.contains(e.target))fermer(false);});
-    listesDrapeaux[box.dataset.field]={valide:()=>{const ok=!!input.value;if(err)err.hidden=ok;return ok;},btn,reset:()=>{input.value='';box.classList.remove('filled');
-      opts.forEach(x=>x.setAttribute('aria-selected','false'));courant.innerHTML=opts[opts.length-1].querySelector('svg').outerHTML+'<span class="fs-text">Choisissez</span>';if(autre){autre.hidden=true;autre.required=false;autre.value='';}}};
+    const parValeur=v=>{const k=opts.findIndex(o=>o.dataset.value===v);if(k>=0)choisir(k,false);};
+    if(box.dataset.default) parValeur(box.dataset.default);
+    listesDrapeaux[box.dataset.field]={btn,input,
+      valide:()=>{const ok=!!input.value;if(err)err.hidden=ok;return ok;},
+      // Change la valeur sans écraser un choix fait à la main par le visiteur
+      proposer:v=>{if(!box.dataset.manuel)parValeur(v);}};
   });
 })();
 
-// Fiche d'inscription
+// Fiche de candidature (page Inscription)
 (function(){
   const form=document.getElementById('form-inscription');
   if(!form) return;
   const el=form.elements, btn=form.querySelector('button[type="submit"]'), err=document.getElementById('ins-err');
   const tuteur=document.getElementById('ins-tuteur'), numFin=form.querySelector('.num-tuteur');
+  const NAT=JSON.parse(form.dataset.nationalites);
   const f=new URLSearchParams(location.search).get('formation');
   if(f&&el.formation.querySelector(`option[value="${CSS.escape(f)}"]`)) el.formation.value=f;
   // Date de naissance : pas dans le futur ; parent ou tuteur demandé avant 18 ans
@@ -228,36 +234,42 @@ const listesDrapeaux={};
     tuteur.hidden=!mineur; numFin.textContent=mineur?'6':'5';
     tuteur.querySelectorAll('[data-req]').forEach(x=>x.required=mineur);
   });
-  // Pays de résidence : indicatif téléphonique proposé
-  let indicatif='+225';
+  // Nationalité remplie automatiquement selon le pays et le sexe (modifiable)
+  let natAuto='';
+  const remplirNationalite=()=>{
+    const sexe=form.querySelector('input[name="sexe"]:checked'), n=NAT[el.pays.value];
+    if(!sexe||!n) return;
+    if(!el.nationalite.value.trim()||el.nationalite.value===natAuto){natAuto=n[sexe.value];el.nationalite.value=natAuto;}
+  };
+  form.querySelectorAll('input[name="sexe"]').forEach(r=>r.addEventListener('change',remplirNationalite));
   el.pays.addEventListener('change',e=>{
-    const nouveau=e.detail&&e.detail.tel; if(!nouveau) return;
-    [el.tel,el.whatsapp].forEach(x=>{x.placeholder=x===el.whatsapp?'Si différent du téléphone':nouveau;
-      if(!x.value.trim()||x.value.trim()===indicatif) x.value=x===el.tel?nouveau+' ':x.value;});
-    indicatif=nouveau;
+    remplirNationalite();
+    // Indicatif des téléphones calé sur le pays, tant que le visiteur ne l'a pas changé
+    if(e.detail&&e.detail.tel) ['tel_ind','tel2_ind'].forEach(k=>listesDrapeaux[k].proposer(e.detail.tel));
   });
+  const numero=k=>{const n=(el[k].value||'').trim(), ind=el[k+'_ind'].value;return n?(ind&&ind!=='Autre'&&!n.startsWith('+')?ind+' '+n:n):'';};
   form.addEventListener('submit',e=>{
     e.preventDefault(); err.hidden=true;
-    const listesOk=['nationalite','pays'].map(k=>listesDrapeaux[k].valide());
+    const paysOk=listesDrapeaux.pays.valide();
     if(!form.checkValidity()){form.reportValidity();return;}
-    if(listesOk.includes(false)){const k=listesOk[0]?'pays':'nationalite';listesDrapeaux[k].btn.focus();listesDrapeaux[k].btn.scrollIntoView({block:'center'});return;}
+    if(!paysOk){listesDrapeaux.pays.btn.focus();listesDrapeaux.pays.btn.scrollIntoView({block:'center'});return;}
     const val=x=>(x&&x.value||'').trim(), choix=x=>x.value?x.selectedOptions[0].textContent:'';
-    const autreOu=(champ)=>/^Autre/.test(val(el[champ]))&&val(el[champ+'_autre'])?val(el[champ+'_autre']):val(el[champ]);
+    const pays=/^Autre/.test(el.pays.value)&&val(el.pays_autre)?val(el.pays_autre):el.pays.value;
     const jour=new Date(el.naissance.value+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
-    const champs={'Formation':choix(el.formation),'Sexe':form.querySelector('input[name="sexe"]:checked').value,
-      'Nom':val(el.nom).toUpperCase(),'Prénoms':val(el.prenoms),'Date de naissance':jour+' ('+age(el.naissance.value)+' ans)',
-      'Lieu de naissance':val(el.lieu_naissance),'Nationalité':autreOu('nationalite'),
+    const champs={'Nom':val(el.nom).toUpperCase(),'Prénom(s)':val(el.prenoms),
+      'Date de naissance':jour+' ('+age(el.naissance.value)+' ans)','Lieu de naissance':val(el.lieu_naissance),
+      'Pays':pays,'Sexe':form.querySelector('input[name="sexe"]:checked').value,'Nationalité':val(el.nationalite),
       'Pièce d’identité':[choix(el.piece),val(el.piece_numero)].filter(Boolean).join(' n° '),
-      'Pays de résidence':autreOu('pays'),'Ville':val(el.ville),'Commune / quartier':val(el.commune),
-      'Téléphone':val(el.tel),'WhatsApp':val(el.whatsapp),'E-mail':val(el.email),
-      'Niveau d’études':choix(el.niveau),'Dernier diplôme':val(el.diplome),'Situation actuelle':choix(el.situation),
-      'Expérience':choix(el.experience)};
+      'Adresse':val(el.adresse),'Ville / Commune':val(el.ville),'E-mail':val(el.email),
+      'Téléphone principal':numero('tel'),'Téléphone secondaire':numero('tel2'),
+      'Niveau d’études':choix(el.niveau),'Dernier diplôme':val(el.diplome),
+      'Formation':choix(el.formation),'Situation actuelle':choix(el.situation),'Expérience':choix(el.experience)};
     if(!tuteur.hidden) Object.assign(champs,{'Parent ou tuteur':val(el.tuteur_nom),'Lien de parenté':choix(el.tuteur_lien),'Téléphone du tuteur':val(el.tuteur_tel)});
     Object.assign(champs,{'Contact en cas d’urgence':val(el.urgence),'Connu par':choix(el.connu),'Projet professionnel':val(el.motivation)});
-    const sujet='Inscription : '+champs['Formation']+' – '+champs['Prénoms']+' '+champs['Nom'];
+    const sujet='Candidature : '+champs['Formation']+' – '+champs['Prénom(s)']+' '+champs['Nom'];
     btn.disabled=true; btn.textContent='Envoi en cours…';
     envoyerEmail(form.dataset.mail,sujet,champs).then(ok=>{
-      btn.disabled=false; btn.textContent='Envoyer ma fiche d’inscription';
+      btn.disabled=false; btn.textContent='Envoyer ma candidature';
       if(!ok){afficherEchec(err,form.dataset.mail,sujet,texteDemande(champs));return;}
       document.getElementById('ins-recap').textContent=texteDemande(champs);
       form.hidden=true; const box=document.getElementById('ins-ok'); box.hidden=false; box.scrollIntoView({block:'start'});

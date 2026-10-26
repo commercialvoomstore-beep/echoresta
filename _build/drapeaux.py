@@ -93,6 +93,11 @@ PAYS = [
 ]
 
 
+# Nationalité au masculin, dans le même ordre que PAYS (la colonne de PAYS est au féminin)
+NATIONALITES_MASC = ['Ivoirien', 'Béninois', 'Burkinabè', 'Cap-verdien', 'Gambien', 'Ghanéen', 'Guinéen', 'Bissau-guinéen',
+                     'Libérien', 'Malien', 'Mauritanien', 'Nigérien', 'Nigérian', 'Sénégalais', 'Sierra-léonais', 'Togolais']
+
+
 def drapeau(code, titre=''):
     t = f'<title>{titre}</title>' if titre else ''
     return (f'<svg class="flag" viewBox="0 0 30 20" preserveAspectRatio="none" role="img" aria-hidden="{"false" if titre else "true"}">'

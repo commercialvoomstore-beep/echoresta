@@ -827,28 +827,39 @@ LIENS_PARENTE = ['Père', 'Mère', 'Tuteur / tutrice', 'Frère / sœur', 'Autre'
 GLOBE = '<svg class="flag flag-globe" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>'
 
 
-def liste_drapeaux(champ, label, colonne):
-    """Liste déroulante avec drapeaux (pays ou nationalité), gérée par assets/main.js."""
+def liste_drapeaux(champ, label, mode='pays', requis=True, defaut=''):
+    """Liste déroulante avec drapeaux, gérée par assets/main.js.
+    mode 'pays' : choix d'un pays ; mode 'indicatif' : indicatif téléphonique (drapeau + code)."""
+    if mode == 'pays':
+        lignes = [(code, pays, tel, f'{drapeaux.drapeau(code)}<span class="fs-name">{pays}</span>') for code, pays, _, tel in drapeaux.PAYS]
+        autre = ('autre', 'Autre pays', '', f'{GLOBE}<span class="fs-name">Autre pays</span>')
+    else:
+        lignes = [(code, tel, tel, f'{drapeaux.drapeau(code)}<span class="fs-name">{pays}</span><span class="fs-code">{tel}</span>') for code, pays, _, tel in drapeaux.PAYS]
+        autre = ('autre', 'Autre', '', f'{GLOBE}<span class="fs-name">Autre indicatif</span><span class="fs-code">+…</span>')
     options = '\n'.join(
-        f'            <li role="option" id="{champ}-{code.lower()}" data-value="{valeur}" data-tel="{tel}" aria-selected="false">'
-        f'{drapeaux.drapeau(code)}<span>{valeur}</span></li>'
-        for code, pays, nat, tel in drapeaux.PAYS for valeur in [pays if colonne == 'pays' else nat])
-    autre = 'Autre pays' if colonne == 'pays' else 'Autre nationalité'
-    return f'''<div class="field-flag">
-          <span class="flab" id="{champ}-label">{label} *</span>
-          <div class="flag-select" data-field="{champ}">
-            <button type="button" class="fs-btn" id="{champ}-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="{champ}-label {champ}-btn">
-              <span class="fs-current">{GLOBE}<span class="fs-text">Choisissez</span></span><svg class="ic fs-chev"><use href="#i-down"/></svg>
+        f'            <li role="option" id="{champ}-{code.lower()}" data-value="{valeur}" data-tel="{tel}" aria-selected="false">{contenu}</li>'
+        for code, valeur, tel, contenu in lignes + [autre])
+    autre_txt = (f'\n          <input class="fs-other" id="{champ}-autre-txt" name="{champ}_autre" placeholder="Précisez le pays" aria-label="Précisez le pays" hidden>'
+                 if mode == 'pays' else '')
+    erreur = f'\n          <p class="field-error" id="{champ}-err" hidden>Choisissez dans la liste.</p>' if requis else ''
+    return f'''<div class="flag-select{' tel-select' if mode == 'indicatif' else ''}" data-field="{champ}" data-default="{defaut}">
+            <button type="button" class="fs-btn" id="{champ}-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="{label} {champ}-btn">
+              <span class="fs-current">{GLOBE}<span class="fs-text">Sélectionnez votre pays</span></span><svg class="ic fs-chev"><use href="#i-down"/></svg>
             </button>
-            <ul class="fs-list" role="listbox" id="{champ}-list" aria-labelledby="{champ}-label" tabindex="-1" hidden>
+            <ul class="fs-list" role="listbox" id="{champ}-list" aria-labelledby="{label}" tabindex="-1" hidden>
 {options}
-            <li role="option" id="{champ}-autre" data-value="{autre}" data-tel="" aria-selected="false">{GLOBE}<span>{autre}</span></li>
             </ul>
             <input type="hidden" name="{champ}" id="{champ}">
-          </div>
-          <p class="field-error" id="{champ}-err" hidden>Choisissez dans la liste.</p>
-          <input class="fs-other" id="{champ}-autre-txt" name="{champ}_autre" placeholder="Précisez" aria-label="Précisez : {label.lower()}" hidden>
-        </div>'''
+          </div>{erreur}{autre_txt}'''
+
+
+def telephone(champ, label, requis):
+    etoile = ' *' if requis else ''
+    return f'''<div><span class="flab" id="{champ}-label">{label}{etoile}</span>
+              <div class="tel-field">
+                {liste_drapeaux(champ + '_ind', champ + '-label', 'indicatif', requis=False, defaut='+225')}
+                <input id="{champ}" name="{champ}" type="tel" inputmode="tel"{' required' if requis else ''} autocomplete="{'tel-national' if requis else 'off'}" placeholder="01 02 03 04 05" aria-labelledby="{champ}-label">
+              </div></div>'''
 
 
 def choix_radio(nom, valeurs, requis=True):
@@ -872,6 +883,93 @@ DOCS_HTML = f'''      <div class="info-box docs-box">
         </ul>
       </div>'''
 
+# Nationalité proposée automatiquement selon le pays et le sexe
+NATIONALITES = {pays: {'Féminin': nat, 'Masculin': masc} for (_, pays, nat, _), masc in zip(drapeaux.PAYS, drapeaux.NATIONALITES_MASC)}
+
+FORMULAIRE_INSCRIPTION = f'''      <form id="form-inscription" data-mail="{EMAIL}" data-nationalites='{json.dumps(NATIONALITES, ensure_ascii=False).replace("'", "&#39;")}' novalidate>
+        <h3 class="ins-title">Formulaire de candidature</h3>
+        <div class="sep"></div>
+        <p class="muted ins-intro">Les champs marqués d’un * sont obligatoires.</p>
+
+        <fieldset>
+          <legend>1. Informations personnelles</legend>
+          <div class="row">
+            <div><label for="ins-nom">Nom de famille *</label><input id="ins-nom" name="nom" required autocomplete="family-name" placeholder="Nom"></div>
+            <div><label for="ins-prenoms">Prénom(s) *</label><input id="ins-prenoms" name="prenoms" required autocomplete="given-name" placeholder="Prénoms"></div>
+            <div><label for="ins-naissance">Date de naissance *</label><input id="ins-naissance" name="naissance" type="date" required autocomplete="bday"></div>
+            <div><label for="ins-lieu">Lieu de naissance *</label><input id="ins-lieu" name="lieu_naissance" required placeholder="Lieu"></div>
+            <div><span class="flab" id="pays-label">Pays *</span>
+          {liste_drapeaux('pays', 'pays-label')}</div>
+            <div><span class="flab">Sexe *</span>{choix_radio('sexe', ['Masculin', 'Féminin'])}</div>
+            <div class="full"><label for="ins-nationalite">Nationalité *</label><input id="ins-nationalite" name="nationalite" required placeholder="Ex. Ivoirienne" aria-describedby="ins-nat-aide"><p class="field-hint" id="ins-nat-aide">Remplie automatiquement quand vous choisissez votre pays et votre sexe.</p></div>
+            <div><label for="ins-piece">Type de pièce d’identité</label>
+              <select id="ins-piece" name="piece"><option value="">—</option>{options(['CNI', 'Passeport', 'Attestation d’identité', 'Carte consulaire', 'Autre'])}</select></div>
+            <div><label for="ins-piece-num">Numéro de la pièce</label><input id="ins-piece-num" name="piece_numero"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>2. Coordonnées de contact</legend>
+          <div class="row">
+            <div class="full"><label for="ins-adresse">Adresse résidentielle *</label><input id="ins-adresse" name="adresse" required autocomplete="street-address" placeholder="Adresse"></div>
+            <div><label for="ins-ville">Ville / Commune *</label><input id="ins-ville" name="ville" required autocomplete="address-level2" placeholder="Ville"></div>
+            <div><label for="ins-email">Adresse e-mail *</label><input id="ins-email" name="email" type="email" required autocomplete="email" placeholder="Email"></div>
+            {telephone('tel', 'Numéro de téléphone principal', True)}
+            {telephone('tel2', 'Numéro de téléphone secondaire', False)}
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>3. Niveau d’études</legend>
+          <div class="row">
+            <div><label for="ins-niveau">Dernier niveau d’études atteint *</label>
+              <select id="ins-niveau" name="niveau" required><option value="">Sélectionnez votre niveau</option>{options(NIVEAUX_ETUDES)}</select></div>
+            <div><label for="ins-diplome">Dernier diplôme obtenu</label><input id="ins-diplome" name="diplome" placeholder="Ex. BEPC, BAC A2…"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>4. Formation souhaitée</legend>
+          <div class="row">
+            <div class="full"><label for="ins-formation">Formation *</label>
+              <select id="ins-formation" name="formation" required>
+                <option value="">— Choisissez une formation —</option>
+{options_formations}
+              </select></div>
+            <div><label for="ins-situation">Situation actuelle *</label>
+              <select id="ins-situation" name="situation" required><option value="">— Choisissez —</option>{options(SITUATIONS)}</select></div>
+            <div><label for="ins-exp">Expérience en hôtellerie / restauration</label>
+              <select id="ins-exp" name="experience">{options(EXPERIENCES)}</select></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="tuteur" id="ins-tuteur" hidden>
+          <legend>5. Parent ou tuteur <small>(obligatoire pour les moins de 18 ans)</small></legend>
+          <div class="row">
+            <div><label for="ins-tut-nom">Nom et prénoms *</label><input id="ins-tut-nom" name="tuteur_nom" data-req></div>
+            <div><label for="ins-tut-lien">Lien de parenté *</label>
+              <select id="ins-tut-lien" name="tuteur_lien" data-req><option value="">— Choisissez —</option>{options(LIENS_PARENTE)}</select></div>
+            <div class="full"><label for="ins-tut-tel">Téléphone du parent ou tuteur *</label><input id="ins-tut-tel" name="tuteur_tel" type="tel" data-req placeholder="+225 01 02 03 04 05"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="num-tuteur">5</span>. Pour finir</legend>
+          <div class="row">
+            <div class="full"><label for="ins-urgence">Personne à prévenir en cas d’urgence (nom et téléphone)</label><input id="ins-urgence" name="urgence"></div>
+            <div class="full"><label for="ins-connu">Comment avez-vous connu EchoResta ?</label>
+              <select id="ins-connu" name="connu"><option value="">—</option>{options(CONNU)}</select></div>
+            <div class="full"><label for="ins-motivation">Votre projet professionnel</label><textarea id="ins-motivation" name="motivation" placeholder="Quel métier visez-vous ? Pourquoi cette formation ?"></textarea></div>
+          </div>
+        </fieldset>
+
+        <label class="consent"><input type="checkbox" id="ins-consent" required> Je certifie l’exactitude des informations et j’accepte d’être recontacté(e) par EchoResta au sujet de ma candidature.</label>
+        <button type="submit" class="btn btn-red">Envoyer ma candidature</button>
+        <p class="rdv-note">Votre candidature est envoyée par e-mail à {EMAIL}.</p>
+        <p class="field-error" id="ins-err" hidden></p>
+      </form>'''
+
+
 inscription = page_hero('Inscription à une formation en hôtellerie et restauration à Abidjan', 'Inscription', 'images/hero-cuisine.jpg',
                         'Remplissez votre fiche d’inscription en quelques minutes : notre équipe vous recontacte pour finaliser votre dossier.') + f'''
 <section>
@@ -890,91 +988,10 @@ inscription = page_hero('Inscription à une formation en hôtellerie et restaura
     </aside>
 
     <div class="form ins-form" id="formulaire" style="scroll-margin-top:140px">
-      <form id="form-inscription" data-mail="{EMAIL}" novalidate>
-        <div class="eyebrow">Fiche d’inscription</div>
-        <h3>Inscrivez-vous à une formation</h3>
-        <p class="muted ins-intro">Les champs marqués d’un * sont obligatoires.</p>
-
-        <fieldset>
-          <legend>1. Formation souhaitée</legend>
-          <div class="row">
-            <div class="full"><label for="ins-formation">Formation *</label>
-              <select id="ins-formation" name="formation" required>
-                <option value="">— Choisissez une formation —</option>
-{options_formations}
-              </select></div>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>2. Identité</legend>
-          <span class="flab">Sexe *</span>
-          {choix_radio('sexe', ['Femme', 'Homme'])}
-          <div class="row">
-            <div><label for="ins-nom">Nom *</label><input id="ins-nom" name="nom" required autocomplete="family-name"></div>
-            <div><label for="ins-prenoms">Prénoms *</label><input id="ins-prenoms" name="prenoms" required autocomplete="given-name"></div>
-            <div><label for="ins-naissance">Date de naissance *</label><input id="ins-naissance" name="naissance" type="date" required autocomplete="bday"></div>
-            <div><label for="ins-lieu">Lieu de naissance *</label><input id="ins-lieu" name="lieu_naissance" required placeholder="Ville, pays"></div>
-            <div class="full">{liste_drapeaux('nationalite', 'Nationalité', 'nationalite')}</div>
-            <div><label for="ins-piece">Type de pièce d’identité</label>
-              <select id="ins-piece" name="piece"><option value="">—</option>{options(['CNI', 'Passeport', 'Attestation d’identité', 'Carte consulaire', 'Autre'])}</select></div>
-            <div><label for="ins-piece-num">Numéro de la pièce</label><input id="ins-piece-num" name="piece_numero"></div>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>3. Coordonnées</legend>
-          <div class="row">
-            <div class="full">{liste_drapeaux('pays', 'Pays de résidence', 'pays')}</div>
-            <div><label for="ins-ville">Ville *</label><input id="ins-ville" name="ville" required autocomplete="address-level2" placeholder="Ex. Abidjan"></div>
-            <div><label for="ins-commune">Commune / quartier</label><input id="ins-commune" name="commune" placeholder="Ex. Cocody, Yopougon…"></div>
-            <div><label for="ins-tel">Téléphone *</label><input id="ins-tel" name="tel" type="tel" required autocomplete="tel" placeholder="+225"></div>
-            <div><label for="ins-wa">WhatsApp</label><input id="ins-wa" name="whatsapp" type="tel" placeholder="Si différent du téléphone"></div>
-            <div class="full"><label for="ins-email">E-mail *</label><input id="ins-email" name="email" type="email" required autocomplete="email"></div>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>4. Parcours</legend>
-          <div class="row">
-            <div><label for="ins-niveau">Niveau d’études *</label>
-              <select id="ins-niveau" name="niveau" required><option value="">— Choisissez —</option>{options(NIVEAUX_ETUDES)}</select></div>
-            <div><label for="ins-diplome">Dernier diplôme obtenu</label><input id="ins-diplome" name="diplome"></div>
-            <div><label for="ins-situation">Situation actuelle *</label>
-              <select id="ins-situation" name="situation" required><option value="">— Choisissez —</option>{options(SITUATIONS)}</select></div>
-            <div><label for="ins-exp">Expérience en hôtellerie / restauration</label>
-              <select id="ins-exp" name="experience">{options(EXPERIENCES)}</select></div>
-          </div>
-        </fieldset>
-
-        <fieldset class="tuteur" id="ins-tuteur" hidden>
-          <legend>5. Parent ou tuteur <small>(obligatoire pour les moins de 18 ans)</small></legend>
-          <div class="row">
-            <div><label for="ins-tut-nom">Nom et prénoms *</label><input id="ins-tut-nom" name="tuteur_nom" data-req></div>
-            <div><label for="ins-tut-lien">Lien de parenté *</label>
-              <select id="ins-tut-lien" name="tuteur_lien" data-req><option value="">— Choisissez —</option>{options(LIENS_PARENTE)}</select></div>
-            <div class="full"><label for="ins-tut-tel">Téléphone du parent ou tuteur *</label><input id="ins-tut-tel" name="tuteur_tel" type="tel" data-req></div>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend><span class="num-tuteur">5</span>. Pour finir</legend>
-          <div class="row">
-            <div class="full"><label for="ins-urgence">Personne à prévenir en cas d’urgence (nom et téléphone)</label><input id="ins-urgence" name="urgence"></div>
-            <div class="full"><label for="ins-connu">Comment avez-vous connu EchoResta ?</label>
-              <select id="ins-connu" name="connu"><option value="">—</option>{options(CONNU)}</select></div>
-            <div class="full"><label for="ins-motivation">Votre projet professionnel</label><textarea id="ins-motivation" name="motivation" placeholder="Quel métier visez-vous ? Pourquoi cette formation ?"></textarea></div>
-          </div>
-        </fieldset>
-
-        <label class="consent"><input type="checkbox" id="ins-consent" required> Je certifie l’exactitude des informations et j’accepte d’être recontacté(e) par EchoResta au sujet de mon inscription.</label>
-        <button type="submit" class="btn btn-red">Envoyer ma fiche d’inscription</button>
-        <p class="rdv-note">Votre fiche est envoyée par e-mail à {EMAIL}.</p>
-        <p class="field-error" id="ins-err" hidden></p>
-      </form>
+{FORMULAIRE_INSCRIPTION}
 
       <div class="form-ok" id="ins-ok" hidden>
-        <h3>Votre fiche d’inscription est envoyée</h3>
+        <h3>Votre candidature est envoyée</h3>
         <p class="muted">Merci ! Notre équipe vous recontacte pour fixer votre entretien d’inscription. Pensez à préparer les pièces de votre dossier.</p>
         <pre class="rdv-recap" id="ins-recap"></pre>
       </div>
