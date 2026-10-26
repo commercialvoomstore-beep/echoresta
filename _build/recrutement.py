@@ -255,47 +255,61 @@ page('espace_client.html', *seo.PAGES['espace_client.html'],
 
 # ================================================================ Espace candidat : fiche d'inscription candidat
 A = 'or'
-POSTES = ['Cuisine', 'Salle', 'Bar', 'Réception', 'Étages']
-ICONES_POSTES = {'Cuisine': 'i-chef', 'Salle': 'i-utensils', 'Bar': 'i-cocktail', 'Réception': 'i-bell', 'Étages': 'i-bed'}
+EMPLOIS = ['Serveur / Serveuse', 'Barman / Barmaid', 'Réceptionniste', 'Femme / Valet de chambre', 'Cuisinier(ère) de restaurant',
+           'Cuisine africaine', 'Cuisine européenne', 'Cuisine arabe', 'Cuisine asiatique', 'Nettoyage des surfaces', 'Lessive',
+           'Repassage', 'Chauffeur familial', 'Chauffeur coursier', 'Nounou 0 à 2 ans', 'Nounou 2 à 5 ans', 'Nounou 5 à 10 ans',
+           'Nounou + 10 ans', 'Majordome', 'Gouvernante à domicile', 'Personnes âgées', 'Enfant handicapé', 'Malades à domicile', 'Autres']
+SALAIRES = ['Moins de 60 000', '60 000 – 80 000', '80 000 – 100 000', '100 000 – 150 000', '150 000 – 200 000', '200 000 – 300 000',
+            'Plus de 300 000', 'À négocier']
 
 
-def fichier(id_, etiquette, aide, accept, multiple=False):
+def fichier(id_, etiquette, aide, accept, multiple=False, requis=False):
     return f'''<div class="{'sm:tw-col-span-2' if multiple else ''}">
-              <span class="{LABEL}">{etiquette}</span>
+              <span class="{LABEL}">{etiquette}{' *' if requis else ''}</span>
               <label for="{id_}" class="tw-flex tw-cursor-pointer tw-flex-col tw-items-center tw-justify-center tw-gap-2 tw-rounded-xl tw-border tw-border-dashed tw-border-slate-300 tw-bg-white tw-px-4 tw-py-6 tw-text-center tw-transition hover:tw-border-amber-500 hover:tw-bg-slate-50">
                 <svg class="ic tw-h-7 tw-w-7 tw-text-amber-600"><use href="#i-upload"/></svg>
                 <span class="tw-text-sm tw-font-bold tw-text-slate-900">Choisir {'des fichiers' if multiple else 'un fichier'}</span>
                 <span class="tw-text-xs tw-text-slate-500">{aide}</span>
                 <span class="tw-text-sm tw-font-semibold tw-text-slate-800" data-fichiers="{id_}"></span>
               </label>
-              <input id="{id_}" name="{id_}" type="file" accept="{accept}" class="tw-sr-only" data-label="{etiquette}"{' multiple' if multiple else ''}>
+              <input id="{id_}" name="{id_}" type="file" accept="{accept}" class="tw-sr-only" data-label="{etiquette}"{' multiple' if multiple else ''}{' required' if requis else ''}>
             </div>'''
 
 
 candidat_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec ec-or">
   <div class="tw-mx-auto tw-max-w-4xl">
-{entete('Espace candidat · Professionnels', 'Fiche d’inscription candidat',
-        'Cuisiniers, serveurs, barmen, réceptionnistes, femmes et valets de chambre : inscrivez-vous pour être mis en relation avec des hôtels et restaurants qui recrutent.', A)}
+{entete('Recherche un emploi · Candidats', 'Fiche d’inscription candidat',
+        'Hôtellerie, restauration, cuisine, ménage, garde d’enfants, chauffeur : inscrivez-vous pour être mis en relation avec des hôtels, restaurants et familles qui recrutent.', A)}
     <form id="form-candidat" class="{PANNEAU.format(bord='tw-border-amber-500')}" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" data-sujet="Candidature emploi" novalidate>
       <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-{bloc(1, 'Votre identité', 'Pour que les recruteurs puissent vous joindre.',
-      champ('cd-nom', 'Nom', A, True, attrs='autocomplete="family-name"')
+{bloc(1, 'Identification', 'Vos coordonnées, votre parcours et vos expériences.',
+      liste('cd-genre', 'Genre', ['Femme', 'Homme'], A, True)
+      + '<div class="tw-hidden sm:tw-block"></div>'
+      + champ('cd-nom', 'Nom', A, True, attrs='autocomplete="family-name"')
       + champ('cd-prenoms', 'Prénoms', A, True, attrs='autocomplete="given-name"')
-      + whatsapp('cd-whatsapp', 'Téléphone WhatsApp', A)
-      + champ('cd-email', 'E-mail', A, False, 'email', attrs='autocomplete="email"')
-      + champ('cd-lieu', 'Lieu d’habitation', A, True, attrs='placeholder="Ex. Yopougon, Abidjan"')
-      + liste('cd-experience', 'Années d’expérience', ['Moins d’un an', '1 à 2 ans', '3 à 5 ans', '6 à 10 ans', 'Plus de 10 ans'], A, True), A)}
-{bloc(2, 'Métier recherché & conditions', 'Le poste que vous visez et vos attentes.',
-      groupe('cd-poste', 'Poste recherché', POSTES, A, requis=True, icones=ICONES_POSTES)
-      + champ('cd-poste-precis', 'Intitulé du poste', A, large=True, attrs='placeholder="Ex. Chef de partie, chef de rang, night auditor…"')
+      + liste('cd-nationalite', 'Nationalité', [pays for _, pays, _, _ in drapeaux.PAYS] + ['Autre pays'], A, True)
+      + liste('cd-lieu', 'Lieu d’habitation', ZONES, A, True)
+      + liste('cd-niveau', 'Niveau d’enseignement général', ['Aucun', 'Primaire', 'Secondaire (collège)', 'Secondaire (lycée)', 'Baccalauréat',
+                                                            'Supérieur (BTS, licence…)', 'Formation professionnelle'], A)
+      + liste('cd-experience', 'Années d’expérience', ['Aucune (débutant)', 'Moins d’un an', '1 à 2 ans', '3 à 5 ans', '6 à 10 ans', 'Plus de 10 ans'], A)
+      + zone_texte('cd-formations', 'Autres formations', A, 'Ex. formation EchoResta, CAP cuisine, permis de conduire, langues parlées…')
+      + zone_texte('cd-emplois', 'Emplois précédents', A, 'Vos trois derniers emplois : employeur, poste occupé et période. Ex. Hôtel X, femme de chambre, 2023–2025')
+      + whatsapp('cd-tel', 'Téléphone 1', A)
+      + whatsapp('cd-whatsapp', 'Téléphone 2 (WhatsApp)', A, requis=False)
+      + champ('cd-email', 'E-mail', A, False, 'email', large=True, attrs='autocomplete="email"'), A)}
+{bloc(2, 'Emploi recherché', 'Cochez tous les emplois qui vous intéressent.',
+      groupe('cd-emploi', 'Emploi recherché', EMPLOIS, A, requis=True, grille=True)
+      + champ('cd-emploi-autre', 'Autre emploi ou précision', A, large=True, attrs='placeholder="Ex. chef de rang, night auditor, pâtissier…"'), A)}
+{bloc(3, 'Conditions de travail', 'Vos attentes et vos documents.',
+      groupe('cd-temps', 'Conditions de travail', ['À plein temps', 'À temps partiel'], A, type_='radio', requis=True)
+      + groupe('cd-loge', 'Logé ?', ['Oui', 'Non', 'Peu importe'], A, type_='radio', requis=True)
       + groupe('cd-contrat', 'Type de contrat souhaité', ['CDI', 'CDD', 'Extra'], A)
-      + liste('cd-dispo', 'Disponibilité', ['Immédiate', 'Sous 15 jours', 'Sous 1 mois', 'À convenir'], A)
-      + salaire('cd-salaire', 'Prétention salariale', A, ['par mois', 'par jour', 'à négocier'])
-      + zone_texte('cd-etablissements', 'Derniers établissements fréquentés', A, 'Nom de l’établissement, poste occupé et période. Ex. Hôtel X, commis de cuisine, 2023–2025'), A)}
-{bloc(3, 'Justificatifs', 'Sélectionnez vos documents : après l’envoi de la fiche, vous pourrez nous les transmettre en un clic sur WhatsApp.',
-      fichier('cd-cv', 'CV', 'PDF, Word ou photo · 5 Mo maximum', '.pdf,.doc,.docx,image/*')
-      + fichier('cd-photo', 'Photo professionnelle', 'JPG ou PNG, de face, tenue correcte', 'image/*')
-      + fichier('cd-diplomes', 'Diplômes et attestations', 'Plusieurs fichiers possibles', '.pdf,image/*', multiple=True), A)}
+      + liste('cd-dispo', 'Disponibilité', ['Immédiate', 'Sous 1 semaine', 'Sous 15 jours', 'Sous 1 mois', 'À convenir'], A, True)
+      + liste('cd-salaire', 'Salaire idéal (FCFA)', SALAIRES, A, True)
+      + intertitre('Vos documents', 'Sélectionnez vos fichiers : après l’envoi de la fiche, vous nous les transmettez en un clic sur WhatsApp.')
+      + fichier('cd-cv', 'Votre CV', 'PDF, Word ou photo · 5 Mo maximum', '.pdf,.doc,.docx,image/*', requis=True)
+      + fichier('cd-photo', 'Une photo récente', 'JPG ou PNG, de face, tenue correcte', 'image/*', requis=True)
+      + fichier('cd-diplomes', 'Documents attestant votre expérience', 'Certificats, diplômes, attestations de travail… (si vous en avez)', '.pdf,image/*', multiple=True), A)}
 {pied_formulaire(A, 'Je certifie l’exactitude des informations et j’accepte d’être recontacté(e) par EchoResta pour des offres d’emploi.',
                  'Envoyer ma candidature', f'Votre fiche est envoyée à notre équipe par e-mail. Une question ? {PHONE}')}
     </form>
@@ -305,10 +319,10 @@ candidat_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec 
 </section>
 '''
 page('espace_candidat.html', *seo.PAGES['espace_candidat.html'],
-     page_hero('Espace candidat : trouvez un emploi en hôtellerie-restauration', '<a href="recrutement.html">Recrutement</a><span>/</span>Espace candidat',
-               'images/serveur-hotesse.jpg', 'Inscrivez-vous en quelques minutes et soyez mis en relation avec des établissements qui recrutent.') + candidat_form,
+     page_hero('Recherche un emploi : trouvez un poste en hôtellerie, restauration et services', '<a href="recrutement.html">Recrutement</a><span>/</span>Recherche un emploi',
+               'images/serveur-hotesse.jpg', 'Inscrivez-vous en quelques minutes et soyez mis en relation avec des hôtels, restaurants et familles qui recrutent.') + candidat_form,
      'recrutement.html', head_extra=TAILWIND,
-     schemas=[seo.fil_ariane(('Accueil', ''), ('Recrutement', 'recrutement.html'), ('Espace candidat', 'espace_candidat.html'))])
+     schemas=[seo.fil_ariane(('Accueil', ''), ('Recrutement', 'recrutement.html'), ('Recherche un emploi', 'espace_candidat.html'))])
 
 # ================================================================ Page d'aiguillage : deux grands boutons
 choix = f'''<section class="tw-bg-nuit-50 tw-px-4 tw-py-16 sm:tw-py-24">

@@ -325,7 +325,7 @@ const listesDrapeaux={};
     form.querySelectorAll('[data-fcfa]').forEach(i=>i.addEventListener('input',()=>{const d=i.value.replace(/\D/g,'').slice(0,10);i.value=d?Number(d).toLocaleString('fr-FR').replace(/ | /g,' '):'';}));
     // Noms des fichiers choisis
     form.querySelectorAll('input[type="file"]').forEach(i=>i.addEventListener('change',()=>{
-      const zone=form.querySelector(`[data-fichiers="${i.id}"]`); if(zone) zone.textContent=[...i.files].map(f=>f.name).join(', ');}));
+      const zone=form.querySelector(`[data-fichiers="${i.id}"]`); if(zone){zone.textContent=[...i.files].map(f=>f.name).join(', ');zone.classList.remove('tw-text-red-700');}}));
     // Groupes de choix obligatoires
     const groupes=[...form.querySelectorAll('[data-groupe]')];
     const groupeOk=g=>!g.dataset.requis||!!g.querySelector('input:checked');
@@ -352,11 +352,13 @@ const listesDrapeaux={};
       e.preventDefault(); echec.classList.add('tw-hidden');
       const mauvais=groupes.filter(g=>!groupeOk(g));
       mauvais.forEach(g=>g.querySelector('[data-erreur]').classList.remove('tw-hidden'));
+      form.querySelectorAll('input[type="file"][required]').forEach(i=>{const zone=form.querySelector(`[data-fichiers="${i.id}"]`);
+        if(!i.files.length&&zone){zone.textContent='Fichier obligatoire';zone.classList.add('tw-text-red-700');}});
       if(!form.checkValidity()){form.reportValidity();return;}
       if(mauvais.length){mauvais[0].scrollIntoView({block:'center'});return;}
       const champs=valeurs();
       const nom=champs['Établissement ou société']||[champs['Prénoms'],champs['Nom']].filter(Boolean).join(' ');
-      const objet=champs['Je cherche']||champs['Poste recherché']||'';
+      const objet=champs['Je cherche']||champs['Emploi recherché']||'';
       const sujet=form.dataset.sujet+' : '+objet+' – '+nom;
       btn.disabled=true; btn.textContent='Envoi en cours…';
       envoyerEmail(form,sujet,champs).then(ok=>{
