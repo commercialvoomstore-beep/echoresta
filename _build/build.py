@@ -526,7 +526,7 @@ faq = [('Quels sont les prérequis pour s’inscrire ?', 'La plupart de nos form
        ('Quels sont vos horaires ?', 'Nous vous accueillons du lundi au vendredi, de 8h à 17h. Selon la formation, les cours ont lieu le matin ou l’après-midi : contactez-nous pour connaître le prochain calendrier.'),
        ('Je ne sais pas quel métier choisir. Que faire ?', 'Faites notre test d’orientation en trois questions sur la page d’accueil, ou écrivez-nous sur WhatsApp : un conseiller vous aide à choisir.'),
        ('Peut-on payer en plusieurs fois ?', 'Oui, un échéancier peut être mis en place. Les modalités vous sont présentées lors de l’entretien d’inscription.')]
-formations = page_hero('Formations en hôtellerie et restauration à Abidjan', 'Formations', 'images/hero.jpg',
+formations = page_hero('Formations en hôtellerie et restauration à Abidjan', 'Formations', 'images/formations-bandeau.jpg',
                        f'{len(METIERS)} métiers de l’hôtellerie et de la restauration, avec stage garanti en entreprise.') + f'''
 <section class="center">
   <div class="container">

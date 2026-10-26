@@ -652,3 +652,4 @@
   #rdv-ok,#form-rdv{scroll-margin-top:140px}
   /* Nom de l'école centré au-dessus du slogan */
   .brand>div:last-child{text-align:center}
+  .page-hero h1{text-wrap:balance}
