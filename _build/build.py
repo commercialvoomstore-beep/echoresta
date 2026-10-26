@@ -625,7 +625,6 @@ for m in METIERS:
         <h4>Infos pratiques</h4>
         <dl>
           <div><dt><svg class="ic"><use href="#i-level"/></svg>Niveau</dt><dd>{m['niveau']}</dd></div>
-          <div><dt><svg class="ic"><use href="#i-users"/></svg>Public</dt><dd>{m['public']}</dd></div>
           <div><dt><svg class="ic"><use href="#i-award"/></svg>Certification</dt><dd>Double : Côte d’Ivoire &amp; Australie</dd></div>
           <div><dt><svg class="ic"><use href="#i-building"/></svg>Stage</dt><dd>6 mois garanti, grands hôtels</dd></div>
         </dl>

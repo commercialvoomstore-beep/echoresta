@@ -276,10 +276,11 @@
   .side-box.light{background:#f6f7fb;color:var(--ink)}
   .side-box h4{font-family:var(--serif);font-size:20px;margin-bottom:18px}
   .side-box dl{display:grid;margin-bottom:26px}
-  .side-box dl div{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.14);font-size:14.5px}
-  .side-box dt{display:flex;align-items:center;gap:8px;opacity:.8}
+  /* Infos pratiques : libellé au-dessus, valeur en dessous, tout aligné à gauche */
+  .side-box dl div{display:grid;gap:4px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.14)}
+  .side-box dt{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.72)}
   .side-box dt svg{width:16px;height:16px}
-  .side-box dd{font-weight:600;text-align:right}
+  .side-box dd{font-weight:600;font-size:15px;padding-left:24px}
   .side-call{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px;font-weight:600}
   .side-call svg{width:16px;height:16px}
   .side-links{list-style:none;display:grid}
