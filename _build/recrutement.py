@@ -10,7 +10,7 @@ TAILWIND = '<link rel="stylesheet" href="assets/recrutement.css">'
 # ---------------------------------------------------------------- Petits composants communs
 def classes_champ(accent):
     ring = 'focus:tw-border-nuit-700 focus:tw-ring-nuit-700/10' if accent == 'nuit' else 'focus:tw-border-amber-600 focus:tw-ring-amber-500/15'
-    return (f'tw-w-full tw-rounded-lg tw-border tw-border-solid tw-border-slate-300 tw-bg-white tw-px-4 tw-py-3 tw-text-[15px] '
+    return (f'tw-w-full tw-rounded-lg tw-border tw-border-solid tw-border-slate-300 tw-bg-white tw-px-4 tw-py-3 tw-font-sans tw-text-[15px] '
             f'tw-text-slate-900 placeholder:tw-text-slate-400 focus:tw-outline-none focus:tw-ring-4 {ring} tw-transition')
 
 
@@ -82,6 +82,18 @@ def salaire(id_, etiquette, accent, periodes):
 
 
 def bloc(num, titre, sous_titre, contenu, accent):
+    if accent == 'or':
+        filet = ' tw-border-0 tw-border-t tw-border-solid tw-border-slate-200' if num > 1 else ''
+        return f'''        <div class="tw-px-5 tw-py-8 sm:tw-px-10 sm:tw-py-10{filet}">
+          <div class="tw-mb-7 tw-flex tw-items-baseline tw-gap-4 sm:tw-gap-5">
+            <span class="tw-font-serif tw-text-2xl tw-font-bold tw-text-amber-600 sm:tw-text-3xl">{num:02d}</span>
+            <div><h2 class="tw-m-0 tw-font-serif tw-text-xl tw-leading-snug tw-text-slate-900 sm:tw-text-2xl">{titre}</h2>
+            <p class="tw-mb-0 tw-mt-1 tw-text-sm tw-text-slate-500">{sous_titre}</p></div>
+          </div>
+          <div class="tw-grid tw-grid-cols-1 tw-gap-x-6 tw-gap-y-5 sm:tw-grid-cols-2">
+{contenu}
+          </div>
+        </div>'''
     pastille = 'tw-bg-nuit-800 tw-text-white' if accent == 'nuit' else 'tw-bg-amber-500 tw-text-white'
     fond = 'tw-border-slate-200 tw-bg-white' if accent == 'nuit' else 'tw-border-amber-200/70 tw-bg-white'
     return f'''        <div class="tw-rounded-2xl tw-border tw-border-solid {fond} tw-p-5 tw-shadow-sm sm:tw-p-8">
@@ -112,7 +124,8 @@ def bouton(texte, accent):
 
 def pied_formulaire(accent, consentement, bouton_txt, note):
     coche = 'tw-accent-nuit-800' if accent == 'nuit' else 'tw-accent-amber-600'
-    return f'''        <div class="tw-grid tw-gap-4">
+    cadre = ' tw-border-0 tw-border-t tw-border-solid tw-border-slate-200 tw-bg-slate-50/70 tw-px-5 tw-py-8 sm:tw-px-10' if accent == 'or' else ''
+    return f'''        <div class="tw-grid tw-gap-4{cadre}">
           <label class="tw-flex tw-cursor-pointer tw-items-start tw-gap-3 tw-text-sm tw-text-slate-600"><input type="checkbox" required class="tw-mt-1 tw-h-4 tw-w-4 {coche}"> {consentement}</label>
           {bouton(bouton_txt, accent)}
           <p class="tw-text-center tw-text-[13px] tw-text-slate-500">{note}</p>
@@ -192,11 +205,11 @@ ICONES_POSTES = {'Cuisine': 'i-chef', 'Salle': 'i-utensils', 'Bar': 'i-cocktail'
 
 
 def fichier(id_, etiquette, aide, accept, multiple=False):
-    return f'''<div class="sm:tw-col-span-2">
+    return f'''<div class="{'sm:tw-col-span-2' if multiple else ''}">
               <span class="{LABEL}">{etiquette}</span>
-              <label for="{id_}" class="tw-flex tw-cursor-pointer tw-flex-col tw-items-center tw-justify-center tw-gap-2 tw-rounded-xl tw-border-2 tw-border-dashed tw-border-amber-300 tw-bg-amber-50/60 tw-px-4 tw-py-6 tw-text-center tw-transition hover:tw-border-amber-500 hover:tw-bg-amber-50">
+              <label for="{id_}" class="tw-flex tw-cursor-pointer tw-flex-col tw-items-center tw-justify-center tw-gap-2 tw-rounded-xl tw-border tw-border-dashed tw-border-slate-300 tw-bg-white tw-px-4 tw-py-6 tw-text-center tw-transition hover:tw-border-amber-500 hover:tw-bg-slate-50">
                 <svg class="ic tw-h-7 tw-w-7 tw-text-amber-600"><use href="#i-upload"/></svg>
-                <span class="tw-text-sm tw-font-bold tw-text-amber-800">Choisir {'des fichiers' if multiple else 'un fichier'}</span>
+                <span class="tw-text-sm tw-font-bold tw-text-slate-900">Choisir {'des fichiers' if multiple else 'un fichier'}</span>
                 <span class="tw-text-xs tw-text-slate-500">{aide}</span>
                 <span class="tw-text-sm tw-font-semibold tw-text-slate-800" data-fichiers="{id_}"></span>
               </label>
@@ -204,11 +217,11 @@ def fichier(id_, etiquette, aide, accept, multiple=False):
             </div>'''
 
 
-candidat_form = f'''<section class="tw-bg-gradient-to-b tw-from-amber-50 tw-to-orange-50/40 tw-px-4 tw-py-14 sm:tw-py-20 ec ec-or">
+candidat_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec ec-or">
   <div class="tw-mx-auto tw-max-w-4xl">
 {entete('Espace candidat · Professionnels', 'Fiche d’inscription candidat',
         'Cuisiniers, serveurs, barmen, réceptionnistes, femmes et valets de chambre : inscrivez-vous pour être mis en relation avec des hôtels et restaurants qui recrutent.', A)}
-    <form id="form-candidat" class="fiche tw-grid tw-gap-6" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" data-sujet="Candidature emploi" novalidate>
+    <form id="form-candidat" class="fiche tw-overflow-hidden tw-rounded-2xl tw-border-0 tw-border-t-4 tw-border-solid tw-border-amber-500 tw-bg-white tw-shadow-[0_1px_3px_rgba(15,23,42,.08),0_20px_50px_-20px_rgba(15,23,42,.25)] tw-ring-1 tw-ring-slate-200" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" data-sujet="Candidature emploi" novalidate>
       <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 {bloc(1, 'Votre identité', 'Pour que les recruteurs puissent vous joindre.',
       champ('cd-nom', 'Nom', A, True, attrs='autocomplete="family-name"')
