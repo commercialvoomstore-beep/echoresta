@@ -226,7 +226,7 @@ client_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec">
       + groupe('ec-age', 'Tranche d’âge', ['18 à 25 ans', '25 à 30 ans', '30 à 35 ans', '35 à 40 ans', '40 à 45 ans', '45 à 50 ans',
                                            '50 ans et +', 'Peu importe l’âge'], A, type_='radio', requis=True, grille=True)
       + groupe('ec-sachant', 'Sachant', ['Lire', 'Écrire', 'Peu importe'], A, requis=True)
-      + groupe('ec-niveau', 'Ayant le niveau minimum', ['Bac +2', 'Bac +3', 'Bac +4', 'Bac +5', 'Peu importe'], A, type_='radio', requis=True)
+      + groupe('ec-niveau', 'Ayant le niveau minimum', ['Bac +2', 'Bac +3', 'Bac +4', 'Bac +5'], A, type_='radio', requis=True)
       + groupe('ec-anglais', 'Niveau d’anglais', ['Élémentaire', 'Débutant', 'Moyen', 'Avancé'], A, type_='radio')
       + intertitre('Pour exécuter les tâches suivantes', 'Tous les services de l’hôtellerie et de la restauration : cochez les métiers qui correspondent à votre besoin.')
       + groupe_services('ec-taches', 'Métier(s) recherché(s)', A)
