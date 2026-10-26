@@ -85,25 +85,24 @@ def balises_json_ld(schemas):
 
 # ---------------------------------------------------------------- Pages principales
 PAGES = {
-    'index.html': ('École d’hôtellerie et de restauration à Abidjan | EchoResta',
-                   'École de l’hôtellerie et de la restauration à Abidjan (Cocody Angré) : formations certifiantes en cuisine, service, réception, bar. Stage garanti.'),
-    'formations.html': ('Formations hôtellerie et restauration à Abidjan | EchoResta',
-                   '10 formations hôtellerie et restauration à Abidjan : cuisinier, serveur, femme de chambre, gouvernante, réceptionniste, barman, directeur d’hôtel.'),
-    'apropos.html': ('EchoResta, école hôtelière à Abidjan : qui sommes-nous ?',
-                   'EchoResta forme à Abidjan des professionnels de l’hôtellerie et de la restauration : formateurs du métier, double certification et stage garanti.'),
-    'recrutement.html': ('Recrutement hôtellerie et restauration à Abidjan | EchoResta',
-                         'Vous recrutez ou cherchez un emploi en hôtellerie-restauration à Abidjan ? Espace client pour les employeurs, espace candidat pour les professionnels.'),
-    'espace_client.html': ('Recherche de personnel hôtelier à Abidjan | EchoResta',
-                           'Hôtels et restaurants d’Abidjan : valets, gouvernantes, réceptionnistes, serveurs, cuisiniers, barmen. Décrivez votre besoin, nous proposons des profils.'),
-    'espace_candidat.html': ('Emploi en hôtellerie et restauration à Abidjan | EchoResta',
-                             'Valet, femme de chambre, gouvernante, réceptionniste, serveur, cuisinier, barman : inscrivez-vous et trouvez un emploi à Abidjan avec EchoResta.'),
-    'inscription.html': ('Inscription en ligne | École hôtelière EchoResta Abidjan',
-                         'Inscrivez-vous en ligne à une formation en hôtellerie ou restauration à Abidjan : cuisinier, serveur, réceptionniste, femme de chambre, barman…'),
-    'rendez-vous.html': ('Prendre rendez-vous | École hôtelière EchoResta Abidjan',
-                         'Prenez rendez-vous avec EchoResta, école hôtelière à Abidjan : entretien d’orientation, inscription ou visite de l’école, du lundi au vendredi.'),
-    'contact.html': ('Contact et inscription | École hôtelière EchoResta Abidjan',
-                     'Inscrivez-vous ou contactez EchoResta, école d’hôtellerie et de restauration à Angré Star 14, '
-                     'Cocody (Abidjan). Téléphone et WhatsApp : +225 07 68 84 20 38.'),
+    'index.html': ('École hôtelière à Abidjan, Cocody Angré | EchoResta',
+        'Tu veux travailler dans les hôtels et restaurants ? EchoResta, école hôtelière à Abidjan : cuisine, service, réception, bar. Stage de 6 mois garanti.'),
+    'formations.html': ('Formation hôtellerie et restauration Abidjan | EchoResta',
+        'Cuisine, serveur, femme de chambre, réception, bar, gouvernante… 10 formations à Abidjan pour trouver vite boulot dans les hôtels. Stage garanti.'),
+    'apropos.html': ('EchoResta : l’école hôtelière d’Angré, Cocody Abidjan',
+        'À Cocody Angré, EchoResta forme les jeunes aux métiers de l’hôtel et du restaurant : formateurs du terrain, double certification Côte d’Ivoire & Australie.'),
+    'recrutement.html': ('Recrutement hôtel et restaurant à Abidjan | EchoResta',
+        'Tu cherches du personnel ou du boulot en hôtellerie-restauration à Abidjan ? Employeurs et candidats, remplissez votre fiche, on vous met en relation.'),
+    'espace_client.html': ('Recruter serveur, cuisinier, réceptionniste à Abidjan',
+        'Hôtel, restaurant, maquis ou résidence à Abidjan : besoin de serveurs, cuisiniers, femmes de chambre ? Remplis la fiche, on te propose des profils formés.'),
+    'espace_candidat.html': ('Offre d’emploi hôtel et restaurant Abidjan | EchoResta',
+        'Tu cherches boulot à Abidjan ? Serveur, cuisinier, réceptionniste, femme de chambre, barman : inscris-toi, on te présente aux hôtels qui recrutent.'),
+    'inscription.html': ('Inscription formation hôtellerie Abidjan | EchoResta',
+        'Inscris-toi en ligne en 5 minutes : cuisine, service, réception, bar, femme de chambre… À Abidjan, double certification et stage de 6 mois garanti.'),
+    'rendez-vous.html': ('Rendez-vous école hôtelière Abidjan | EchoResta Angré',
+        'Passe nous voir à Angré Star 14 ! Prends rendez-vous pour ton orientation, ton inscription ou la visite de l’école, du lundi au vendredi de 8h à 17h.'),
+    'contact.html': ('Contact EchoResta, école hôtelière à Cocody Angré',
+        'On est à Angré Star 14, Cocody (Abidjan). Appelle ou écris-nous sur WhatsApp au 07 68 84 20 38 pour tes questions sur les formations et l’inscription.'),
 }
 
 # ---------------------------------------------------------------- Pages métier
@@ -112,7 +111,7 @@ METIERS_SEO = {
     'valet-femme-chambre': {
         'h1': 'Formation valet et femme de chambre à Abidjan',
         'title': 'Formation femme de chambre et valet à Abidjan | EchoResta',
-        'desc': 'Formation femme de chambre et valet à Abidjan aux standards des hôtels 3 à 5 étoiles. Sans diplôme exigé, double certification et stage garanti.',
+        'desc': 'Pas besoin de diplôme ! Deviens femme de chambre ou valet dans les hôtels 3 à 5 étoiles d’Abidjan. Double certification et stage de 6 mois garanti.',
         'pourquoi': 'Hôtels d’affaires, résidences hôtelières, resorts : à Abidjan comme dans toute la Côte d’Ivoire, '
                     'les établissements recrutent régulièrement des valets et femmes de chambre formés aux standards '
                     'internationaux. Notre formation de femme de chambre et de valet de chambre vous apprend les gestes '
@@ -122,7 +121,7 @@ METIERS_SEO = {
     'gouvernante': {
         'h1': 'Formation gouvernante d’hôtel à Abidjan',
         'title': 'Formation gouvernante d’hôtel à Abidjan | EchoResta',
-        'desc': 'Formation gouvernante d’hôtel à Abidjan : organisation des étages, contrôle qualité des chambres, linge et management. Certification et stage.',
+        'desc': 'Deviens gouvernante d’hôtel à Abidjan : étages, contrôle des chambres, linge et équipe. Un poste qui recrute fort en Côte d’Ivoire. Stage garanti.',
         'pourquoi': 'Dans un hôtel, la gouvernante est garante de la propreté et du confort de chaque chambre : c’est un '
                     'poste clé, recherché par les hôtels et résidences d’Abidjan. Cette formation de gouvernante d’hôtel '
                     's’adresse aux femmes et valets de chambre expérimentés qui veulent encadrer une équipe et prendre des '
@@ -130,8 +129,8 @@ METIERS_SEO = {
     },
     'audit-nuit': {
         'h1': 'Formation réceptionniste et audit de nuit à Abidjan',
-        'title': 'Formation réceptionniste d’hôtel et audit de nuit à Abidjan',
-        'desc': 'Formation réceptionniste et audit de nuit à Abidjan : accueil, check-in, logiciel hôtelier, caisse, night audit. Certification et stage garanti.',
+        'title': 'Formation réceptionniste hôtel Abidjan | Audit de nuit',
+        'desc': 'Apprends la réception d’hôtel à Abidjan : accueil, check-in, réservations, caisse et audit de nuit. Les hôtels de Côte d’Ivoire recrutent. Stage garanti.',
         'pourquoi': 'La réception est le premier contact du client avec l’hôtel. Notre formation de réceptionniste d’hôtel '
                     'et d’auditeur de nuit (night auditor) prépare aux postes de front office des hôtels d’Abidjan : '
                     'accueil, réservations, logiciel hôtelier, facturation et clôture de la journée. Des compétences '
@@ -139,8 +138,8 @@ METIERS_SEO = {
     },
     'directeur-hotel': {
         'h1': 'Formation directeur d’hôtel à Abidjan',
-        'title': 'Formation directeur d’hôtel et management hôtelier à Abidjan',
-        'desc': 'Formation directeur d’hôtel à Abidjan : stratégie, revenue management, gestion financière, RH et qualité. Pour cadres de l’hôtellerie.',
+        'title': 'Formation directeur d’hôtel à Abidjan | EchoResta',
+        'desc': 'Tu veux diriger un hôtel en Côte d’Ivoire ? Stratégie, revenue management, finances, RH et qualité : la formation des cadres de l’hôtellerie à Abidjan.',
         'pourquoi': 'Le tourisme d’affaires et les grands événements internationaux accueillis à Abidjan créent des '
                     'besoins en managers capables de piloter un établissement. Cette formation en management hôtelier '
                     'vous donne les outils de la direction d’hôtel : stratégie commerciale, revenue management, gestion '
@@ -148,8 +147,8 @@ METIERS_SEO = {
     },
     'serveur-hotesse': {
         'h1': 'Formation serveur et hôtesse à Abidjan',
-        'title': 'Formation serveur, serveuse et hôtesse à Abidjan | EchoResta',
-        'desc': 'Formation serveur, serveuse et hôtesse à Abidjan : accueil, service à table, prise de commande, vins. Dès 16 ans, stage garanti.',
+        'title': 'Formation serveur et serveuse à Abidjan | EchoResta',
+        'desc': 'Deviens serveur, serveuse ou hôtesse dans les hôtels et restaurants d’Abidjan : accueil, service à table, commandes, vins. Stage de 6 mois garanti.',
         'pourquoi': 'Restaurants, hôtels, traiteurs et événementiel : le métier de serveur ou de serveuse est l’un des plus '
                     'demandés de la restauration à Abidjan. Notre formation de serveur et d’hôtesse vous apprend '
                     'l’accueil, le service à table et la vente, pour être opérationnel dès votre premier poste et évoluer '
@@ -157,8 +156,8 @@ METIERS_SEO = {
     },
     'maitre-hotel': {
         'h1': 'Formation maître d’hôtel à Abidjan',
-        'title': 'Formation maître d’hôtel à Abidjan | EchoResta',
-        'desc': 'Formation maître d’hôtel à Abidjan : direction de la salle, service au guéridon, accords mets et vins, accueil VIP. Pour serveurs et chefs de rang.',
+        'title': 'Formation maître d’hôtel à Abidjan | EchoResta Cocody',
+        'desc': 'Serveur ou chef de rang, passe au niveau supérieur : direction de la salle, guéridon, accords mets-vins, clients VIP. Formation maître d’hôtel à Abidjan.',
         'pourquoi': 'Les restaurants gastronomiques et les hôtels haut de gamme d’Abidjan recherchent des maîtres d’hôtel '
                     'capables de diriger une salle et d’accueillir une clientèle exigeante. Cette formation s’adresse aux '
                     'serveurs et chefs de rang qui veulent évoluer : direction du service, service au guéridon, accords '
@@ -166,8 +165,8 @@ METIERS_SEO = {
     },
     'cuisinier': {
         'h1': 'Formation cuisinier à Abidjan',
-        'title': 'Formation cuisinier à Abidjan | École de cuisine EchoResta',
-        'desc': 'Formation cuisinier à Abidjan : cuisine ivoirienne et internationale, pâtisserie, hygiène HACCP. Double certification et stage en restaurant.',
+        'title': 'Formation cuisine à Abidjan | École de cuisine EchoResta',
+        'desc': 'Kédjénou, attiéké, sauce graine… et cuisine internationale ! Formation cuisinier à Abidjan : pâtisserie, hygiène HACCP, certification et stage garanti.',
         'pourquoi': 'Vous cherchez une école de cuisine à Abidjan ? Notre formation de cuisinier associe les techniques de '
                     'la cuisine professionnelle, la cuisine ivoirienne et africaine, la cuisine internationale et la '
                     'pâtisserie. Vous apprenez en cuisine, encadré par des chefs, avec les règles d’hygiène HACCP '
@@ -176,7 +175,7 @@ METIERS_SEO = {
     'bar-mixology': {
         'h1': 'Formation barman et mixologie à Abidjan',
         'title': 'Formation barman et mixologie à Abidjan | EchoResta',
-        'desc': 'Formation barman et barmaid à Abidjan : cocktails classiques et signatures, spiritueux, gestion du bar. Certification et stage garanti.',
+        'desc': 'Deviens barman ou barmaid à Abidjan : cocktails, mocktails, spiritueux et gestion du bar pour hôtels, lounges et rooftops. Certification et stage garanti.',
         'pourquoi': 'Bars d’hôtel, lounges, rooftops et restaurants : la vie nocturne d’Abidjan offre de nombreux '
                     'débouchés aux barmen et barmaids formés. Notre formation de barman et de mixologie vous apprend les '
                     'cocktails classiques, la création de cocktails signatures avec les saveurs locales et la gestion '
@@ -184,9 +183,8 @@ METIERS_SEO = {
     },
     'directeur-restaurant': {
         'h1': 'Formation directeur de restaurant à Abidjan',
-        'title': 'Formation directeur de restaurant à Abidjan | EchoResta',
-        'desc': 'Formation en gestion de restaurant à Abidjan : rentabilité, coût matière, carte, management d’équipe '
-                'et marketing. Pour restaurateurs et porteurs de projet.',
+        'title': 'Formation gestion de restaurant à Abidjan | EchoResta',
+        'desc': 'Tu veux ouvrir ou mieux gérer ton restaurant, ton maquis à Abidjan ? Coût matière, carte, rentabilité, équipe, marketing : la formation des restaurateurs.',
         'pourquoi': 'Vous dirigez un restaurant ou vous voulez ouvrir le vôtre à Abidjan ? Cette formation en gestion de '
                     'restaurant vous apprend à piloter la rentabilité, maîtriser le coût matière, construire une carte, '
                     'encadrer vos équipes et attirer de nouveaux clients, notamment grâce aux réseaux sociaux et aux '
@@ -194,9 +192,8 @@ METIERS_SEO = {
     },
     'anglais-tourisme-hotellerie': {
         'h1': 'Formation anglais tourisme et hôtellerie à Abidjan',
-        'title': 'Anglais pour l’hôtellerie et le tourisme à Abidjan | EchoResta',
-        'desc': 'Cours d’anglais professionnel pour l’hôtellerie et le tourisme à Abidjan : accueil, réception, '
-                'restaurant, téléphone et réclamations. Tous niveaux.',
+        'title': 'Anglais hôtellerie et tourisme à Abidjan | EchoResta',
+        'desc': 'Parle anglais avec les clients étrangers : accueil, réception, restaurant, téléphone, réclamations. Anglais pro pour l’hôtellerie à Abidjan, tous niveaux.',
         'pourquoi': 'À Abidjan, les hôtels, les agences de voyage et les sites touristiques accueillent une clientèle '
                     'internationale. Parler anglais est un vrai atout pour décrocher un poste et évoluer. Nos cours '
                     'd’anglais pour l’hôtellerie et le tourisme sont centrés sur les situations du métier : accueil, '
