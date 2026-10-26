@@ -456,8 +456,7 @@ about = page_hero('EchoResta, école hôtelière à Abidjan', 'À propos', 'imag
 <section class="h-about">
   <div class="container h-about-grid">
     <div>
-      <div class="eyebrow">Notre histoire</div>
-      <h2>Une école née sur le terrain</h2>
+      <h2>Notre histoire</h2>
       <div class="sep"></div>
     </div>
     <div class="story">
@@ -584,40 +583,38 @@ for m in METIERS:
       {visual}
 
       <div class="eyebrow" style="margin-top:40px">{CATEGORIES[m['cat']]}</div>
-      <h2>Le métier en bref</h2>
-      <div class="sep"></div>
-      <p class="lead-p">{m['resume']} Une formation pratique, animée par des professionnels en activité, pour être opérationnel dès votre premier poste.</p>
+      <p class="lead-p lead-first">{m['resume']} Une formation pratique, animée par des professionnels en activité, pour être opérationnel dès votre premier poste.</p>
 
-      <h3 class="h3">Pourquoi suivre cette formation à Abidjan ?</h3>
+      <h2 class="h3">Pourquoi suivre cette formation à Abidjan ?</h2>
       <p class="lead-p">{meta['pourquoi']}</p>
 
-      <h3 class="h3">Ce que vous saurez faire</h3>
+      <h2 class="h3">Ce que vous saurez faire</h2>
       <ul class="checks two">
 {savoir}
       </ul>
 
-      <h3 class="h3">Le programme</h3>
+      <h2 class="h3">Le programme</h2>
       <ol class="modules">
 {modules}
       </ol>
 
-      <h3 class="h3">{m.get('journee_titre', 'Une journée type')}</h3>
+      <h2 class="h3">{m.get('journee_titre', 'Une journée type')}</h2>
       <ol class="timeline">
 {journee}
       </ol>
 
-      <h3 class="h3">Votre évolution de carrière</h3>
+      <h2 class="h3">Votre évolution de carrière</h2>
       <ol class="ladder">
 {ladder}
       </ol>
 
       <div class="duo">
         <div>
-          <h3 class="h3">Les qualités qui comptent</h3>
+          <h2 class="h3">Les qualités qui comptent</h2>
           <div class="chips">{qualites}</div>
         </div>
         <div>
-          <h3 class="h3">Où travailler ?</h3>
+          <h2 class="h3">Où travailler ?</h2>
           <div class="chips">{lieux}</div>
         </div>
       </div>
