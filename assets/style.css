@@ -643,3 +643,13 @@
   .story .checks{margin:28px 0 32px}
   /* Phrase clé : double certification internationale et stage de 6 mois */
   .h-lead.h-cert{margin-top:16px;color:var(--navy);font-weight:600}
+
+  /* Page Contact / inscription : colonne de gauche (pièces du dossier + coordonnées) */
+  .contact-side{display:grid;gap:24px;align-content:start;min-width:0}
+  .docs-box{padding:34px 40px}
+  .docs-box h3{display:flex;align-items:center;gap:12px;font-size:21px;margin-bottom:20px}
+  .docs-box h3 svg{width:26px;height:26px;flex:none}
+  .docs-list{list-style:none;display:grid;gap:14px}
+  .docs-list li{display:flex;align-items:center;gap:12px;font-size:15.5px}
+  .docs-list svg{width:24px;height:24px;flex:none;padding:4px;border:1.5px solid rgba(255,255,255,.7);border-radius:50%;stroke-width:2.6}
+  @media (max-width:600px){.docs-box{padding:28px 24px}}

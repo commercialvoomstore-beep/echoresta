@@ -623,7 +623,6 @@ for m in METIERS:
         <h4>Infos pratiques</h4>
         <dl>
           <div><dt><svg class="ic"><use href="#i-level"/></svg>Niveau</dt><dd>{m['niveau']}</dd></div>
-          <div><dt><svg class="ic"><use href="#i-clock2"/></svg>Rythme</dt><dd>{m['rythme']}</dd></div>
           <div><dt><svg class="ic"><use href="#i-users"/></svg>Public</dt><dd>{m['public']}</dd></div>
           <div><dt><svg class="ic"><use href="#i-award"/></svg>Certification</dt><dd>Double : Côte d’Ivoire &amp; Australie</dd></div>
           <div><dt><svg class="ic"><use href="#i-building"/></svg>Stage</dt><dd>6 mois garanti, grands hôtels</dd></div>
@@ -761,6 +760,7 @@ page('rendez-vous.html', *seo.PAGES['rendez-vous.html'], rdv, 'rendez-vous.html'
      schemas=[seo.ecole_schema(PHONE, LAT, LNG, PLUS_CODE), seo.fil_ariane(('Accueil', ''), ('Rendez-vous', 'rendez-vous.html'))])
 
 # =========================================================== Contact
+PIECES_DOSSIER = ['2 photos d’identité récentes', '1 copie de la pièce d’identité', '1 CV']
 options = '\n'.join(
     f'              <optgroup label="{CATEGORIES[c]}">\n' +
     '\n'.join(f'                <option value="{m["slug"]}">{m["titre"]}</option>' for m in BY_CAT[c]) +
@@ -768,7 +768,14 @@ options = '\n'.join(
 contact = page_hero('Contact et inscription : votre école hôtelière à Abidjan', 'Contact', 'images/audit-nuit.jpg') + f'''
 <section>
   <div class="container contact-grid">
-    <aside class="info-box">
+    <aside class="contact-side">
+      <div class="info-box docs-box">
+        <h3><svg class="ic"><use href="#i-award"/></svg>Pièces à joindre au dossier</h3>
+        <ul class="docs-list">
+{chr(10).join(f'          <li><svg class="ic"><use href="#i-check"/></svg>{d}</li>' for d in PIECES_DOSSIER)}
+        </ul>
+      </div>
+      <div class="info-box">
       <h3>Parlons de votre projet</h3>
       <p>Une question sur nos formations ou une inscription ? Notre équipe vous répond sous 48 h.</p>
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-pin"/></svg></div><div><strong>Adresse</strong><span>Angré Star 14, Cocody<br>Abidjan, Côte d’Ivoire<br>Code de localisation : <a href="{MAPS_OUVRIR}" target="_blank" rel="noopener">{PLUS_CODE}</a></span></div></div>
@@ -777,6 +784,7 @@ contact = page_hero('Contact et inscription : votre école hôtelière à Abidja
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-mail"/></svg></div><div><strong>E-mail</strong><span>contact@echoresta.ci</span></div></div>
       <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-clock"/></svg></div><div><strong>Horaires</strong><span>Lundi – Vendredi : 8h00 – 17h00</span></div></div>
       <a href="rendez-vous.html" class="btn btn-ghost info-rdv">Prendre rendez-vous</a>
+      </div>
     </aside>
 
     <div class="form" id="formulaire" style="scroll-margin-top:140px">
