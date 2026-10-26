@@ -1100,8 +1100,8 @@ index = [{'t': 'Accueil', 'u': 'index.html', 'd': 'Présentation de l’école E
          {'t': 'Prendre rendez-vous', 'u': 'rendez-vous.html', 'd': 'Entretien d’orientation, inscription ou visite de l’école'},
          {'t': 'Inscription', 'u': 'inscription.html', 'd': 'Fiche d’inscription en ligne et pièces à joindre au dossier'},
          {'t': 'Recrutement', 'u': 'recrutement.html', 'd': 'Espace client et espace candidat'},
-         {'t': 'Recherche du personnel', 'u': 'espace_client.html', 'd': 'Fiche de besoin de personnel : hôtellerie, restauration, maison', 'k': 'recruter employeur placement serveur cuisinier réceptionniste nounou ménage chauffeur majordome'},
-         {'t': 'Recherche un emploi', 'u': 'espace_candidat.html', 'd': 'Fiche d’inscription candidat : hôtellerie, restauration, maison', 'k': 'emploi travail candidature cv serveur cuisinier nounou ménage chauffeur'}]
+         {'t': 'Recherche du personnel', 'u': 'espace_client.html', 'd': 'Fiche de besoin de personnel en hôtellerie-restauration', 'k': 'recruter employeur placement serveur cuisinier réceptionniste gouvernante valet barman'},
+         {'t': 'Recherche un emploi', 'u': 'espace_candidat.html', 'd': 'Fiche d’inscription candidat en hôtellerie-restauration', 'k': 'emploi travail candidature cv serveur cuisinier réceptionniste gouvernante valet barman'}]
 for m in METIERS:
     kw = ' '.join([CATEGORIES[m['cat']], *(t for t, _ in m['modules']), *m['carriere'], *m['lieux']])
     index.append({'t': m['titre'], 'u': url(m), 'd': m['resume'], 'k': kw})

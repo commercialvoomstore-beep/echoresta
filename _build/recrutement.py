@@ -176,23 +176,13 @@ PROFILS = ['Serveur / Serveuse', 'Hôtesse d’accueil', 'Maître d’hôtel', '
 A = 'nuit'
 PANNEAU = ('fiche tw-overflow-hidden tw-rounded-2xl tw-border-0 tw-border-t-4 tw-border-solid {bord} tw-bg-white '
            'tw-shadow-[0_1px_3px_rgba(15,23,42,.08),0_20px_50px_-20px_rgba(15,23,42,.25)] tw-ring-1 tw-ring-slate-200')
-TACHES = [('Hôtellerie & restauration', ['Service en salle', 'Accueil / Hôtesse', 'Réception', 'Audit de nuit', 'Bar', 'Cuisine de restaurant',
-                                         'Étages / chambres', 'Gouvernante d’hôtel', 'Plonge']),
-          ('Cuisine', ['Cuisine ivoirienne authentique', 'Cuisine africaine', 'Cuisine européenne', 'Cuisine européenne élaborée',
-                       'Cuisine arabe', 'Cuisine asiatique']),
-          ('Nounou (garde d’enfants)', ['Nounou 0 à 2 ans', 'Nounou 2 à 5 ans', 'Nounou 5 à 10 ans', 'Nounou + 10 ans', 'Suivi scolaire',
-                                        'Autres (à préciser)']),
-          ('Ménage', ['Nettoyage des surfaces', 'Nettoyage des vitres', 'Entretien des chambres', 'Entretien des salles de bain',
-                      'Lessive à la main', 'Lessive à la machine', 'Lessive à la main et à la machine', 'Repassage', 'Rangement']),
-          ('Auxiliaire de vie', ['Personnes âgées', 'Malades à domicile', 'Adulte handicapé', 'Enfant handicapé']),
-          ('Chauffeur', ['Chauffeur de famille', 'Chauffeur personnel']),
-          ('Gestion globale', ['Majordome', 'Gouvernante'])]
-TACHES_HTML = ''.join(groupe(f'ec-t{n}', titre, valeurs, A, cle=f'Tâches – {titre}', grille=True) for n, (titre, valeurs) in enumerate(TACHES, 1))
+# Uniquement les métiers enseignés par l'école (liste des formations)
+METIERS_FORMES = [m['titre'] for m in METIERS]
 
 client_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec">
   <div class="tw-mx-auto tw-max-w-4xl">
 {entete('Recherche du personnel · Employeurs', 'Fiche de besoin de personnel',
-        'Hôtels, restaurants, résidences, entreprises ou particuliers : décrivez le profil recherché, les tâches et les conditions de travail. Notre équipe vous propose des candidats formés et vous recontacte rapidement.', A)}
+        'Hôtels, restaurants, résidences et particuliers : décrivez le profil recherché et les conditions de travail. Notre équipe vous propose des candidats formés aux métiers de l’hôtellerie et de la restauration.', A)}
     <form id="form-client" class="{PANNEAU.format(bord='tw-border-nuit-800')}" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" data-sujet="Besoin de personnel" novalidate>
       <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 {bloc(1, 'Identification du besoin', 'Le profil de la ou des personnes que vous recherchez.',
@@ -203,9 +193,8 @@ client_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec">
       + groupe('ec-sachant', 'Sachant', ['Lire', 'Écrire', 'Peu importe'], A, requis=True)
       + groupe('ec-niveau', 'Ayant le niveau', ['Élémentaire', 'Secondaire', 'Supérieur', 'Peu importe', 'Autre'], A, type_='radio', requis=True)
       + si('ec-niveau=Autre', champ('ec-niveau-autre', 'Précisez la formation', A, large=True, attrs='placeholder="Ex. CAP cuisine, BTS hôtellerie…"'))
-      + intertitre('Pour exécuter les tâches suivantes', 'Cochez toutes les tâches attendues.')
-      + TACHES_HTML
-      + zone_texte('ec-taches-autres', 'Autre(s) tâche(s)', A)
+      + intertitre('Pour exécuter les tâches suivantes', 'Les métiers enseignés à l’école EchoResta : cochez ceux qui correspondent à votre besoin.')
+      + groupe('ec-taches', 'Métier(s) recherché(s)', METIERS_FORMES, A, requis=True, grille=True)
       + intertitre('Niveau d’aptitude recherché')
       + groupe('ec-echelle', 'Échelle de compétence (de 1 à 10)', [f'{n:02d}' for n in range(1, 11)], A, type_='radio', requis=True)
       + groupe('ec-maitrise', 'Niveau de maîtrise', ['Débutant', 'Intermédiaire', 'Expert'], A, type_='radio', requis=True)
@@ -248,17 +237,13 @@ client_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec">
 </section>
 '''
 page('espace_client.html', *seo.PAGES['espace_client.html'],
-     page_hero('Recherche du personnel : recrutez en hôtellerie, restauration et services', '<a href="recrutement.html">Recrutement</a><span>/</span>Recherche du personnel',
-               'images/directeur-hotel.jpg', 'Une fiche simple pour nous décrire le profil, les tâches et les conditions de travail du personnel recherché.') + client_form,
+     page_hero('Recherche du personnel : recrutez en hôtellerie et restauration', '<a href="recrutement.html">Recrutement</a><span>/</span>Recherche du personnel',
+               'images/directeur-hotel.jpg', 'Une fiche simple pour nous décrire le profil et les conditions de travail du personnel recherché.') + client_form,
      'recrutement.html', head_extra=TAILWIND,
      schemas=[seo.fil_ariane(('Accueil', ''), ('Recrutement', 'recrutement.html'), ('Recherche du personnel', 'espace_client.html'))])
 
 # ================================================================ Espace candidat : fiche d'inscription candidat
 A = 'or'
-EMPLOIS = ['Serveur / Serveuse', 'Barman / Barmaid', 'Réceptionniste', 'Femme / Valet de chambre', 'Cuisinier(ère) de restaurant',
-           'Cuisine africaine', 'Cuisine européenne', 'Cuisine arabe', 'Cuisine asiatique', 'Nettoyage des surfaces', 'Lessive',
-           'Repassage', 'Chauffeur familial', 'Chauffeur coursier', 'Nounou 0 à 2 ans', 'Nounou 2 à 5 ans', 'Nounou 5 à 10 ans',
-           'Nounou + 10 ans', 'Majordome', 'Gouvernante à domicile', 'Personnes âgées', 'Enfant handicapé', 'Malades à domicile', 'Autres']
 SALAIRES = ['Moins de 60 000', '60 000 – 80 000', '80 000 – 100 000', '100 000 – 150 000', '150 000 – 200 000', '200 000 – 300 000',
             'Plus de 300 000', 'À négocier']
 
@@ -279,7 +264,7 @@ def fichier(id_, etiquette, aide, accept, multiple=False, requis=False):
 candidat_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec ec-or">
   <div class="tw-mx-auto tw-max-w-4xl">
 {entete('Recherche un emploi · Candidats', 'Fiche d’inscription candidat',
-        'Hôtellerie, restauration, cuisine, ménage, garde d’enfants, chauffeur : inscrivez-vous pour être mis en relation avec des hôtels, restaurants et familles qui recrutent.', A)}
+        'Valet, gouvernante, réceptionniste, serveur, cuisinier, barman… : inscrivez-vous pour être mis en relation avec des hôtels et restaurants qui recrutent.', A)}
     <form id="form-candidat" class="{PANNEAU.format(bord='tw-border-amber-500')}" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" data-sujet="Candidature emploi" novalidate>
       <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 {bloc(1, 'Identification', 'Vos coordonnées, votre parcours et vos expériences.',
@@ -297,9 +282,8 @@ candidat_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec 
       + whatsapp('cd-tel', 'Téléphone 1', A)
       + whatsapp('cd-whatsapp', 'Téléphone 2 (WhatsApp)', A, requis=False)
       + champ('cd-email', 'E-mail', A, False, 'email', large=True, attrs='autocomplete="email"'), A)}
-{bloc(2, 'Emploi recherché', 'Cochez tous les emplois qui vous intéressent.',
-      groupe('cd-emploi', 'Emploi recherché', EMPLOIS, A, requis=True, grille=True)
-      + champ('cd-emploi-autre', 'Autre emploi ou précision', A, large=True, attrs='placeholder="Ex. chef de rang, night auditor, pâtissier…"'), A)}
+{bloc(2, 'Emploi recherché', 'Les métiers enseignés à l’école EchoResta : cochez ceux qui vous intéressent.',
+      groupe('cd-emploi', 'Emploi recherché', METIERS_FORMES, A, requis=True, grille=True), A)}
 {bloc(3, 'Conditions de travail', 'Vos attentes et vos documents.',
       groupe('cd-temps', 'Conditions de travail', ['À plein temps', 'À temps partiel'], A, type_='radio', requis=True)
       + groupe('cd-loge', 'Logé ?', ['Oui', 'Non', 'Peu importe'], A, type_='radio', requis=True)
@@ -319,8 +303,8 @@ candidat_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec 
 </section>
 '''
 page('espace_candidat.html', *seo.PAGES['espace_candidat.html'],
-     page_hero('Recherche un emploi : trouvez un poste en hôtellerie, restauration et services', '<a href="recrutement.html">Recrutement</a><span>/</span>Recherche un emploi',
-               'images/serveur-hotesse.jpg', 'Inscrivez-vous en quelques minutes et soyez mis en relation avec des hôtels, restaurants et familles qui recrutent.') + candidat_form,
+     page_hero('Recherche un emploi : trouvez un poste en hôtellerie et restauration', '<a href="recrutement.html">Recrutement</a><span>/</span>Recherche un emploi',
+               'images/serveur-hotesse.jpg', 'Inscrivez-vous en quelques minutes et soyez mis en relation avec des hôtels et restaurants qui recrutent.') + candidat_form,
      'recrutement.html', head_extra=TAILWIND,
      schemas=[seo.fil_ariane(('Accueil', ''), ('Recrutement', 'recrutement.html'), ('Recherche un emploi', 'espace_candidat.html'))])
 
