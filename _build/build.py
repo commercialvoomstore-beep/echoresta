@@ -1123,7 +1123,7 @@ def images_page(f):
     code = (OUT / f).read_text()
     vues = []
     for src in _re.findall(r'<img [^>]*src="(images/[^"]+)"', code) + _re.findall(r"background-image:url\('(images/[^']+)'\)", code):
-        if src not in vues and not src.endswith(('logo.jpg', 'logo.png')):
+        if src not in vues and not src.startswith('images/logo'):
             vues.append(src)
     return vues
 
