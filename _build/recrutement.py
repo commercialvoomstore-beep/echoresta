@@ -184,8 +184,35 @@ PROFILS = ['Serveur / Serveuse', 'Hôtesse d’accueil', 'Maître d’hôtel', '
 A = 'nuit'
 PANNEAU = ('fiche tw-overflow-hidden tw-rounded-2xl tw-border-0 tw-border-t-4 tw-border-solid {bord} tw-bg-white '
            'tw-shadow-[0_1px_3px_rgba(15,23,42,.08),0_20px_50px_-20px_rgba(15,23,42,.25)] tw-ring-1 tw-ring-slate-200')
-# Uniquement les métiers enseignés par l'école (liste des formations)
-METIERS_FORMES = [m['titre'] for m in METIERS]
+# Tous les services de l'hôtellerie et de la restauration, avec leurs métiers
+SERVICES = [
+    ('Réception & hébergement', ['Réceptionniste', 'Audit de nuit / Night auditor', 'Chef de réception', 'Concierge',
+                                 'Agent de réservation', 'Standardiste', 'Bagagiste / Groom', 'Voiturier', 'Accueil bilingue (anglais)']),
+    ('Étages & lingerie', ['Valet / Femme de chambre', 'Gouvernante', 'Gouvernante générale', 'Lingère / Blanchisserie',
+                           'Agent d’entretien (parties communes)']),
+    ('Restaurant & salle', ['Serveur / Serveuse', 'Hôtesse d’accueil', 'Commis de salle', 'Chef de rang', 'Maître d’hôtel',
+                            'Sommelier', 'Room service', 'Agent de banquet / Traiteur']),
+    ('Bar', ['Barman / Barmaid', 'Mixologue', 'Chef barman', 'Barista']),
+    ('Cuisine', ['Cuisinier', 'Commis de cuisine', 'Chef de partie', 'Sous-chef', 'Chef de cuisine', 'Pâtissier',
+                 'Boulanger', 'Plongeur', 'Économe / Magasinier']),
+    ('Direction & gestion', ['Directeur d’hôtel', 'Directeur de restaurant', 'Responsable hébergement', 'Responsable restauration (F&B)',
+                             'Commercial hôtelier', 'Assistant(e) de direction', 'Comptable / Contrôleur hôtelier']),
+    ('Loisirs & services annexes', ['Animateur / Événementiel', 'Spa & bien-être', 'Technicien de maintenance', 'Agent de sécurité',
+                                    'Guide / Accueil touristique']),
+]
+
+
+def groupe_services(nom, etiquette, accent, requis=True):
+    """Un seul choix obligatoire (au moins une case), présenté service par service."""
+    attr = f' data-requis="{etiquette}"' if requis else ''
+    services = ''.join(
+        f'<div class="tw-mt-5 first:tw-mt-0"><p class="tw-mb-2.5 tw-mt-0 tw-text-xs tw-font-bold tw-uppercase tw-tracking-[0.14em] '
+        f'{"tw-text-nuit-700" if accent == "nuit" else "tw-text-amber-700"}">{service}</p>'
+        f'<div class="tw-grid tw-grid-cols-2 tw-gap-2 lg:tw-grid-cols-3">{"".join(case(nom, v, accent) for v in postes)}</div></div>'
+        for service, postes in SERVICES)
+    return (f'<div class="sm:tw-col-span-2" data-groupe="{nom}" data-label="{etiquette}"{attr}>'
+            f'<span class="{LABEL}">{etiquette}{" *" if requis else ""}</span>{services}'
+            f'<p class="tw-mt-3 tw-hidden tw-text-sm tw-font-semibold tw-text-red-700" data-erreur>Cochez au moins un métier.</p></div>')
 
 client_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec">
   <div class="tw-mx-auto tw-max-w-4xl">
@@ -201,8 +228,8 @@ client_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec">
       + groupe('ec-sachant', 'Sachant', ['Lire', 'Écrire', 'Peu importe'], A, requis=True)
       + groupe('ec-niveau', 'Ayant le niveau', ['Élémentaire', 'Secondaire', 'Supérieur', 'Peu importe', 'Autre'], A, type_='radio', requis=True)
       + si('ec-niveau=Autre', champ('ec-niveau-autre', 'Précisez la formation', A, large=True, attrs='placeholder="Ex. CAP cuisine, BTS hôtellerie…"'))
-      + intertitre('Pour exécuter les tâches suivantes', 'Les métiers enseignés à l’école EchoResta : cochez ceux qui correspondent à votre besoin.')
-      + groupe('ec-taches', 'Métier(s) recherché(s)', METIERS_FORMES, A, requis=True, grille=True)
+      + intertitre('Pour exécuter les tâches suivantes', 'Tous les services de l’hôtellerie et de la restauration : cochez les métiers qui correspondent à votre besoin.')
+      + groupe_services('ec-taches', 'Métier(s) recherché(s)', A)
       + intertitre('Niveau d’aptitude recherché')
       + groupe('ec-echelle', 'Échelle de compétence (de 1 à 10)', [f'{n:02d}' for n in range(1, 11)], A, type_='radio', requis=True)
       + groupe('ec-maitrise', 'Niveau de maîtrise', ['Débutant', 'Intermédiaire', 'Expert'], A, type_='radio', requis=True)
@@ -290,8 +317,8 @@ candidat_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec 
       + whatsapp('cd-tel', 'Téléphone 1', A)
       + whatsapp('cd-whatsapp', 'Téléphone 2 (WhatsApp)', A, requis=False)
       + champ('cd-email', 'E-mail', A, False, 'email', large=True, attrs='autocomplete="email"'), A)}
-{bloc(2, 'Emploi recherché', 'Les métiers enseignés à l’école EchoResta : cochez ceux qui vous intéressent.',
-      groupe('cd-emploi', 'Emploi recherché', METIERS_FORMES, A, requis=True, grille=True), A)}
+{bloc(2, 'Emploi recherché', 'Tous les services de l’hôtellerie et de la restauration : cochez les métiers qui vous intéressent.',
+      groupe_services('cd-emploi', 'Emploi recherché', A), A)}
 {bloc(3, 'Conditions de travail', 'Vos attentes et vos documents.',
       groupe('cd-temps', 'Conditions de travail', ['À plein temps', 'À temps partiel'], A, type_='radio', requis=True)
       + groupe('cd-loge', 'Logé ?', ['Oui', 'Non', 'Peu importe'], A, type_='radio', requis=True)
