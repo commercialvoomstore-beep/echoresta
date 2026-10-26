@@ -28,13 +28,24 @@ def puce(nom, valeur, etiquette, accent, type_='checkbox', icone=''):
             f'peer-focus-visible:tw-ring-slate-400/30 {actif}">{ic}{etiquette}</span></label>')
 
 
-def groupe(nom, etiquette, valeurs, accent, type_='checkbox', requis=False, icones=None):
+def case(nom, valeur, accent, type_='checkbox'):
+    """Case à cocher visible, disposée en grille (listes longues : âges, tâches)."""
+    actif = ('has-[:checked]:tw-border-nuit-700 has-[:checked]:tw-bg-nuit-50 has-[:checked]:tw-text-nuit-900 tw-accent-nuit-800'
+             if accent == 'nuit' else 'has-[:checked]:tw-border-amber-500 has-[:checked]:tw-bg-amber-50 tw-accent-amber-600')
+    return (f'<label class="tw-flex tw-cursor-pointer tw-items-center tw-gap-3 tw-rounded-lg tw-border tw-border-solid tw-border-slate-200 '
+            f'tw-bg-white tw-px-3 tw-py-2.5 tw-text-[13.5px] tw-leading-snug tw-text-slate-700 tw-transition hover:tw-border-slate-400 sm:tw-px-3.5 sm:tw-text-sm {actif}">'
+            f'<input type="{type_}" name="{nom}" value="{valeur}" class="tw-m-0 tw-h-4 tw-w-4 tw-shrink-0">{valeur}</label>')
+
+
+def groupe(nom, etiquette, valeurs, accent, type_='checkbox', requis=False, icones=None, cle=None, grille=False):
     icones = icones or {}
-    puces = ''.join(puce(nom, v, v, accent, type_, icones.get(v, '')) for v in valeurs)
+    puces = (''.join(case(nom, v, accent, type_) for v in valeurs) if grille
+             else ''.join(puce(nom, v, v, accent, type_, icones.get(v, '')) for v in valeurs))
+    disposition = 'tw-grid tw-grid-cols-2 tw-gap-2 lg:tw-grid-cols-3' if grille else 'tw-flex tw-flex-wrap tw-gap-2'
     attr = f' data-requis="{etiquette}"' if requis else ''
-    return (f'<div class="sm:tw-col-span-2" data-groupe="{nom}" data-label="{etiquette}"{attr}>'
+    return (f'<div class="sm:tw-col-span-2" data-groupe="{nom}" data-label="{cle or etiquette}"{attr}>'
             f'<span class="{LABEL}">{etiquette}{" *" if requis else ""}</span>'
-            f'<div class="tw-flex tw-flex-wrap tw-gap-2">{puces}</div>'
+            f'<div class="{disposition}">{puces}</div>'
             f'<p class="tw-mt-2 tw-hidden tw-text-sm tw-font-semibold tw-text-red-700" data-erreur>Choisissez au moins une option.</p></div>')
 
 
@@ -62,12 +73,12 @@ def zone_texte(id_, etiquette, accent, placeholder='', requis=False):
             f'placeholder="{placeholder}"{" required" if requis else ""}></textarea></div>')
 
 
-def whatsapp(id_, etiquette, accent):
+def whatsapp(id_, etiquette, accent, requis=True):
     """Téléphone avec indicatif à drapeau (composant du site) et champ Tailwind."""
-    return (f'<div><span class="{LABEL}" id="{id_}-label">{etiquette} *</span>'
+    return (f'<div><span class="{LABEL}" id="{id_}-label">{etiquette}{" *" if requis else ""}</span>'
             f'<div class="tel-field tw-tel tw-tel-{accent}">'
             f'{liste_drapeaux(id_ + "_ind", id_ + "-label", "indicatif", requis=False, defaut="+225")}'
-            f'<input id="{id_}" name="{id_}" type="tel" inputmode="tel" required autocomplete="tel-national" placeholder="07 00 00 00 00" '
+            f'<input id="{id_}" name="{id_}" type="tel" inputmode="tel"{" required" if requis else ""} autocomplete="tel-national" placeholder="07 00 00 00 00" '
             f'class="{classes_champ(accent)} tw-rounded-l-none" aria-labelledby="{id_}-label" data-label="{etiquette}" data-indicatif="{id_}_ind"></div></div>')
 
 
@@ -81,28 +92,35 @@ def salaire(id_, etiquette, accent, periodes):
             + ''.join(f'<option>{p}</option>' for p in periodes) + '</select></div></div>')
 
 
+def montant(id_, etiquette, accent):
+    return (f'<div><label class="{LABEL}" for="{id_}">{etiquette}</label><div class="tw-relative">'
+            f'<input id="{id_}" name="{id_}" type="text" inputmode="numeric" placeholder="Ex. 100 000" '
+            f'class="{classes_champ(accent)} tw-pr-20 tw-tabular-nums" data-label="{etiquette}" data-fcfa>'
+            f'<span class="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-4 tw-flex tw-items-center tw-text-sm tw-font-bold tw-text-slate-500">FCFA</span></div></div>')
+
+
+def intertitre(texte, aide=''):
+    a = f'<p class="tw-mb-0 tw-mt-1 tw-text-sm tw-text-slate-500">{aide}</p>' if aide else ''
+    return (f'<div class="sm:tw-col-span-2 tw-mt-3 tw-border-0 tw-border-t tw-border-dashed tw-border-slate-200 tw-pt-7">'
+            f'<h3 class="tw-m-0 tw-font-serif tw-text-lg tw-text-slate-900">{texte}</h3>{a}</div>')
+
+
+def si(condition, contenu):
+    """Champs affichés seulement quand le choix « nom=valeur » est coché (voir main.js)."""
+    return (f'<div class="sm:tw-col-span-2 tw-hidden tw-grid tw-grid-cols-1 tw-gap-x-6 tw-gap-y-5 tw-rounded-xl tw-bg-slate-50 tw-p-5 sm:tw-grid-cols-2" '
+            f'data-si="{condition}">{contenu}</div>')
+
+
 def bloc(num, titre, sous_titre, contenu, accent):
-    if accent == 'or':
-        filet = ' tw-border-0 tw-border-t tw-border-solid tw-border-slate-200' if num > 1 else ''
-        return f'''        <div class="tw-px-5 tw-py-8 sm:tw-px-10 sm:tw-py-10{filet}">
+    chiffre = 'tw-text-red-700' if accent == 'nuit' else 'tw-text-amber-600'
+    filet = ' tw-border-0 tw-border-t tw-border-solid tw-border-slate-200' if num > 1 else ''
+    return f'''        <div class="tw-px-5 tw-py-8 sm:tw-px-10 sm:tw-py-10{filet}">
           <div class="tw-mb-7 tw-flex tw-items-baseline tw-gap-4 sm:tw-gap-5">
-            <span class="tw-font-serif tw-text-2xl tw-font-bold tw-text-amber-600 sm:tw-text-3xl">{num:02d}</span>
+            <span class="tw-font-serif tw-text-2xl tw-font-bold {chiffre} sm:tw-text-3xl">{num:02d}</span>
             <div><h2 class="tw-m-0 tw-font-serif tw-text-xl tw-leading-snug tw-text-slate-900 sm:tw-text-2xl">{titre}</h2>
             <p class="tw-mb-0 tw-mt-1 tw-text-sm tw-text-slate-500">{sous_titre}</p></div>
           </div>
           <div class="tw-grid tw-grid-cols-1 tw-gap-x-6 tw-gap-y-5 sm:tw-grid-cols-2">
-{contenu}
-          </div>
-        </div>'''
-    pastille = 'tw-bg-nuit-800 tw-text-white' if accent == 'nuit' else 'tw-bg-amber-500 tw-text-white'
-    fond = 'tw-border-slate-200 tw-bg-white' if accent == 'nuit' else 'tw-border-amber-200/70 tw-bg-white'
-    return f'''        <div class="tw-rounded-2xl tw-border tw-border-solid {fond} tw-p-5 tw-shadow-sm sm:tw-p-8">
-          <div class="tw-mb-6 tw-flex tw-items-start tw-gap-4">
-            <span class="tw-flex tw-h-10 tw-w-10 tw-shrink-0 tw-items-center tw-justify-center tw-rounded-full {pastille} tw-font-serif tw-text-lg tw-font-bold">{num}</span>
-            <div><h2 class="tw-m-0 tw-font-serif tw-text-xl tw-leading-snug tw-text-slate-900 sm:tw-text-2xl">{titre}</h2>
-            <p class="tw-mt-1 tw-text-sm tw-text-slate-500">{sous_titre}</p></div>
-          </div>
-          <div class="tw-grid tw-grid-cols-1 tw-gap-5 sm:tw-grid-cols-2">
 {contenu}
           </div>
         </div>'''
@@ -124,7 +142,7 @@ def bouton(texte, accent):
 
 def pied_formulaire(accent, consentement, bouton_txt, note):
     coche = 'tw-accent-nuit-800' if accent == 'nuit' else 'tw-accent-amber-600'
-    cadre = ' tw-border-0 tw-border-t tw-border-solid tw-border-slate-200 tw-bg-slate-50/70 tw-px-5 tw-py-8 sm:tw-px-10' if accent == 'or' else ''
+    cadre = ' tw-border-0 tw-border-t tw-border-solid tw-border-slate-200 tw-bg-slate-50/70 tw-px-5 tw-py-8 sm:tw-px-10'
     return f'''        <div class="tw-grid tw-gap-4{cadre}">
           <label class="tw-flex tw-cursor-pointer tw-items-start tw-gap-3 tw-text-sm tw-text-slate-600"><input type="checkbox" required class="tw-mt-1 tw-h-4 tw-w-4 {coche}"> {consentement}</label>
           {bouton(bouton_txt, accent)}
@@ -156,35 +174,72 @@ PROFILS = ['Serveur / Serveuse', 'Hôtesse d’accueil', 'Maître d’hôtel', '
 
 # ================================================================ Espace client : fiche de besoin de personnel
 A = 'nuit'
-client_form = f'''<section class="tw-bg-nuit-50 tw-px-4 tw-py-14 sm:tw-py-20 ec">
+PANNEAU = ('fiche tw-overflow-hidden tw-rounded-2xl tw-border-0 tw-border-t-4 tw-border-solid {bord} tw-bg-white '
+           'tw-shadow-[0_1px_3px_rgba(15,23,42,.08),0_20px_50px_-20px_rgba(15,23,42,.25)] tw-ring-1 tw-ring-slate-200')
+TACHES = [('Hôtellerie & restauration', ['Service en salle', 'Accueil / Hôtesse', 'Réception', 'Audit de nuit', 'Bar', 'Cuisine de restaurant',
+                                         'Étages / chambres', 'Gouvernante d’hôtel', 'Plonge']),
+          ('Cuisine', ['Cuisine ivoirienne authentique', 'Cuisine africaine', 'Cuisine européenne', 'Cuisine européenne élaborée',
+                       'Cuisine arabe', 'Cuisine asiatique']),
+          ('Nounou (garde d’enfants)', ['Nounou 0 à 2 ans', 'Nounou 2 à 5 ans', 'Nounou 5 à 10 ans', 'Nounou + 10 ans', 'Suivi scolaire',
+                                        'Autres (à préciser)']),
+          ('Ménage', ['Nettoyage des surfaces', 'Nettoyage des vitres', 'Entretien des chambres', 'Entretien des salles de bain',
+                      'Lessive à la main', 'Lessive à la machine', 'Lessive à la main et à la machine', 'Repassage', 'Rangement']),
+          ('Auxiliaire de vie', ['Personnes âgées', 'Malades à domicile', 'Adulte handicapé', 'Enfant handicapé']),
+          ('Chauffeur', ['Chauffeur de famille', 'Chauffeur personnel']),
+          ('Gestion globale', ['Majordome', 'Gouvernante'])]
+TACHES_HTML = ''.join(groupe(f'ec-t{n}', titre, valeurs, A, cle=f'Tâches – {titre}', grille=True) for n, (titre, valeurs) in enumerate(TACHES, 1))
+
+client_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec">
   <div class="tw-mx-auto tw-max-w-4xl">
-{entete('Espace client · Employeurs', 'Fiche de besoin de personnel en hôtellerie-restauration',
-        'Hôtels, restaurants, lounges, traiteurs : décrivez le personnel dont vous avez besoin. Notre équipe étudie votre demande et vous propose des profils formés aux métiers de l’hôtellerie et de la restauration.', A)}
-    <form id="form-client" class="fiche tw-grid tw-gap-6" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" data-sujet="Besoin de personnel" novalidate>
+{entete('Recherche du personnel · Employeurs', 'Fiche de besoin de personnel',
+        'Hôtels, restaurants, résidences, entreprises ou particuliers : décrivez le profil recherché, les tâches et les conditions de travail. Notre équipe vous propose des candidats formés et vous recontacte rapidement.', A)}
+    <form id="form-client" class="{PANNEAU.format(bord='tw-border-nuit-800')}" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" data-sujet="Besoin de personnel" novalidate>
       <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-{bloc(1, 'Identification du besoin', 'Combien de personnes et quels profils recherchez-vous ?',
-      champ('ec-nombre', 'Nombre de personnes', A, True, 'number', attrs='min="1" max="200" placeholder="Ex. 3"')
-      + liste('ec-debut', 'Prise de poste souhaitée', ['Dès que possible', 'Sous 2 semaines', 'Sous 1 mois', 'Date à convenir'], A)
-      + groupe('ec-profils', 'Profil(s) recherché(s)', PROFILS, A, requis=True)
-      + champ('ec-profil-autre', 'Autre profil (précisez)', A, large=True, attrs='placeholder="Ex. Sommelier, chef de rang…"')
-      + liste('ec-experience', 'Expérience minimale', ['Débutant accepté', '1 an', '2 à 3 ans', '5 ans et plus'], A)
-      + groupe('ec-langues', 'Compétences linguistiques', ['Français', 'Anglais', 'Espagnol', 'Arabe', 'Autre langue'], A)
-      + zone_texte('ec-competences', 'Compétences techniques attendues', A, 'Ex. hygiène HACCP, logiciel hôtelier, cocktails, service au guéridon…'), A)}
-{bloc(2, 'Conditions de travail', 'Contrat, horaires et rémunération proposés.',
-      groupe('ec-contrat', 'Type de contrat', ['CDI', 'CDD', 'Extra (mission ponctuelle)', 'Stage'], A, type_='radio', requis=True)
-      + champ('ec-duree', 'Durée de la mission ou du contrat', A, large=True, attrs='placeholder="Ex. 3 mois, un week-end, un événement…"')
+{bloc(1, 'Identification du besoin', 'Le profil de la ou des personnes que vous recherchez.',
+      liste('ec-nombre', 'Je cherche', [f'{n} personne' + ('s' if n > 1 else '') for n in range(1, 11)] + ['Plus de 10 personnes'], A, True)
+      + liste('ec-genre', 'Genre', ['Homme', 'Femme', 'Peu importe'], A, True)
+      + groupe('ec-age', 'Tranche d’âge', ['18 à 25 ans', '25 à 30 ans', '30 à 35 ans', '35 à 40 ans', '40 à 45 ans', '45 à 50 ans',
+                                           '50 ans et +', 'Peu importe l’âge'], A, type_='radio', requis=True, grille=True)
+      + groupe('ec-sachant', 'Sachant', ['Lire', 'Écrire', 'Peu importe'], A, requis=True)
+      + groupe('ec-niveau', 'Ayant le niveau', ['Élémentaire', 'Secondaire', 'Supérieur', 'Peu importe', 'Autre'], A, type_='radio', requis=True)
+      + si('ec-niveau=Autre', champ('ec-niveau-autre', 'Précisez la formation', A, large=True, attrs='placeholder="Ex. CAP cuisine, BTS hôtellerie…"'))
+      + intertitre('Pour exécuter les tâches suivantes', 'Cochez toutes les tâches attendues.')
+      + TACHES_HTML
+      + zone_texte('ec-taches-autres', 'Autre(s) tâche(s)', A)
+      + intertitre('Niveau d’aptitude recherché')
+      + groupe('ec-echelle', 'Échelle de compétence (de 1 à 10)', [f'{n:02d}' for n in range(1, 11)], A, type_='radio', requis=True)
+      + groupe('ec-maitrise', 'Niveau de maîtrise', ['Débutant', 'Intermédiaire', 'Expert'], A, type_='radio', requis=True)
+      + intertitre('Autres indications')
+      + zone_texte('ec-details', 'Détails', A, 'Langues parlées, qualités attendues, expérience souhaitée…'), A)}
+{bloc(2, 'Conditions de travail de l’employé', 'Logement, horaires, début de la mission et salaire.',
+      groupe('ec-loge', 'Logé sur le lieu de travail ?', ['Oui', 'Non', 'Peu importe'], A, type_='radio', requis=True)
+      + si('ec-loge=Oui', champ('ec-sortie', 'Heure de sortie', A, type_='time') + champ('ec-reprise', 'Heure de reprise', A, type_='time'))
+      + groupe('ec-temps', 'Temps de travail', ['Plein temps', 'Temps partiel'], A, type_='radio', requis=True)
+      + si('ec-temps=Temps partiel', champ('ec-debut-h', 'Heure de début', A, type_='time') + champ('ec-fin-h', 'Heure de fin', A, type_='time'))
+      + groupe('ec-contrat', 'Type de contrat', ['CDI', 'CDD', 'Extra (mission ponctuelle)', 'Stage'], A, type_='radio')
       + groupe('ec-horaires', 'Horaires', ['Continus', 'En coupure', 'Travail de nuit', 'Week-ends et jours fériés'], A)
-      + salaire('ec-salaire', 'Salaire proposé', A, ['par mois', 'par jour', 'par prestation', 'à négocier'])
-      + groupe('ec-avantages', 'Avantages', ['Logement', 'Repas', 'Transport', 'Primes'], A), A)}
-{bloc(3, 'Identité de l’établissement', 'Pour que notre équipe puisse vous recontacter.',
-      champ('ec-etablissement', 'Nom de l’hôtel ou du restaurant', A, True, large=True, attrs='autocomplete="organization"')
-      + liste('ec-type', 'Type d’établissement', ['Hôtel', 'Restaurant', 'Bar / Lounge', 'Traiteur / Événementiel', 'Résidence hôtelière', 'Autre'], A, True)
-      + champ('ec-contact', 'Nom du contact', A, True, attrs='autocomplete="name"')
-      + champ('ec-fonction', 'Fonction', A, attrs='placeholder="Ex. Directeur, DRH, gérant…"')
-      + whatsapp('ec-whatsapp', 'Téléphone WhatsApp', A)
-      + champ('ec-email', 'E-mail', A, True, 'email', attrs='autocomplete="email"')
-      + liste('ec-zone', 'Zone géographique', ZONES, A, True)
-      + champ('ec-adresse', 'Adresse ou quartier', A, attrs='placeholder="Ex. Riviera 3, zone 4…"'), A)}
+      + liste('ec-debut', 'Début de la mission', ['Immédiatement', 'Dans 1 à 3 jours', 'Dans 1 semaine', 'Dans 2 semaines', 'Dans 1 mois',
+                                                  'Date à convenir'], A, True)
+      + '<div class="tw-hidden sm:tw-block"></div>'
+      + montant('ec-salaire-min', 'Salaire prévisionnel minimum', A)
+      + montant('ec-salaire-max', 'Salaire prévisionnel maximum', A)
+      + groupe('ec-avantages', 'Avantages', ['Repas', 'Transport', 'Primes'], A)
+      + zone_texte('ec-particularite', 'Autre particularité', A), A)}
+{bloc(3, 'Votre identité', 'Pour que notre équipe puisse vous recontacter.',
+      liste('ec-civilite', 'Genre', ['Homme', 'Femme'], A, True)
+      + liste('ec-situation', 'Situation familiale', ['Célibataire', 'En couple', 'Marié(e)', 'Divorcé(e)', 'Veuf / Veuve'], A, True)
+      + groupe('ec-enfant', 'Enfants', ['Oui', 'Non'], A, type_='radio', requis=True)
+      + si('ec-enfant=Oui', champ('ec-age-enfants', 'Âge des enfants', A, large=True, attrs='placeholder="Ex. 2 ans, 5 ans, 7 ans"'))
+      + champ('ec-nom', 'Nom', A, True, attrs='autocomplete="family-name"')
+      + champ('ec-prenoms', 'Prénoms', A, True, attrs='autocomplete="given-name"')
+      + liste('ec-zone', 'Lieu d’habitation', ZONES, A, True)
+      + champ('ec-adresse', 'Quartier', A, attrs='placeholder="Ex. Riviera 3, Angré…"')
+      + whatsapp('ec-tel', 'Téléphone', A)
+      + whatsapp('ec-whatsapp', 'Téléphone WhatsApp', A, requis=False)
+      + champ('ec-email', 'E-mail', A, True, 'email', large=True, attrs='autocomplete="email"')
+      + liste('ec-type', 'Vous êtes', ['Particulier', 'Hôtel', 'Restaurant', 'Bar / Lounge', 'Traiteur / Événementiel', 'Résidence hôtelière',
+                                       'Entreprise', 'Autre'], A, True)
+      + champ('ec-etablissement', 'Établissement ou société', A, attrs='autocomplete="organization" placeholder="Si vous recrutez pour une structure"'), A)}
 {pied_formulaire(A, 'J’accepte d’être recontacté(e) par EchoResta au sujet de ce besoin de personnel.', 'Envoyer la fiche de besoin',
                  f'Votre fiche est envoyée à notre équipe par e-mail. Une question ? {PHONE}')}
     </form>
@@ -193,10 +248,10 @@ client_form = f'''<section class="tw-bg-nuit-50 tw-px-4 tw-py-14 sm:tw-py-20 ec"
 </section>
 '''
 page('espace_client.html', *seo.PAGES['espace_client.html'],
-     page_hero('Espace client : recrutez du personnel en hôtellerie-restauration', '<a href="recrutement.html">Recrutement</a><span>/</span>Espace client',
-               'images/directeur-hotel.jpg', 'Une fiche simple pour nous décrire le personnel dont votre établissement a besoin.') + client_form,
+     page_hero('Recherche du personnel : recrutez en hôtellerie, restauration et services', '<a href="recrutement.html">Recrutement</a><span>/</span>Recherche du personnel',
+               'images/directeur-hotel.jpg', 'Une fiche simple pour nous décrire le profil, les tâches et les conditions de travail du personnel recherché.') + client_form,
      'recrutement.html', head_extra=TAILWIND,
-     schemas=[seo.fil_ariane(('Accueil', ''), ('Recrutement', 'recrutement.html'), ('Espace client', 'espace_client.html'))])
+     schemas=[seo.fil_ariane(('Accueil', ''), ('Recrutement', 'recrutement.html'), ('Recherche du personnel', 'espace_client.html'))])
 
 # ================================================================ Espace candidat : fiche d'inscription candidat
 A = 'or'
@@ -221,7 +276,7 @@ candidat_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec 
   <div class="tw-mx-auto tw-max-w-4xl">
 {entete('Espace candidat · Professionnels', 'Fiche d’inscription candidat',
         'Cuisiniers, serveurs, barmen, réceptionnistes, femmes et valets de chambre : inscrivez-vous pour être mis en relation avec des hôtels et restaurants qui recrutent.', A)}
-    <form id="form-candidat" class="fiche tw-overflow-hidden tw-rounded-2xl tw-border-0 tw-border-t-4 tw-border-solid tw-border-amber-500 tw-bg-white tw-shadow-[0_1px_3px_rgba(15,23,42,.08),0_20px_50px_-20px_rgba(15,23,42,.25)] tw-ring-1 tw-ring-slate-200" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" data-sujet="Candidature emploi" novalidate>
+    <form id="form-candidat" class="{PANNEAU.format(bord='tw-border-amber-500')}" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" data-sujet="Candidature emploi" novalidate>
       <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 {bloc(1, 'Votre identité', 'Pour que les recruteurs puissent vous joindre.',
       champ('cd-nom', 'Nom', A, True, attrs='autocomplete="family-name"')

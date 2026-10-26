@@ -1100,7 +1100,7 @@ index = [{'t': 'Accueil', 'u': 'index.html', 'd': 'Présentation de l’école E
          {'t': 'Prendre rendez-vous', 'u': 'rendez-vous.html', 'd': 'Entretien d’orientation, inscription ou visite de l’école'},
          {'t': 'Inscription', 'u': 'inscription.html', 'd': 'Fiche d’inscription en ligne et pièces à joindre au dossier'},
          {'t': 'Recrutement', 'u': 'recrutement.html', 'd': 'Espace client et espace candidat'},
-         {'t': 'Espace client : je cherche du personnel', 'u': 'espace_client.html', 'd': 'Fiche de besoin de personnel pour hôtels et restaurants', 'k': 'recruter employeur placement serveur cuisinier réceptionniste'},
+         {'t': 'Recherche du personnel', 'u': 'espace_client.html', 'd': 'Fiche de besoin de personnel : hôtellerie, restauration, maison', 'k': 'recruter employeur placement serveur cuisinier réceptionniste nounou ménage chauffeur majordome'},
          {'t': 'Espace candidat : je cherche un emploi', 'u': 'espace_candidat.html', 'd': 'Fiche d’inscription candidat pour les professionnels', 'k': 'emploi travail offre cuisine salle bar réception étages CV'}]
 for m in METIERS:
     kw = ' '.join([CATEGORIES[m['cat']], *(t for t, _ in m['modules']), *m['carriere'], *m['lieux']])

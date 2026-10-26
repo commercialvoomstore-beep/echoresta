@@ -330,10 +330,15 @@ const listesDrapeaux={};
     const groupes=[...form.querySelectorAll('[data-groupe]')];
     const groupeOk=g=>!g.dataset.requis||!!g.querySelector('input:checked');
     groupes.forEach(g=>g.addEventListener('change',()=>{if(groupeOk(g))g.querySelector('[data-erreur]').classList.add('tw-hidden');}));
+    // Champs conditionnels : data-si="nom=valeur" s'affiche quand ce choix est coché
+    const conditions=[...form.querySelectorAll('[data-si]')];
+    const majConditions=()=>conditions.forEach(c=>{const [n,v]=c.dataset.si.split('=');
+      c.classList.toggle('tw-hidden',![...form.querySelectorAll(`[name="${n}"]`)].some(i=>i.checked&&i.value===v));});
+    if(conditions.length){form.addEventListener('change',majConditions);majConditions();}
     const valeurs=()=>{
       const champs={}, vus=new Set();
       [...form.elements].forEach(el=>{
-        if(!el.name||el.name==='botcheck'||vus.has(el.name)||el.type==='hidden'||(el.type==='checkbox'&&!el.closest('[data-groupe]'))) return;
+        if(!el.name||el.name==='botcheck'||vus.has(el.name)||el.type==='hidden'||(el.type==='checkbox'&&!el.closest('[data-groupe]'))||el.closest('[data-si].tw-hidden')) return;
         const g=el.closest('[data-groupe]');
         if(g){vus.add(el.name);const v=[...g.querySelectorAll('input:checked')].map(x=>x.value).join(', ');if(v)champs[g.dataset.label]=v;return;}
         let v=el.type==='file'?[...el.files].map(f=>f.name).join(', '):el.tagName==='SELECT'?(el.value?el.selectedOptions[0].textContent:''):el.value.trim();
@@ -350,8 +355,8 @@ const listesDrapeaux={};
       if(!form.checkValidity()){form.reportValidity();return;}
       if(mauvais.length){mauvais[0].scrollIntoView({block:'center'});return;}
       const champs=valeurs();
-      const nom=champs['Nom de l’hôtel ou du restaurant']||[champs['Prénoms'],champs['Nom']].filter(Boolean).join(' ');
-      const objet=champs['Profil(s) recherché(s)']?(champs['Nombre de personnes']+' × '+champs['Profil(s) recherché(s)']):(champs['Poste recherché']||'');
+      const nom=champs['Établissement ou société']||[champs['Prénoms'],champs['Nom']].filter(Boolean).join(' ');
+      const objet=champs['Je cherche']||champs['Poste recherché']||'';
       const sujet=form.dataset.sujet+' : '+objet+' – '+nom;
       btn.disabled=true; btn.textContent='Envoi en cours…';
       envoyerEmail(form,sujet,champs).then(ok=>{
