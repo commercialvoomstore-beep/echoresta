@@ -123,7 +123,7 @@ FOOTER = f'''<footer class="big">
     <div class="cols">
       <div>
         <div class="f-brand"><img src="images/logo.jpg" alt=""><b>EchoResta</b></div>
-        <p>École de formation en hôtellerie et restauration à Abidjan. Des parcours pratiques, une double certification et un stage garanti en entreprise.</p>
+        <p>École de formation en hôtellerie et restauration à Abidjan. Double certification internationale (Côte d’Ivoire &amp; Australie) et stage de 6 mois garanti dans les plus grands hôtels.</p>
       </div>
       <div>
         <h5>Navigation</h5>
@@ -259,7 +259,7 @@ def quiz_question_html(i):
 STEPS = [('Choisissez', 'Sélectionnez la formation qui correspond à votre projet professionnel.'),
          ('Inscrivez-vous', 'Remplissez le formulaire, nous vous rappelons sous 48 h.'),
          ('Formez-vous', 'Cours pratiques en petits groupes, encadrés par des professionnels.'),
-         ('Décrochez votre stage', 'Immersion dans un hôtel partenaire et remise de votre double certification.')]
+         ('Décrochez votre stage', 'Stage de 6 mois dans l’un des plus grands hôtels et remise de votre double certification internationale.')]
 
 FIGURES = [('97', '%', 'de diplômés'), ('30', '+', 'formateurs certifiés'), ('40', '', 'hôtels partenaires'), ('2500', '', 'stagiaires formés')]
 
@@ -268,8 +268,8 @@ POLES = [('Hôtellerie &amp; tourisme', 'i-building', 'Hébergement, réception,
          ('Restauration &amp; arts culinaires', 'i-chef', 'Service en salle, cuisine, bar et direction de restaurant.',
           BY_CAT['restauration'])]
 
-APPROCHE = [('i-building', 'Stage garanti en entreprise', 'Chaque stagiaire qui valide sa formation part en stage dans l’un de nos 40 hôtels partenaires.'),
-            ('i-award', 'Double certification', 'L’attestation EchoResta et une certification professionnelle reconnue par le secteur.'),
+APPROCHE = [('i-building', 'Stage de 6 mois garanti', 'Chaque stagiaire qui valide sa formation effectue un stage de 6 mois dans les plus grands hôtels.'),
+            ('i-award', 'Double certification internationale', 'Une double certification reconnue en Côte d’Ivoire et en Australie.'),
             ('i-users', 'Des formateurs du métier', 'Chefs, maîtres d’hôtel, gouvernantes : des praticiens qui exercent dans les établissements d’Abidjan.'),
             ('i-chef', 'La pratique avant tout', 'Ateliers en cuisine, en salle, au bar et en chambre : vous pratiquez à chaque séance.')]
 
@@ -331,8 +331,8 @@ home = f'''<section class="h-hero">
         <a href="contact.html#formulaire" class="btn btn-ghost">S’inscrire à une session</a>
       </div>
       <ul class="h-hero-points">
-        <li><svg class="ic"><use href="#i-check"/></svg>Stage garanti</li>
-        <li><svg class="ic"><use href="#i-check"/></svg>Double certification</li>
+        <li><svg class="ic"><use href="#i-check"/></svg>Stage de 6 mois garanti</li>
+        <li><svg class="ic"><use href="#i-check"/></svg>Double certification internationale</li>
         <li><svg class="ic"><use href="#i-check"/></svg>Formateurs du secteur</li>
       </ul>
     </div>
@@ -355,7 +355,8 @@ home = f'''<section class="h-hero">
       <div class="sep"></div>
     </div>
     <div>
-      <p class="h-lead">École de formation en hôtellerie et restauration basée à Abidjan, EchoResta prépare depuis plusieurs années des professionnels opérationnels dès le premier jour. Cuisine, service en salle, bar, réception, hébergement et anglais professionnel : chaque parcours est animé par des praticiens du secteur, avec double certification et stage garanti en entreprise.</p>
+      <p class="h-lead">École de formation en hôtellerie et restauration basée à Abidjan, EchoResta prépare depuis plusieurs années des professionnels opérationnels dès le premier jour. Cuisine, service en salle, bar, réception, hébergement et anglais professionnel : chaque parcours est animé par des praticiens du secteur.</p>
+      <p class="h-lead h-cert">Double certification internationale (Côte d’Ivoire &amp; Australie) et stage de 6 mois garanti dans les plus grands hôtels.</p>
       <blockquote class="h-pull">EchoResta est née d’une conviction : en partageant ce que l’on sait faire, on élève toute la profession.</blockquote>
       <a class="link-arrow" href="apropos.html">Découvrir l’école <svg class="ic"><use href="#i-arrow"/></svg></a>
     </div>
@@ -449,24 +450,21 @@ page('index.html', *seo.PAGES['index.html'], home + MAP, 'index.html',
 values = [('i-target', 'Notre mission', 'Former des professionnels opérationnels dès le premier jour, capables de répondre aux standards de l’hôtellerie internationale.'),
           ('i-eye', 'Notre vision', 'Faire d’Abidjan une référence régionale de l’excellence hôtelière, en élevant le niveau de toute la profession.'),
           ('i-heart', 'Nos valeurs', 'Rigueur, sens du service, bienveillance et transmission : ce que nos formateurs pratiquent chaque jour en entreprise.')]
-team = [('galerie-2.jpg', 'Chef Marc Kouadio', 'Formateur cuisine'),
-        ('galerie-3.jpg', 'Awa Bamba', 'Formatrice gouvernante'),
-        ('galerie-5.jpg', 'David Yao', 'Formateur bar & mixologie'),
-        ('galerie-6.jpg', 'Serge Konan', 'Formateur service en salle')]
 about = page_hero('EchoResta, école hôtelière à Abidjan', 'À propos', 'images/galerie-1.jpg') + f'''
-<section>
-  <div class="container split">
-    <div class="img"><img src="images/galerie-3.jpg" alt="Formatrice de l’école hôtelière EchoResta à Abidjan" {taille("galerie-3.jpg")} loading="lazy" decoding="async"></div>
+<section class="h-about">
+  <div class="container h-about-grid">
     <div>
       <div class="eyebrow">Notre histoire</div>
       <h2>Une école née sur le terrain</h2>
       <div class="sep"></div>
+    </div>
+    <div class="story">
       <p>EchoResta a été fondée par des professionnels de l’hôtellerie et de la restauration ivoiriennes, convaincus qu’un métier de service s’apprend d’abord en le pratiquant. Depuis nos premières promotions, nous associons cours théoriques, ateliers pratiques et immersion en entreprise.</p>
       <p>Aujourd’hui, plus de 2500 stagiaires ont été formés et travaillent dans les hôtels, restaurants et établissements partenaires d’Abidjan et de la sous-région.</p>
       <ul class="checks">
         <li><svg class="ic"><use href="#i-check"/></svg>Formateurs issus du secteur, en activité</li>
-        <li><svg class="ic"><use href="#i-check"/></svg>Double certification reconnue par la profession</li>
-        <li><svg class="ic"><use href="#i-check"/></svg>Stage garanti dans l’un de nos 40 hôtels partenaires</li>
+        <li><svg class="ic"><use href="#i-check"/></svg>Double certification internationale (Côte d’Ivoire &amp; Australie)</li>
+        <li><svg class="ic"><use href="#i-check"/></svg>Stage de 6 mois garanti dans les plus grands hôtels</li>
       </ul>
       <a href="formations.html" class="btn btn-outline">Voir nos formations <svg class="ic"><use href="#i-arrow"/></svg></a>
     </div>
@@ -479,17 +477,6 @@ about = page_hero('EchoResta, école hôtelière à Abidjan', 'À propos', 'imag
     <div class="sep"></div>
     <div class="cards">
 {chr(10).join(f'      <div class="card"><div class="ico"><svg class="ic"><use href="#{i}"/></svg></div><h3>{t}</h3><p>{d}</p></div>' for i, t, d in values)}
-    </div>
-  </div>
-</section>
-
-<section class="center">
-  <div class="container">
-    <h2>Nos formateurs</h2>
-    <div class="sep"></div>
-    <p class="muted" style="margin-top:30px">Des praticiens reconnus qui transmettent les gestes et les standards du métier.</p>
-    <div class="team">
-{chr(10).join(f'      <div class="member"><img src="images/{img}" alt="{n}, {r.lower()} chez EchoResta" {taille(img)} loading="lazy" decoding="async"><div class="info"><h4>{n}</h4><span>{r}</span></div></div>' for img, n, r in team)}
     </div>
   </div>
 </section>
@@ -521,13 +508,13 @@ cards = '\n'.join(f'''      <article class="course" id="{m['slug']}" data-cat="{
       </article>''' for m in METIERS)
 steps = STEPS
 faq = [('Quels sont les prérequis pour s’inscrire ?', 'La plupart de nos formations sont ouvertes dès 16 ans, sans diplôme exigé. Un entretien de motivation est réalisé avant l’inscription.'),
-       ('Les formations sont-elles certifiantes ?', 'Oui. Chaque parcours donne lieu à une double certification : l’attestation EchoResta et une certification professionnelle reconnue par le secteur.'),
-       ('Le stage est-il vraiment garanti ?', 'Oui, chaque stagiaire ayant validé sa formation est placé en stage dans l’un de nos 40 hôtels et restaurants partenaires.'),
+       ('Les formations sont-elles certifiantes ?', 'Oui. Chaque parcours donne lieu à une double certification internationale, reconnue en Côte d’Ivoire et en Australie.'),
+       ('Le stage est-il vraiment garanti ?', 'Oui. Chaque stagiaire ayant validé sa formation effectue un stage de 6 mois garanti dans l’un des plus grands hôtels.'),
        ('Quels sont vos horaires ?', 'Nous vous accueillons du lundi au vendredi, de 8h à 17h. Selon la formation, les cours ont lieu le matin ou l’après-midi : contactez-nous pour connaître le prochain calendrier.'),
        ('Je ne sais pas quel métier choisir. Que faire ?', 'Faites notre test d’orientation en trois questions sur la page d’accueil, ou écrivez-nous sur WhatsApp : un conseiller vous aide à choisir.'),
        ('Peut-on payer en plusieurs fois ?', 'Oui, un échéancier peut être mis en place. Les modalités vous sont présentées lors de l’entretien d’inscription.')]
 formations = page_hero('Formations en hôtellerie et restauration à Abidjan', 'Formations', 'images/formations-bandeau.jpg',
-                       f'{len(METIERS)} métiers de l’hôtellerie et de la restauration, avec stage garanti en entreprise.') + f'''
+                       f'{len(METIERS)} métiers de l’hôtellerie et de la restauration, avec double certification internationale et stage de 6 mois garanti.') + f'''
 <section class="center">
   <div class="container">
     <h2>Choisissez votre parcours</h2>
@@ -638,8 +625,8 @@ for m in METIERS:
           <div><dt><svg class="ic"><use href="#i-level"/></svg>Niveau</dt><dd>{m['niveau']}</dd></div>
           <div><dt><svg class="ic"><use href="#i-clock2"/></svg>Rythme</dt><dd>{m['rythme']}</dd></div>
           <div><dt><svg class="ic"><use href="#i-users"/></svg>Public</dt><dd>{m['public']}</dd></div>
-          <div><dt><svg class="ic"><use href="#i-award"/></svg>Certification</dt><dd>Double certification</dd></div>
-          <div><dt><svg class="ic"><use href="#i-building"/></svg>Stage</dt><dd>Garanti en entreprise</dd></div>
+          <div><dt><svg class="ic"><use href="#i-award"/></svg>Certification</dt><dd>Double : Côte d’Ivoire &amp; Australie</dd></div>
+          <div><dt><svg class="ic"><use href="#i-building"/></svg>Stage</dt><dd>6 mois garanti, grands hôtels</dd></div>
         </dl>
         <a href="contact.html?formation={m['slug']}#formulaire" class="btn btn-red" style="width:100%;justify-content:center">S’inscrire à cette formation</a>
         <a href="rendez-vous.html?formation={m['slug']}" class="btn btn-ghost side-rdv">Prendre rendez-vous</a>

@@ -29,7 +29,7 @@ def ecole_schema(phone, lat, lng, plus_code):
         'name': 'EchoResta — École de l’Hôtellerie & Restauration',
         'alternateName': ['EchoResta', 'École hôtelière EchoResta Abidjan'],
         'description': 'École de l’hôtellerie et de la restauration à Abidjan (Cocody, Angré) : formations '
-                       'certifiantes en cuisine, service en salle, réception, hébergement, bar et management, avec stage garanti.',
+                       'certifiantes en cuisine, service en salle, réception, hébergement, bar et management, avec double certification internationale (Côte d’Ivoire et Australie) et stage de 6 mois garanti.',
         'url': BASE_URL,
         'logo': BASE_URL + 'images/logo.png',
         'image': BASE_URL + 'images/hero-cuisine.jpg',
@@ -66,7 +66,7 @@ def cours_schema(m, meta):
     return {
         '@context': 'https://schema.org', '@type': 'Course',
         'name': meta['h1'], 'description': meta['desc'], 'url': BASE_URL + f'formation-{m["slug"]}.html',
-        'inLanguage': 'fr', 'educationalCredentialAwarded': 'Double certification : attestation EchoResta et certification professionnelle',
+        'inLanguage': 'fr', 'educationalCredentialAwarded': 'Double certification internationale (Côte d’Ivoire et Australie)',
         'provider': {'@type': 'EducationalOrganization', '@id': ECOLE_ID, 'name': SITE_NAME, 'url': BASE_URL},
         'hasCourseInstance': {'@type': 'CourseInstance', 'courseMode': 'Onsite',
                               'location': {'@type': 'Place', 'name': 'EchoResta, Angré Star 14', 'address': ADRESSE}},
@@ -200,8 +200,8 @@ ACCUEIL_FAQ = [
      'serveur et hôtesse, maître d’hôtel, cuisinier, barman et mixologie, directeur de restaurant, et anglais pour '
      'l’hôtellerie et le tourisme.'),
     ('Les formations sont-elles reconnues ?',
-     'Chaque parcours donne lieu à une double certification, l’attestation EchoResta et une certification '
-     'professionnelle reconnue par le secteur, et se termine par un stage dans l’un de nos 40 hôtels partenaires.'),
+     'Chaque parcours donne lieu à une double certification internationale (Côte d’Ivoire et Australie) '
+     'et se termine par un stage de 6 mois garanti dans les plus grands hôtels.'),
     ('Comment s’inscrire à une formation ?',
      'Remplissez le formulaire de la page Contact, appelez-nous ou écrivez-nous sur WhatsApp au +225 07 68 84 20 38. '
      'Un conseiller vous rappelle pour un entretien d’inscription.'),

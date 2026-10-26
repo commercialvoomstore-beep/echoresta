@@ -146,12 +146,6 @@
   .muted{color:var(--muted)}
   .bg-soft{background:#f6f7fb}
 
-  /* Bloc image + texte */
-  .split{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;max-width:1180px}
-  .split .img{position:relative}
-  .split .img img{width:100%;aspect-ratio:4/3.4;object-fit:cover}
-  .split .img::after{content:"";position:absolute;inset:24px -24px -24px 24px;border:2px solid var(--red);z-index:-1}
-  .split p{color:var(--muted);margin-top:22px}
   .checks{list-style:none;margin:26px 0 32px;display:grid;gap:12px}
   .checks li{display:flex;gap:12px;align-items:flex-start}
   .checks svg{width:20px;height:20px;color:var(--red);flex:none;margin-top:3px;stroke-width:2.4}
@@ -165,12 +159,6 @@
   .card h3{font-family:var(--serif);font-size:21px;margin-bottom:12px;color:var(--ink)}
   .card p{color:var(--muted);font-size:15px}
 
-  /* Équipe */
-  .team{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:30px;margin-top:60px}
-  .member img{width:100%;aspect-ratio:1/1.1;object-fit:cover}
-  .member .info{background:#fff;margin:-36px 18px 0;position:relative;padding:20px 16px;text-align:center;box-shadow:0 10px 26px rgba(15,34,96,.10)}
-  .member h4{font-family:var(--serif);font-size:17px}
-  .member span{font-size:13.5px;color:var(--red);font-weight:600}
 
   /* Catalogue formations */
   .filters{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:44px}
@@ -249,10 +237,8 @@
     .submenu{position:static;opacity:1;visibility:visible;transform:none;box-shadow:none;border:0;padding:0 0 0 14px;display:none;min-width:0}
     .has-sub.open .submenu{display:block}
     nav.main .submenu a{padding:8px 0}
-    .split,.contact-grid{grid-template-columns:1fr;gap:56px}
-    .split .img::after{inset:16px -12px -16px 12px}
+    .contact-grid{grid-template-columns:1fr;gap:56px}
     .cards,.courses{grid-template-columns:1fr 1fr}
-    .team{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
     .steps{grid-template-columns:1fr 1fr;row-gap:44px}
     .step::after{display:none}
     footer.big .cols{grid-template-columns:1fr 1fr}
@@ -264,8 +250,7 @@
     footer.big .cols{grid-template-columns:1fr}
   }
   footer.big .container{display:block}
-  .course .body,.member .info{text-align:left}
-  .member .info{text-align:center}
+  .course .body{text-align:left}
 
   /* Liens des fiches formation */
   .course h3 a:hover{color:var(--red)}
@@ -551,7 +536,6 @@
     .modules{grid-template-columns:1fr}
   }
   @media (max-width:480px){
-    .team{grid-template-columns:minmax(0,1fr);max-width:320px;margin-inline:auto}
     .ladder{gap:12px}
     .ladder li{padding:14px 12px;font-size:14px}
     .timeline li{padding-left:20px;gap:10px}
@@ -653,3 +637,9 @@
   /* Nom de l'école centré au-dessus du slogan */
   .brand>div:last-child{text-align:center}
   .page-hero h1{text-wrap:balance}
+  /* À propos : « Notre histoire » sans photo */
+  .story p{color:var(--muted);font-size:17px;line-height:1.75}
+  .story p + p{margin-top:18px}
+  .story .checks{margin:28px 0 32px}
+  /* Phrase clé : double certification internationale et stage de 6 mois */
+  .h-lead.h-cert{margin-top:16px;color:var(--navy);font-weight:600}
