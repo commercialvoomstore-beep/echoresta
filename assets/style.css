@@ -736,3 +736,5 @@
   @media (max-width:1000px){.intro-grid{grid-template-columns:minmax(0,1fr);gap:28px}}
   @media (max-width:600px){.intro-seo{padding:64px 0}}
   .hp{display:none!important}
+  /* Rendez-vous sur téléphone et tablette : le formulaire d'abord, les étapes ensuite */
+  @media (max-width:1000px){.rdv-grid .rdv-form{order:-1}}
