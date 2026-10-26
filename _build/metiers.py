@@ -258,7 +258,7 @@ METIERS = [
     # ------------------------------------------------------------------ Langues
     {
         'slug': 'anglais-tourisme-hotellerie', 'cat': 'langues', 'titre': 'Anglais tourisme & hôtellerie',
-        'icon': 'i-lang', 'photo': 'galerie-4.jpg', 'fond': 'galerie-4.jpg',
+        'icon': 'i-lang', 'photo': 'anglais-tourisme-hotellerie.jpg', 'fond': 'anglais-tourisme-hotellerie.jpg',
         'court': 'Accueillez le monde entier',
         'accroche': 'Accueillez le monde entier avec assurance : l’anglais est le passeport des carrières dans le tourisme et l’hôtellerie.',
         'resume': 'Accueil, réception, restaurant, téléphone : l’anglais du quotidien face à une clientèle internationale.',
