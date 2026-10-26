@@ -232,9 +232,7 @@ client_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec">
       + groupe_services('ec-taches', 'Métier(s) recherché(s)', A)
       + intertitre('Niveau d’aptitude recherché')
       + groupe('ec-echelle', 'Échelle de compétence (de 1 à 10)', [f'{n:02d}' for n in range(1, 11)], A, type_='radio', requis=True)
-      + groupe('ec-maitrise', 'Niveau de maîtrise', ['Débutant', 'Intermédiaire', 'Expert'], A, type_='radio', requis=True)
-      + intertitre('Autres indications')
-      + zone_texte('ec-details', 'Détails', A, 'Langues parlées, qualités attendues, expérience souhaitée…'), A)}
+      + groupe('ec-maitrise', 'Niveau de maîtrise', ['Débutant', 'Intermédiaire', 'Expert'], A, type_='radio', requis=True), A)}
 {bloc(2, 'Conditions de travail de l’employé', 'Logement, horaires, début de la mission et salaire.',
       groupe('ec-loge', 'Logé sur le lieu de travail ?', ['Oui', 'Non', 'Peu importe'], A, type_='radio', requis=True)
       + si('ec-loge=Oui', champ('ec-sortie', 'Heure de sortie', A, type_='time') + champ('ec-reprise', 'Heure de reprise', A, type_='time'))
@@ -247,8 +245,7 @@ client_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec">
       + '<div class="tw-hidden sm:tw-block"></div>'
       + montant('ec-salaire-min', 'Salaire prévisionnel minimum', A)
       + montant('ec-salaire-max', 'Salaire prévisionnel maximum', A)
-      + groupe('ec-avantages', 'Avantages', ['Repas', 'Transport', 'Primes'], A)
-      + zone_texte('ec-particularite', 'Autre particularité', A), A)}
+      + groupe('ec-avantages', 'Avantages', ['Repas', 'Transport', 'Primes'], A), A)}
 {bloc(3, 'Votre identité', 'Pour que notre équipe puisse vous recontacter.',
       liste('ec-civilite', 'Genre', ['Homme', 'Femme'], A, True)
       + liste('ec-situation', 'Situation familiale', ['Célibataire', 'En couple', 'Marié(e)', 'Divorcé(e)', 'Veuf / Veuve'], A, True)
