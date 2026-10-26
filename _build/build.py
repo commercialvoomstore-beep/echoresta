@@ -54,7 +54,7 @@ icons = (S / 'icons.html').read_text().replace('</svg>', '''  <symbol id="i-chec
   <symbol id="i-chat" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8.5 10.5c0 2.5 2.5 5 5 5l1.5-1.5-2-1-1 .8c-.9-.4-1.6-1.1-2-2l.8-1-1-2Z"/></symbol>
 </svg>''', 1)
 
-NAV = [('index.html', 'Accueil'), ('apropos.html', 'À propos'), ('formations.html', 'Formations'),
+NAV = [('index.html', 'Accueil'), ('formations.html', 'Formations'), ('apropos.html', 'À propos'),
        ('rendez-vous.html', 'Rendez-vous'), ('contact.html', 'Contact')]
 
 
@@ -451,7 +451,7 @@ page('index.html', *seo.PAGES['index.html'], home + MAP, 'index.html',
 values = [('i-target', 'Notre mission', 'Former des professionnels opérationnels dès le premier jour, capables de répondre aux standards de l’hôtellerie internationale.'),
           ('i-eye', 'Notre vision', 'Faire d’Abidjan une référence régionale de l’excellence hôtelière, en élevant le niveau de toute la profession.'),
           ('i-heart', 'Nos valeurs', 'Rigueur, sens du service, bienveillance et transmission : ce que nos formateurs pratiquent chaque jour en entreprise.')]
-about = page_hero('EchoResta, école hôtelière à Abidjan', 'À propos', 'images/galerie-1.jpg') + f'''
+about = page_hero('EchoResta, école hôtelière à Abidjan', 'À propos', 'images/apropos-diplomes.jpg') + f'''
 <section class="h-about">
   <div class="container h-about-grid">
     <div>
@@ -469,6 +469,9 @@ about = page_hero('EchoResta, école hôtelière à Abidjan', 'À propos', 'imag
       </ul>
       <a href="formations.html" class="btn btn-outline">Voir nos formations <svg class="ic"><use href="#i-arrow"/></svg></a>
     </div>
+  </div>
+  <div class="container about-photo">
+    <img src="images/apropos-diplomes.jpg" alt="Remise des diplômes des stagiaires de l’école hôtelière EchoResta à Abidjan" {taille("apropos-diplomes.jpg")} loading="lazy" decoding="async">
   </div>
 </section>
 
@@ -490,7 +493,7 @@ about = page_hero('EchoResta, école hôtelière à Abidjan', 'À propos', 'imag
   </div>
 </section>
 '''
-page('apropos.html', *seo.PAGES['apropos.html'], about, 'apropos.html',
+page('apropos.html', *seo.PAGES['apropos.html'], about, 'apropos.html', image='apropos-diplomes.jpg',
      schemas=[seo.fil_ariane(('Accueil', ''), ('À propos', 'apropos.html'))])
 
 # =========================================================== Formations
