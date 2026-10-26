@@ -85,6 +85,8 @@ PAGES = {
                    '10 formations hôtellerie et restauration à Abidjan : cuisinier, serveur, femme de chambre, gouvernante, réceptionniste, barman, directeur d’hôtel.'),
     'apropos.html': ('EchoResta, école hôtelière à Abidjan : qui sommes-nous ?',
                    'EchoResta forme à Abidjan des professionnels de l’hôtellerie et de la restauration : formateurs du métier, double certification et stage garanti.'),
+    'inscription.html': ('Inscription en ligne | École hôtelière EchoResta Abidjan',
+                         'Inscrivez-vous en ligne à une formation en hôtellerie ou restauration à Abidjan : cuisinier, serveur, réceptionniste, femme de chambre, barman…'),
     'rendez-vous.html': ('Prendre rendez-vous | École hôtelière EchoResta Abidjan',
                          'Prenez rendez-vous avec EchoResta, école hôtelière à Abidjan : entretien d’orientation, inscription ou visite de l’école, du lundi au vendredi.'),
     'contact.html': ('Contact et inscription | École hôtelière EchoResta Abidjan',
@@ -203,6 +205,6 @@ ACCUEIL_FAQ = [
      'Chaque parcours donne lieu à une double certification internationale (Côte d’Ivoire et Australie) '
      'et se termine par un stage de 6 mois garanti dans les plus grands hôtels.'),
     ('Comment s’inscrire à une formation ?',
-     'Remplissez le formulaire de la page Contact, appelez-nous ou écrivez-nous sur WhatsApp au +225 07 68 84 20 38. '
+     'Remplissez la fiche d’inscription en ligne, appelez-nous ou écrivez-nous sur WhatsApp au +225 07 68 84 20 38. '
      'Un conseiller vous rappelle pour un entretien d’inscription.'),
 ]

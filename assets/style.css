@@ -653,3 +653,50 @@
   .docs-list li{display:flex;align-items:center;gap:12px;font-size:15.5px}
   .docs-list svg{width:24px;height:24px;flex:none;padding:4px;border:1.5px solid rgba(255,255,255,.7);border-radius:50%;stroke-width:2.6}
   @media (max-width:600px){.docs-box{padding:28px 24px}}
+
+  /* =========================================================
+     Fiche d'inscription
+     ========================================================= */
+  .ins-intro{font-size:14px;margin-top:6px}
+  .ins-form fieldset{border:0;padding:0;margin:34px 0 0;min-width:0}
+  .ins-form legend{font-family:var(--serif);font-weight:700;font-size:19px;color:var(--ink);padding:0 0 12px;border-bottom:1px solid var(--line);width:100%;margin-bottom:4px}
+  .ins-form legend small{font-family:var(--sans);font-weight:400;font-size:13px;color:var(--muted)}
+  .ins-form .row{margin-top:16px}
+  .flab{display:block;font-size:14px;font-weight:600;color:var(--navy);margin:18px 0 8px}
+  .field-flag .flab{margin-top:0}
+  .pills{display:flex;gap:10px;flex-wrap:wrap}
+  .form .pill{position:relative;margin:0;cursor:pointer}
+  .form .pill input{position:absolute;opacity:0;width:1px;height:1px;padding:0;border:0}
+  .pill span{display:block;padding:11px 26px;border:1px solid #d6dae5;font-size:15px;font-weight:600;color:var(--navy);background:#fff;transition:all .2s}
+  .pill:hover span{border-color:var(--navy)}
+  .pill input:checked + span{background:var(--navy);border-color:var(--navy);color:#fff}
+  .pill input:focus-visible + span{outline:2px solid var(--navy);outline-offset:2px}
+  .tuteur{background:#f6f7fb;padding:20px 22px 24px!important;border-left:3px solid var(--red)!important}
+  .tuteur legend{border:0;width:auto;padding-bottom:0}
+
+  /* Liste avec drapeaux */
+  .flag{width:28px;height:19px;flex:none;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.12);display:block}
+  .flag-globe{fill:none;stroke:var(--muted);stroke-width:1.6;box-shadow:none;width:20px;height:20px;margin:0 4px}
+  .flag-select{position:relative}
+  .fs-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;font:15px var(--sans);padding:12px 16px;border:1px solid #d6dae5;background:#fff;color:var(--muted);cursor:pointer;text-align:left;min-height:50px}
+  .flag-select.filled .fs-btn{color:var(--ink)}
+  .fs-btn:focus-visible,.fs-btn[aria-expanded="true"]{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(19,41,107,.1)}
+  .fs-current{display:flex;align-items:center;gap:12px;min-width:0}
+  .fs-chev{width:16px;height:16px;flex:none;color:var(--navy);stroke-width:2}
+  .fs-list{position:absolute;z-index:30;left:0;right:0;top:calc(100% + 4px);max-height:300px;overflow:auto;list-style:none;background:#fff;border:1px solid #d6dae5;box-shadow:0 16px 34px rgba(15,34,96,.14);padding:6px 0;outline:none}
+  .fs-list li{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;font-size:15px;color:var(--ink)}
+  .fs-list li.active{background:#f3f5fb}
+  .fs-list li[aria-selected="true"]{font-weight:700;color:var(--navy)}
+  .fs-list li:last-child{border-top:1px solid var(--line);margin-top:4px}
+  .fs-other{margin-top:10px}
+  .rdv-steps.on-dark{margin:18px 0 6px}
+  .rdv-steps.on-dark li::before{border-color:rgba(255,255,255,.7);color:#fff}
+  .rdv-steps.on-dark b{color:#fff}
+  .rdv-steps.on-dark span{color:rgba(255,255,255,.78)}
+  /* Inscription sur téléphone : pièces à joindre, puis formulaire, puis « Après votre inscription » */
+  @media (max-width:1000px){
+    .ins-grid .contact-side{display:contents}
+    .ins-grid .docs-box{order:1}
+    .ins-grid .ins-form{order:2}
+    .ins-grid .ins-after{order:3}
+  }

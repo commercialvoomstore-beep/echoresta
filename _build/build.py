@@ -11,6 +11,7 @@ OUT = S.parent
 sys.path.insert(0, str(S))
 from metiers import CATEGORIES, METIERS, QUIZ  # noqa: E402
 import seo  # noqa: E402
+import drapeaux  # noqa: E402
 from PIL import Image  # noqa: E402
 
 PHONE = '+225 07 68 84 20 38'
@@ -110,7 +111,7 @@ def header(active):
     <nav class="main" id="nav">
 {links}
       <button class="search-btn" aria-label="Rechercher"><svg class="ic"><use href="#i-search"/></svg></button>
-      <a href="contact.html#formulaire" class="btn btn-red nav-cta">S’inscrire</a>
+      <a href="inscription.html" class="btn btn-red nav-cta">S’inscrire</a>
     </nav>
     <button class="burger" aria-label="Menu"><svg class="ic"><use href="#i-menu"/></svg></button>
   </div>
@@ -257,7 +258,7 @@ def quiz_question_html(i):
 
 # =========================================================== Accueil
 STEPS = [('Choisissez', 'Sélectionnez la formation qui correspond à votre projet professionnel.'),
-         ('Inscrivez-vous', 'Remplissez le formulaire, nous vous rappelons sous 48 h.'),
+         ('Inscrivez-vous', 'Remplissez la fiche d’inscription en ligne, nous vous rappelons sous 48 h.'),
          ('Formez-vous', 'Cours pratiques en petits groupes, encadrés par des professionnels.'),
          ('Décrochez votre stage', 'Stage de 6 mois dans l’un des plus grands hôtels et remise de votre double certification internationale.')]
 
@@ -328,7 +329,7 @@ home = f'''<section class="h-hero">
       <p>Toute belle carrière commence par une bonne formation. Avec EchoResta, acquérez les gestes et les standards de l’hôtellerie et de la restauration pour gravir les échelons du métier.</p>
       <div class="h-actions">
         <a href="formations.html" class="btn btn-red">Découvrir nos formations</a>
-        <a href="contact.html#formulaire" class="btn btn-ghost">S’inscrire à une session</a>
+        <a href="inscription.html" class="btn btn-ghost">S’inscrire à une session</a>
       </div>
       <ul class="h-hero-points">
         <li><svg class="ic"><use href="#i-check"/></svg>Stage de 6 mois garanti</li>
@@ -437,7 +438,7 @@ home = f'''<section class="h-hero">
     <h2>Plus de 2500 stagiaires nous font confiance</h2>
     <p>Rejoignez une communauté de professionnels de l’hôtellerie et de la restauration qui réussissent.</p>
     <div class="h-actions">
-      <a href="contact.html#formulaire" class="btn btn-red">S’inscrire à une session</a>
+      <a href="inscription.html" class="btn btn-red">S’inscrire à une session</a>
       <a href="rendez-vous.html" class="btn btn-ghost">Prendre rendez-vous</a>
     </div>
   </div>
@@ -485,7 +486,7 @@ about = page_hero('EchoResta, école hôtelière à Abidjan', 'À propos', 'imag
   <div class="container">
     <h2>Prêt à lancer votre carrière ?</h2>
     <p>Les inscriptions pour la prochaine session sont ouvertes.</p>
-    <a href="contact.html#formulaire" class="btn btn-red">S’inscrire à une session</a>
+    <a href="inscription.html" class="btn btn-red">S’inscrire à une session</a>
   </div>
 </section>
 '''
@@ -503,7 +504,7 @@ cards = '\n'.join(f'''      <article class="course" id="{m['slug']}" data-cat="{
             <span><svg class="ic"><use href="#i-level"/></svg>{m['niveau']}</span>
             <span><svg class="ic"><use href="#i-award"/></svg>Certifiante</span>
           </div>
-          <div class="links"><a class="more" href="{url(m)}">Découvrir <svg class="ic"><use href="#i-arrow"/></svg></a><a class="more alt" href="contact.html?formation={m['slug']}#formulaire">S’inscrire</a></div>
+          <div class="links"><a class="more" href="{url(m)}">Découvrir <svg class="ic"><use href="#i-arrow"/></svg></a><a class="more alt" href="inscription.html?formation={m['slug']}">S’inscrire</a></div>
         </div>
       </article>''' for m in METIERS)
 steps = STEPS
@@ -627,7 +628,7 @@ for m in METIERS:
           <div><dt><svg class="ic"><use href="#i-award"/></svg>Certification</dt><dd>Double : Côte d’Ivoire &amp; Australie</dd></div>
           <div><dt><svg class="ic"><use href="#i-building"/></svg>Stage</dt><dd>6 mois garanti, grands hôtels</dd></div>
         </dl>
-        <a href="contact.html?formation={m['slug']}#formulaire" class="btn btn-red" style="width:100%;justify-content:center">S’inscrire à cette formation</a>
+        <a href="inscription.html?formation={m['slug']}" class="btn btn-red" style="width:100%;justify-content:center">S’inscrire à cette formation</a>
         <a href="rendez-vous.html?formation={m['slug']}" class="btn btn-ghost side-rdv">Prendre rendez-vous</a>
         <a href="{wa_link('Bonjour EchoResta, je suis intéressé(e) par la formation ' + m['titre'] + '.')}" target="_blank" rel="noopener" class="side-call"><svg class="ic"><use href="#i-chat"/></svg>Poser une question sur WhatsApp</a>
       </div>
@@ -646,7 +647,7 @@ for m in METIERS:
     <h2>Prêt(e) à vous lancer ?</h2>
     <p>Les inscriptions pour la prochaine session sont ouvertes. Réservez votre place dès maintenant.</p>
     <div class="actions">
-      <a href="contact.html?formation={m['slug']}#formulaire" class="btn btn-red">Je m’inscris</a>
+      <a href="inscription.html?formation={m['slug']}" class="btn btn-red">Je m’inscris</a>
       <a href="formations.html" class="btn btn-ghost">Voir les autres formations</a>
     </div>
   </div>
@@ -769,12 +770,6 @@ contact = page_hero('Contact et inscription : votre école hôtelière à Abidja
 <section>
   <div class="container contact-grid">
     <aside class="contact-side">
-      <div class="info-box docs-box">
-        <h3><svg class="ic"><use href="#i-award"/></svg>Pièces à joindre au dossier</h3>
-        <ul class="docs-list">
-{chr(10).join(f'          <li><svg class="ic"><use href="#i-check"/></svg>{d}</li>' for d in PIECES_DOSSIER)}
-        </ul>
-      </div>
       <div class="info-box">
       <h3>Parlons de votre projet</h3>
       <p>Une question sur nos formations ou une inscription ? Notre équipe vous répond sous 48 h.</p>
@@ -823,6 +818,173 @@ contact = page_hero('Contact et inscription : votre école hôtelière à Abidja
 page('contact.html', *seo.PAGES['contact.html'], contact, 'contact.html',
      schemas=[seo.ecole_schema(PHONE, LAT, LNG, PLUS_CODE), seo.fil_ariane(('Accueil', ''), ('Contact', 'contact.html'))])
 
+# =========================================================== Inscription
+NIVEAUX_ETUDES = ['Sans diplôme', 'CEPE', 'BEPC', 'BAC', 'BTS / BAC+2', 'Licence / BAC+3', 'Master / BAC+5 et plus']
+SITUATIONS = ['Élève ou étudiant(e)', 'Sans emploi', 'En poste dans l’hôtellerie ou la restauration', 'En poste dans un autre secteur', 'Entrepreneur(e)']
+EXPERIENCES = ['Aucune', 'Moins d’un an', '1 à 3 ans', 'Plus de 3 ans']
+CONNU = ['Facebook', 'Instagram', 'TikTok', 'WhatsApp', 'Google', 'Bouche-à-oreille', 'Affiche ou flyer', 'Autre']
+LIENS_PARENTE = ['Père', 'Mère', 'Tuteur / tutrice', 'Frère / sœur', 'Autre']
+GLOBE = '<svg class="flag flag-globe" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>'
+
+
+def liste_drapeaux(champ, label, colonne):
+    """Liste déroulante avec drapeaux (pays ou nationalité), gérée par assets/main.js."""
+    options = '\n'.join(
+        f'            <li role="option" id="{champ}-{code.lower()}" data-value="{valeur}" data-tel="{tel}" aria-selected="false">'
+        f'{drapeaux.drapeau(code)}<span>{valeur}</span></li>'
+        for code, pays, nat, tel in drapeaux.PAYS for valeur in [pays if colonne == 'pays' else nat])
+    autre = 'Autre pays' if colonne == 'pays' else 'Autre nationalité'
+    return f'''<div class="field-flag">
+          <span class="flab" id="{champ}-label">{label} *</span>
+          <div class="flag-select" data-field="{champ}">
+            <button type="button" class="fs-btn" id="{champ}-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="{champ}-label {champ}-btn">
+              <span class="fs-current">{GLOBE}<span class="fs-text">Choisissez</span></span><svg class="ic fs-chev"><use href="#i-down"/></svg>
+            </button>
+            <ul class="fs-list" role="listbox" id="{champ}-list" aria-labelledby="{champ}-label" tabindex="-1" hidden>
+{options}
+            <li role="option" id="{champ}-autre" data-value="{autre}" data-tel="" aria-selected="false">{GLOBE}<span>{autre}</span></li>
+            </ul>
+            <input type="hidden" name="{champ}" id="{champ}">
+          </div>
+          <p class="field-error" id="{champ}-err" hidden>Choisissez dans la liste.</p>
+          <input class="fs-other" id="{champ}-autre-txt" name="{champ}_autre" placeholder="Précisez" aria-label="Précisez : {label.lower()}" hidden>
+        </div>'''
+
+
+def choix_radio(nom, valeurs, requis=True):
+    return '<div class="pills">' + ''.join(
+        f'<label class="pill"><input type="radio" name="{nom}" value="{v}"{" required" if requis else ""}><span>{v}</span></label>' for v in valeurs) + '</div>'
+
+
+def options(valeurs):
+    return ''.join(f'<option>{v}</option>' for v in valeurs)
+
+
+options_formations = '\n'.join(
+    f'              <optgroup label="{CATEGORIES[c]}">\n' +
+    '\n'.join(f'                <option value="{m["slug"]}">{m["titre"]}</option>' for m in BY_CAT[c]) +
+    '\n              </optgroup>' for c in CATEGORIES)
+
+DOCS_HTML = f'''      <div class="info-box docs-box">
+        <h3><svg class="ic"><use href="#i-award"/></svg>Pièces à joindre au dossier</h3>
+        <ul class="docs-list">
+{chr(10).join(f'          <li><svg class="ic"><use href="#i-check"/></svg>{d}</li>' for d in PIECES_DOSSIER)}
+        </ul>
+      </div>'''
+
+inscription = page_hero('Inscription à une formation en hôtellerie et restauration à Abidjan', 'Inscription', 'images/hero-cuisine.jpg',
+                        'Remplissez votre fiche d’inscription en quelques minutes : notre équipe vous recontacte pour finaliser votre dossier.') + f'''
+<section>
+  <div class="container contact-grid ins-grid">
+    <aside class="contact-side">
+{DOCS_HTML}
+      <div class="info-box ins-after">
+        <h3>Après votre inscription</h3>
+        <ol class="rdv-steps on-dark">
+          <li><b>Étude de votre fiche</b><span>Notre équipe vérifie votre demande.</span></li>
+          <li><b>Entretien d’inscription</b><span>Nous vous appelons pour fixer un entretien à l’école.</span></li>
+          <li><b>Dossier complet</b><span>Vous remettez les pièces demandées et confirmez votre place.</span></li>
+        </ol>
+        <div class="info-item"><div class="ico"><svg class="ic"><use href="#i-phone"/></svg></div><div><strong>Une question ?</strong><span>{PHONE}<br>{EMAIL}</span></div></div>
+      </div>
+    </aside>
+
+    <div class="form ins-form" id="formulaire" style="scroll-margin-top:140px">
+      <form id="form-inscription" data-mail="{EMAIL}" novalidate>
+        <div class="eyebrow">Fiche d’inscription</div>
+        <h3>Inscrivez-vous à une formation</h3>
+        <p class="muted ins-intro">Les champs marqués d’un * sont obligatoires.</p>
+
+        <fieldset>
+          <legend>1. Formation souhaitée</legend>
+          <div class="row">
+            <div class="full"><label for="ins-formation">Formation *</label>
+              <select id="ins-formation" name="formation" required>
+                <option value="">— Choisissez une formation —</option>
+{options_formations}
+              </select></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>2. Identité</legend>
+          <span class="flab">Sexe *</span>
+          {choix_radio('sexe', ['Femme', 'Homme'])}
+          <div class="row">
+            <div><label for="ins-nom">Nom *</label><input id="ins-nom" name="nom" required autocomplete="family-name"></div>
+            <div><label for="ins-prenoms">Prénoms *</label><input id="ins-prenoms" name="prenoms" required autocomplete="given-name"></div>
+            <div><label for="ins-naissance">Date de naissance *</label><input id="ins-naissance" name="naissance" type="date" required autocomplete="bday"></div>
+            <div><label for="ins-lieu">Lieu de naissance *</label><input id="ins-lieu" name="lieu_naissance" required placeholder="Ville, pays"></div>
+            <div class="full">{liste_drapeaux('nationalite', 'Nationalité', 'nationalite')}</div>
+            <div><label for="ins-piece">Type de pièce d’identité</label>
+              <select id="ins-piece" name="piece"><option value="">—</option>{options(['CNI', 'Passeport', 'Attestation d’identité', 'Carte consulaire', 'Autre'])}</select></div>
+            <div><label for="ins-piece-num">Numéro de la pièce</label><input id="ins-piece-num" name="piece_numero"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>3. Coordonnées</legend>
+          <div class="row">
+            <div class="full">{liste_drapeaux('pays', 'Pays de résidence', 'pays')}</div>
+            <div><label for="ins-ville">Ville *</label><input id="ins-ville" name="ville" required autocomplete="address-level2" placeholder="Ex. Abidjan"></div>
+            <div><label for="ins-commune">Commune / quartier</label><input id="ins-commune" name="commune" placeholder="Ex. Cocody, Yopougon…"></div>
+            <div><label for="ins-tel">Téléphone *</label><input id="ins-tel" name="tel" type="tel" required autocomplete="tel" placeholder="+225"></div>
+            <div><label for="ins-wa">WhatsApp</label><input id="ins-wa" name="whatsapp" type="tel" placeholder="Si différent du téléphone"></div>
+            <div class="full"><label for="ins-email">E-mail *</label><input id="ins-email" name="email" type="email" required autocomplete="email"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>4. Parcours</legend>
+          <div class="row">
+            <div><label for="ins-niveau">Niveau d’études *</label>
+              <select id="ins-niveau" name="niveau" required><option value="">— Choisissez —</option>{options(NIVEAUX_ETUDES)}</select></div>
+            <div><label for="ins-diplome">Dernier diplôme obtenu</label><input id="ins-diplome" name="diplome"></div>
+            <div><label for="ins-situation">Situation actuelle *</label>
+              <select id="ins-situation" name="situation" required><option value="">— Choisissez —</option>{options(SITUATIONS)}</select></div>
+            <div><label for="ins-exp">Expérience en hôtellerie / restauration</label>
+              <select id="ins-exp" name="experience">{options(EXPERIENCES)}</select></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="tuteur" id="ins-tuteur" hidden>
+          <legend>5. Parent ou tuteur <small>(obligatoire pour les moins de 18 ans)</small></legend>
+          <div class="row">
+            <div><label for="ins-tut-nom">Nom et prénoms *</label><input id="ins-tut-nom" name="tuteur_nom" data-req></div>
+            <div><label for="ins-tut-lien">Lien de parenté *</label>
+              <select id="ins-tut-lien" name="tuteur_lien" data-req><option value="">— Choisissez —</option>{options(LIENS_PARENTE)}</select></div>
+            <div class="full"><label for="ins-tut-tel">Téléphone du parent ou tuteur *</label><input id="ins-tut-tel" name="tuteur_tel" type="tel" data-req></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="num-tuteur">5</span>. Pour finir</legend>
+          <div class="row">
+            <div class="full"><label for="ins-urgence">Personne à prévenir en cas d’urgence (nom et téléphone)</label><input id="ins-urgence" name="urgence"></div>
+            <div class="full"><label for="ins-connu">Comment avez-vous connu EchoResta ?</label>
+              <select id="ins-connu" name="connu"><option value="">—</option>{options(CONNU)}</select></div>
+            <div class="full"><label for="ins-motivation">Votre projet professionnel</label><textarea id="ins-motivation" name="motivation" placeholder="Quel métier visez-vous ? Pourquoi cette formation ?"></textarea></div>
+          </div>
+        </fieldset>
+
+        <label class="consent"><input type="checkbox" id="ins-consent" required> Je certifie l’exactitude des informations et j’accepte d’être recontacté(e) par EchoResta au sujet de mon inscription.</label>
+        <button type="submit" class="btn btn-red">Envoyer ma fiche d’inscription</button>
+        <p class="rdv-note">Votre fiche est envoyée par e-mail à {EMAIL}.</p>
+        <p class="field-error" id="ins-err" hidden></p>
+      </form>
+
+      <div class="form-ok" id="ins-ok" hidden>
+        <h3>Votre fiche d’inscription est envoyée</h3>
+        <p class="muted">Merci ! Notre équipe vous recontacte pour fixer votre entretien d’inscription. Pensez à préparer les pièces de votre dossier.</p>
+        <pre class="rdv-recap" id="ins-recap"></pre>
+      </div>
+    </div>
+  </div>
+</section>
+'''
+page('inscription.html', *seo.PAGES['inscription.html'], inscription, '',
+     schemas=[seo.fil_ariane(('Accueil', ''), ('Inscription', 'inscription.html'))])
+
 # =========================================================== 404
 page('404.html', 'Page introuvable — EchoResta', 'Page introuvable.', '''
 <section class="center" style="padding:140px 0">
@@ -842,7 +1004,8 @@ index = [{'t': 'Accueil', 'u': 'index.html', 'd': 'Présentation de l’école E
          {'t': 'Nos formations', 'u': 'formations.html', 'd': 'Les 10 formations, étapes d’inscription et FAQ'},
          {'t': 'Test d’orientation', 'u': 'index.html#quiz', 'd': 'Quel métier est fait pour vous ? Trois questions'},
          {'t': 'Contact & inscription', 'u': 'contact.html', 'd': 'Coordonnées, formulaire et plan d’accès'},
-         {'t': 'Prendre rendez-vous', 'u': 'rendez-vous.html', 'd': 'Entretien d’orientation, inscription ou visite de l’école'}]
+         {'t': 'Prendre rendez-vous', 'u': 'rendez-vous.html', 'd': 'Entretien d’orientation, inscription ou visite de l’école'},
+         {'t': 'Inscription', 'u': 'inscription.html', 'd': 'Fiche d’inscription en ligne et pièces à joindre au dossier'}]
 for m in METIERS:
     kw = ' '.join([CATEGORIES[m['cat']], *(t for t, _ in m['modules']), *m['carriere'], *m['lieux']])
     index.append({'t': m['titre'], 'u': url(m), 'd': m['resume'], 'k': kw})
@@ -860,7 +1023,7 @@ print('ok :', len(list(OUT.glob('*.html'))), 'pages')
 # =========================================================== Plan du site (sitemap.xml) et robots.txt
 import datetime  # noqa: E402
 jour = datetime.date.today().isoformat()
-PRIORITE = {'index.html': '1.0', 'formations.html': '0.9', 'rendez-vous.html': '0.8', 'contact.html': '0.8', 'apropos.html': '0.7'}
+PRIORITE = {'index.html': '1.0', 'formations.html': '0.9', 'rendez-vous.html': '0.8', 'inscription.html': '0.9', 'contact.html': '0.8', 'apropos.html': '0.7'}
 urls = '\n'.join(
     f'  <url><loc>{seo.BASE_URL}{"" if f == "index.html" else f}</loc><lastmod>{jour}</lastmod>'
     f'<priority>{PRIORITE.get(f, "0.8")}</priority></url>'

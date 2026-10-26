@@ -14,7 +14,9 @@ Ouvrir le fichier `index.html` dans un navigateur (double-clic).
 | `apropos.html` | À propos |
 | `formations.html` | Catalogue des formations |
 | `formation-*.html` | Fiche détaillée de chacune des 10 formations métiers |
-| `contact.html` | Contact et inscription |
+| `inscription.html` | Fiche d'inscription (pays et nationalités d'Afrique de l'Ouest avec drapeaux) |
+| `rendez-vous.html` | Prise de rendez-vous |
+| `contact.html` | Contact |
 | `404.html` | Page introuvable |
 
 Les styles sont dans `assets/style.css`, les scripts dans `assets/main.js` et les photos dans `images/`.
@@ -49,5 +51,5 @@ Sur vercel.com : **Add New… → Project → Import Git Repository**, choisir c
 
 - Remplacer les photos de `images/` par les originales (mêmes noms de fichiers).
 - Vérifier les durées, niveaux et rythmes des formations dans `_build/metiers.py`.
-- Formulaires Contact et Rendez-vous : envoyés par e-mail à l'adresse `EMAIL` de `_build/build.py` via FormSubmit.
+- Formulaires Contact, Rendez-vous et Inscription : envoyés par e-mail à l'adresse `EMAIL` de `_build/build.py` via FormSubmit.
   À la première demande reçue, FormSubmit envoie un e-mail « Activate Form » à cette adresse : cliquer sur le lien pour activer l'envoi.

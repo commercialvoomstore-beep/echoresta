@@ -173,3 +173,94 @@ const afficherEchec=(el,dest,sujet,texte)=>{
   });
   document.getElementById('rdv-again').onclick=()=>{ok.hidden=true;form.reset();form.hidden=false;form.scrollIntoView({block:'start'});};
 })();
+
+// Listes déroulantes avec drapeaux (pays, nationalité)
+const listesDrapeaux={};
+(function(){
+  document.querySelectorAll('.flag-select').forEach(box=>{
+    const btn=box.querySelector('.fs-btn'), list=box.querySelector('.fs-list'), input=box.querySelector('input[type="hidden"]');
+    const opts=[...list.querySelectorAll('[role="option"]')], courant=btn.querySelector('.fs-current');
+    const autre=document.getElementById(box.dataset.field+'-autre-txt'), err=document.getElementById(box.dataset.field+'-err');
+    let actif=0, recherche='', minuterie;
+    const marquer=i=>{actif=Math.max(0,Math.min(opts.length-1,i));opts.forEach((o,k)=>o.classList.toggle('active',k===actif));
+      list.setAttribute('aria-activedescendant',opts[actif].id);opts[actif].scrollIntoView({block:'nearest'});};
+    const ouvrir=()=>{list.hidden=false;btn.setAttribute('aria-expanded','true');const sel=opts.findIndex(o=>o.getAttribute('aria-selected')==='true');marquer(sel<0?0:sel);list.focus();};
+    const fermer=(focus=true)=>{list.hidden=true;btn.setAttribute('aria-expanded','false');if(focus)btn.focus();};
+    const choisir=i=>{const o=opts[i];opts.forEach(x=>x.setAttribute('aria-selected',x===o?'true':'false'));
+      input.value=o.dataset.value;courant.innerHTML=o.innerHTML;box.classList.add('filled');if(err)err.hidden=true;
+      const estAutre=!o.dataset.tel&&/^Autre/.test(o.dataset.value);
+      if(autre){autre.hidden=!estAutre;autre.required=estAutre;if(estAutre)setTimeout(()=>autre.focus(),0);}
+      input.dispatchEvent(new CustomEvent('change',{bubbles:true,detail:{tel:o.dataset.tel}}));};
+    btn.addEventListener('click',()=>list.hidden?ouvrir():fermer());
+    btn.addEventListener('keydown',e=>{if(['ArrowDown','ArrowUp'].includes(e.key)){e.preventDefault();ouvrir();}});
+    opts.forEach((o,i)=>{o.addEventListener('click',()=>{choisir(i);fermer();});o.addEventListener('mousemove',()=>marquer(i));});
+    list.addEventListener('keydown',e=>{
+      if(e.key==='ArrowDown'){e.preventDefault();marquer(actif+1);}
+      else if(e.key==='ArrowUp'){e.preventDefault();marquer(actif-1);}
+      else if(e.key==='Home'){e.preventDefault();marquer(0);}
+      else if(e.key==='End'){e.preventDefault();marquer(opts.length-1);}
+      else if(e.key==='Enter'||e.key===' '){e.preventDefault();choisir(actif);fermer();}
+      else if(e.key==='Escape'||e.key==='Tab'){fermer(e.key==='Escape');}
+      else if(e.key.length===1){clearTimeout(minuterie);recherche+=e.key.toLowerCase();minuterie=setTimeout(()=>recherche='',700);
+        const sans=t=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+        const k=opts.findIndex(o=>sans(o.dataset.value).startsWith(sans(recherche)));if(k>=0)marquer(k);}
+    });
+    document.addEventListener('click',e=>{if(!list.hidden&&!box.contains(e.target))fermer(false);});
+    listesDrapeaux[box.dataset.field]={valide:()=>{const ok=!!input.value;if(err)err.hidden=ok;return ok;},btn,reset:()=>{input.value='';box.classList.remove('filled');
+      opts.forEach(x=>x.setAttribute('aria-selected','false'));courant.innerHTML=opts[opts.length-1].querySelector('svg').outerHTML+'<span class="fs-text">Choisissez</span>';if(autre){autre.hidden=true;autre.required=false;autre.value='';}}};
+  });
+})();
+
+// Fiche d'inscription
+(function(){
+  const form=document.getElementById('form-inscription');
+  if(!form) return;
+  const el=form.elements, btn=form.querySelector('button[type="submit"]'), err=document.getElementById('ins-err');
+  const tuteur=document.getElementById('ins-tuteur'), numFin=form.querySelector('.num-tuteur');
+  const f=new URLSearchParams(location.search).get('formation');
+  if(f&&el.formation.querySelector(`option[value="${CSS.escape(f)}"]`)) el.formation.value=f;
+  // Date de naissance : pas dans le futur ; parent ou tuteur demandé avant 18 ans
+  const pad=n=>String(n).padStart(2,'0'), auj=new Date();
+  el.naissance.max=auj.getFullYear()+'-'+pad(auj.getMonth()+1)+'-'+pad(auj.getDate());
+  const age=v=>{const d=new Date(v+'T12:00:00');let a=auj.getFullYear()-d.getFullYear();const m=auj.getMonth()-d.getMonth();if(m<0||(m===0&&auj.getDate()<d.getDate()))a--;return a;};
+  el.naissance.addEventListener('change',()=>{
+    const mineur=!!el.naissance.value&&age(el.naissance.value)<18;
+    tuteur.hidden=!mineur; numFin.textContent=mineur?'6':'5';
+    tuteur.querySelectorAll('[data-req]').forEach(x=>x.required=mineur);
+  });
+  // Pays de résidence : indicatif téléphonique proposé
+  let indicatif='+225';
+  el.pays.addEventListener('change',e=>{
+    const nouveau=e.detail&&e.detail.tel; if(!nouveau) return;
+    [el.tel,el.whatsapp].forEach(x=>{x.placeholder=x===el.whatsapp?'Si différent du téléphone':nouveau;
+      if(!x.value.trim()||x.value.trim()===indicatif) x.value=x===el.tel?nouveau+' ':x.value;});
+    indicatif=nouveau;
+  });
+  form.addEventListener('submit',e=>{
+    e.preventDefault(); err.hidden=true;
+    const listesOk=['nationalite','pays'].map(k=>listesDrapeaux[k].valide());
+    if(!form.checkValidity()){form.reportValidity();return;}
+    if(listesOk.includes(false)){const k=listesOk[0]?'pays':'nationalite';listesDrapeaux[k].btn.focus();listesDrapeaux[k].btn.scrollIntoView({block:'center'});return;}
+    const val=x=>(x&&x.value||'').trim(), choix=x=>x.value?x.selectedOptions[0].textContent:'';
+    const autreOu=(champ)=>/^Autre/.test(val(el[champ]))&&val(el[champ+'_autre'])?val(el[champ+'_autre']):val(el[champ]);
+    const jour=new Date(el.naissance.value+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+    const champs={'Formation':choix(el.formation),'Sexe':form.querySelector('input[name="sexe"]:checked').value,
+      'Nom':val(el.nom).toUpperCase(),'Prénoms':val(el.prenoms),'Date de naissance':jour+' ('+age(el.naissance.value)+' ans)',
+      'Lieu de naissance':val(el.lieu_naissance),'Nationalité':autreOu('nationalite'),
+      'Pièce d’identité':[choix(el.piece),val(el.piece_numero)].filter(Boolean).join(' n° '),
+      'Pays de résidence':autreOu('pays'),'Ville':val(el.ville),'Commune / quartier':val(el.commune),
+      'Téléphone':val(el.tel),'WhatsApp':val(el.whatsapp),'E-mail':val(el.email),
+      'Niveau d’études':choix(el.niveau),'Dernier diplôme':val(el.diplome),'Situation actuelle':choix(el.situation),
+      'Expérience':choix(el.experience)};
+    if(!tuteur.hidden) Object.assign(champs,{'Parent ou tuteur':val(el.tuteur_nom),'Lien de parenté':choix(el.tuteur_lien),'Téléphone du tuteur':val(el.tuteur_tel)});
+    Object.assign(champs,{'Contact en cas d’urgence':val(el.urgence),'Connu par':choix(el.connu),'Projet professionnel':val(el.motivation)});
+    const sujet='Inscription : '+champs['Formation']+' – '+champs['Prénoms']+' '+champs['Nom'];
+    btn.disabled=true; btn.textContent='Envoi en cours…';
+    envoyerEmail(form.dataset.mail,sujet,champs).then(ok=>{
+      btn.disabled=false; btn.textContent='Envoyer ma fiche d’inscription';
+      if(!ok){afficherEchec(err,form.dataset.mail,sujet,texteDemande(champs));return;}
+      document.getElementById('ins-recap').textContent=texteDemande(champs);
+      form.hidden=true; const box=document.getElementById('ins-ok'); box.hidden=false; box.scrollIntoView({block:'start'});
+    });
+  });
+})();
