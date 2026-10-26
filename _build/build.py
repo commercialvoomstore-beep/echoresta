@@ -723,7 +723,7 @@ options = '\n'.join(
     '\n              </optgroup>' for c in CATEGORIES)
 contact = page_hero('Contact et inscription : votre école hôtelière à Abidjan', 'Contact', 'images/audit-nuit.jpg') + f'''
 <section>
-  <div class="container contact-grid">
+  <div class="container contact-grid contact-page">
     <aside class="contact-side">
       <div class="info-box">
       <h3>Parlons de votre projet</h3>
@@ -737,7 +737,7 @@ contact = page_hero('Contact et inscription : votre école hôtelière à Abidja
       </div>
     </aside>
 
-    <div class="form" id="formulaire" style="scroll-margin-top:140px">
+    <div class="form" id="formulaire" style="scroll-margin-top:180px">
       <form id="form-contact" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" novalidate>
         <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="eyebrow">Formulaire</div>
@@ -965,7 +965,7 @@ inscription = page_hero('Inscription à une formation en hôtellerie et restaura
       </div>
     </aside>
 
-    <div class="form ins-form" id="formulaire" style="scroll-margin-top:140px">
+    <div class="form ins-form" id="formulaire" style="scroll-margin-top:180px">
 {FORMULAIRE_INSCRIPTION}
 
       <div class="form-ok" id="ins-ok" hidden>
@@ -1021,7 +1021,7 @@ rdv = page_hero('Prendre rendez-vous avec notre école à Abidjan', 'Rendez-vous
       </div>
     </aside>
 
-    <div class="form rdv-form" id="rendez-vous" style="scroll-margin-top:140px">
+    <div class="form rdv-form" id="rendez-vous" style="scroll-margin-top:180px">
       <form id="form-rdv" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" novalidate>
         <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="eyebrow">Formulaire de rendez-vous</div>
