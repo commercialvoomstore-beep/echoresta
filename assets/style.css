@@ -480,16 +480,6 @@
   .h-steps{padding:100px 0}
   .h-steps .steps{margin-top:56px}
 
-  /* Témoignage */
-  .h-quote{padding:100px 0}
-  .h-quote-grid{display:grid;grid-template-columns:220px 1fr;gap:56px;align-items:center;max-width:980px}
-  .h-quote img{width:220px;height:220px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 8px #fff}
-  .h-quote blockquote{font-family:var(--serif);font-style:italic;font-size:clamp(20px,2vw,25px);line-height:1.6;color:var(--ink);margin-top:6px}
-  .h-quote blockquote::before{content:"«\00a0"}
-  .h-quote blockquote::after{content:"\00a0»"}
-  .h-quote figcaption{margin-top:22px}
-  .h-quote figcaption b{display:block;font-family:var(--serif);font-size:18px}
-  .h-quote figcaption span{color:var(--muted);font-size:14.5px}
 
   .quiz-band{padding:100px 0}
   .h-cta{padding:110px 0 120px;background:radial-gradient(circle at 85% 15%,rgba(192,21,47,.2) 0,rgba(192,21,47,0) 38%),radial-gradient(circle at 10% 100%,rgba(255,255,255,.06) 0,rgba(255,255,255,0) 35%),var(--navy-dark)}
@@ -511,7 +501,7 @@
     .h-head p{justify-self:start}
   }
   @media (max-width:600px){
-    .h-about,.h-poles,.h-approach,.h-steps,.h-quote,.quiz-band{padding:72px 0}
+    .h-about,.h-poles,.h-approach,.h-steps,.quiz-band{padding:72px 0}
     .h-figures-card>div{padding:22px 18px}
     .h-figures .num{font-size:30px}
     .h-pole-head{grid-template-columns:auto 1fr;padding:22px 20px}
@@ -519,8 +509,6 @@
     .h-rows a{grid-template-columns:36px 1fr;padding:15px 20px;gap:12px}
     .r-go{display:none}
     .h-points{grid-template-columns:1fr}
-    .h-quote-grid{grid-template-columns:1fr;gap:28px;justify-items:center;text-align:center}
-    .h-quote img{width:150px;height:150px}
     .h-cta + .map{padding-top:48px}
   }
 
