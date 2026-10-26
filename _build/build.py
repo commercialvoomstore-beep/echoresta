@@ -351,7 +351,7 @@ home = f'''<section class="h-hero">
   <div class="container h-about-grid">
     <div>
       <div class="eyebrow">L’école</div>
-      <h2>Quelques mots sur l’école EchoResta</h2>
+      <h2>Quelques mots sur EchoResta</h2>
       <div class="sep"></div>
     </div>
     <div>
