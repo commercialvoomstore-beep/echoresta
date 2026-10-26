@@ -1,6 +1,6 @@
 # EchoResta — site vitrine
 
-Site statique (HTML, CSS, JavaScript) du cabinet de formation EchoResta, Hôtellerie & Restauration, Abidjan.
+Site statique (HTML, CSS, JavaScript) de l’école de formation EchoResta, École de l’Hôtellerie & Restauration, Abidjan.
 
 ## Voir le site sur son ordinateur
 

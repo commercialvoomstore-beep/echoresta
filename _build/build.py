@@ -123,7 +123,7 @@ FOOTER = f'''<footer class="big">
     <div class="cols">
       <div>
         <div class="f-brand"><img src="images/logo.jpg" alt=""><b>EchoResta</b></div>
-        <p>Cabinet de formation en hôtellerie et restauration à Abidjan. Des parcours pratiques, une double certification et un stage garanti en entreprise.</p>
+        <p>École de formation en hôtellerie et restauration à Abidjan. Des parcours pratiques, une double certification et un stage garanti en entreprise.</p>
       </div>
       <div>
         <h5>Navigation</h5>
@@ -350,14 +350,14 @@ home = f'''<section class="h-hero">
 <section class="h-about">
   <div class="container h-about-grid">
     <div>
-      <div class="eyebrow">Le cabinet</div>
-      <h2>Quelques mots sur le cabinet EchoResta</h2>
+      <div class="eyebrow">L’école</div>
+      <h2>Quelques mots sur l’école EchoResta</h2>
       <div class="sep"></div>
     </div>
     <div>
-      <p class="h-lead">Cabinet de formation en hôtellerie et restauration basé à Abidjan, EchoResta prépare depuis plusieurs années des professionnels opérationnels dès le premier jour. Cuisine, service en salle, bar, réception, hébergement et anglais professionnel : chaque parcours est animé par des praticiens du secteur, avec double certification et stage garanti en entreprise.</p>
+      <p class="h-lead">École de formation en hôtellerie et restauration basée à Abidjan, EchoResta prépare depuis plusieurs années des professionnels opérationnels dès le premier jour. Cuisine, service en salle, bar, réception, hébergement et anglais professionnel : chaque parcours est animé par des praticiens du secteur, avec double certification et stage garanti en entreprise.</p>
       <blockquote class="h-pull">EchoResta est née d’une conviction : en partageant ce que l’on sait faire, on élève toute la profession.</blockquote>
-      <a class="link-arrow" href="apropos.html">Découvrir le cabinet <svg class="ic"><use href="#i-arrow"/></svg></a>
+      <a class="link-arrow" href="apropos.html">Découvrir l’école <svg class="ic"><use href="#i-arrow"/></svg></a>
     </div>
   </div>
 </section>
@@ -459,9 +459,9 @@ about = page_hero('EchoResta, école hôtelière à Abidjan', 'À propos', 'imag
     <div class="img"><img src="images/galerie-3.jpg" alt="Formatrice de l’école hôtelière EchoResta à Abidjan" {taille("galerie-3.jpg")} loading="lazy" decoding="async"></div>
     <div>
       <div class="eyebrow">Notre histoire</div>
-      <h2>Un cabinet né sur le terrain</h2>
+      <h2>Une école née sur le terrain</h2>
       <div class="sep"></div>
-      <p>EchoResta a été fondé par des professionnels de l’hôtellerie et de la restauration ivoiriennes, convaincus qu’un métier de service s’apprend d’abord en le pratiquant. Depuis nos premières promotions, nous associons cours théoriques, ateliers pratiques et immersion en entreprise.</p>
+      <p>EchoResta a été fondée par des professionnels de l’hôtellerie et de la restauration ivoiriennes, convaincus qu’un métier de service s’apprend d’abord en le pratiquant. Depuis nos premières promotions, nous associons cours théoriques, ateliers pratiques et immersion en entreprise.</p>
       <p>Aujourd’hui, plus de 2500 stagiaires ont été formés et travaillent dans les hôtels, restaurants et établissements partenaires d’Abidjan et de la sous-région.</p>
       <ul class="checks">
         <li><svg class="ic"><use href="#i-check"/></svg>Formateurs issus du secteur, en activité</li>
@@ -842,7 +842,7 @@ page('404.html', 'Page introuvable — EchoResta', 'Page introuvable.', '''
 ''', '', robots='noindex, follow')
 
 # =========================================================== Données pour la recherche et le test
-index = [{'t': 'Accueil', 'u': 'index.html', 'd': 'Présentation du cabinet EchoResta'},
+index = [{'t': 'Accueil', 'u': 'index.html', 'd': 'Présentation de l’école EchoResta'},
          {'t': 'À propos', 'u': 'apropos.html', 'd': 'Histoire, mission, valeurs et formateurs'},
          {'t': 'Nos formations', 'u': 'formations.html', 'd': 'Les 10 formations, étapes d’inscription et FAQ'},
          {'t': 'Test d’orientation', 'u': 'index.html#quiz', 'd': 'Quel métier est fait pour vous ? Trois questions'},

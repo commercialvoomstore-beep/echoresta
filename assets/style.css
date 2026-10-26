@@ -446,7 +446,7 @@
   .h-figures .num{font-family:var(--serif);font-weight:900;font-size:40px;line-height:1.1;color:var(--navy);font-variant-numeric:tabular-nums}
   .h-figures-card span:last-child{color:var(--muted);font-size:14.5px}
 
-  /* Le cabinet */
+  /* L’école */
   .h-about{padding:110px 0 100px}
   .h-about-grid{display:grid;grid-template-columns:5fr 7fr;gap:72px;max-width:1180px}
   .h-lead{font-size:17px;color:var(--muted);line-height:1.75}
