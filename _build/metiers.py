@@ -40,7 +40,7 @@ METIERS = [
     },
     {
         'slug': 'gouvernante', 'cat': 'hotellerie', 'titre': 'Gouvernante',
-        'icon': 'i-clipboard', 'photo': 'galerie-3.jpg', 'fond': 'galerie-3.jpg',
+        'icon': 'i-clipboard', 'photo': 'gouvernante.jpg', 'fond': 'gouvernante.jpg',
         'court': 'Encadrez l’équipe des étages',
         'accroche': 'Cheffe d’orchestre des étages, la gouvernante garantit une qualité que chaque client remarque sans la voir.',
         'resume': 'Encadrer l’équipe des étages, contrôler la qualité des chambres et gérer le linge, les produits et les plannings.',
