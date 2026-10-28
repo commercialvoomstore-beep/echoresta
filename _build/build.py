@@ -164,7 +164,7 @@ FOOTER = f'''<footer class="big">
     </div>
     <div class="bottom">
       <span>© 2026 EchoResta — École de l’Hôtellerie &amp; Restauration. Tous droits réservés.</span>
-      <span>Abidjan, Côte d’Ivoire</span>
+      <span><a href="plan-du-site.html">Plan du site</a> · Abidjan, Côte d’Ivoire</span>
     </div>
   </div>
 </footer>
@@ -1082,6 +1082,30 @@ page('rendez-vous.html', *seo.PAGES['rendez-vous.html'], rdv, 'rendez-vous.html'
 # =========================================================== Recrutement (espace client, espace candidat)
 exec((S / 'recrutement.py').read_text())
 
+# =========================================================== Plan du site (page lisible par les visiteurs)
+def bloc_plan(titre, liens):
+    return (f'      <div class="plan-bloc">\n        <h2 class="h3">{titre}</h2>\n        <ul>\n'
+            + ''.join(f'          <li><a href="{h}">{t}</a></li>\n' for h, t in liens) + '        </ul>\n      </div>')
+
+
+plan = page_hero('Plan du site', 'Plan du site', 'images/formations-bandeau.jpg',
+                 'Toutes les pages du site de l’école, classées par rubrique.') + f'''
+<section>
+  <div class="container">
+    <div class="plan">
+{bloc_plan('L’école', [('index.html', 'Accueil'), ('apropos.html', 'À propos'), ('formations.html', 'Toutes les formations'),
+                        ('rendez-vous.html', 'Prendre rendez-vous'), ('inscription.html', 'Inscription en ligne'), ('contact.html', 'Contact')])}
+{chr(10).join(bloc_plan('Formations : ' + CATEGORIES[c].lower(), [(url(m), m['titre']) for m in BY_CAT[c]]) for c in BY_CAT)}
+{bloc_plan('Recrutement', [('recrutement.html', 'Espace recrutement'), ('espace_client.html', 'Recherche du personnel'),
+                            ('espace_candidat.html', 'Recherche un emploi')])}
+    </div>
+    <p class="plan-xml">Pour les moteurs de recherche : <a class="link" href="sitemap.xml">sitemap.xml</a></p>
+  </div>
+</section>
+'''
+page('plan-du-site.html', *seo.PAGES['plan-du-site.html'], plan, '',
+     schemas=[seo.fil_ariane(('Accueil', ''), ('Plan du site', 'plan-du-site.html'))])
+
 # =========================================================== 404
 page('404.html', 'Page introuvable — EchoResta', 'Page introuvable.', '''
 <section class="center" style="padding:140px 0">
@@ -1124,7 +1148,7 @@ print('ok :', len(list(OUT.glob('*.html'))), 'pages')
 # =========================================================== Plan du site (sitemap.xml) et robots.txt
 import datetime  # noqa: E402
 jour = datetime.date.today().isoformat()
-PRIORITE = {'index.html': '1.0', 'formations.html': '0.9', 'rendez-vous.html': '0.8', 'inscription.html': '0.9', 'recrutement.html': '0.8', 'contact.html': '0.8', 'apropos.html': '0.7'}
+PRIORITE = {'plan-du-site.html': '0.3', 'index.html': '1.0', 'formations.html': '0.9', 'rendez-vous.html': '0.8', 'inscription.html': '0.9', 'recrutement.html': '0.8', 'contact.html': '0.8', 'apropos.html': '0.7'}
 import html as _html, re as _re  # noqa: E402
 
 

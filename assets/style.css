@@ -754,3 +754,12 @@
   .topbar .langs a:hover{color:#fff}
   .topbar .langs a[aria-current="true"]{background:#fff;color:var(--navy)}
   @media (max-width:900px){.topbar .langs{margin-left:auto}.topbar .container{justify-content:space-between}}
+  /* Plan du site */
+  .plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px 40px}
+  .plan-bloc h2{margin:0 0 12px;padding-bottom:10px;border-bottom:2px solid var(--red)}
+  .plan-bloc ul{list-style:none;margin:0;padding:0}
+  .plan-bloc li{padding:8px 0;border-bottom:1px solid var(--line)}
+  .plan-bloc a{color:var(--navy);font-weight:600}
+  .plan-bloc a:hover{color:var(--red)}
+  .plan-xml{margin-top:40px;color:var(--muted);font-size:14px}
+  footer .bottom a{color:inherit;text-decoration:underline}

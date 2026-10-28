@@ -101,6 +101,8 @@ PAGES = {
         'Inscription en ligne aux formations hôtellerie et restauration à Abidjan : cuisine, service, réception, bar, étages. Dossier simple, réponse rapide.'),
     'rendez-vous.html': ('Rendez-vous école hôtelière Abidjan : orientation, visite',
         'Prenez rendez-vous avec notre école hôtelière à Abidjan : orientation, inscription ou visite. Angré Star 14, Cocody, du lundi au vendredi de 8h à 17h.'),
+    'plan-du-site.html': ('Plan du site : école hôtelière et formations à Abidjan',
+        'Plan du site de l’école hôtelière d’Abidjan : formations en hôtellerie et restauration, inscription, rendez-vous, recrutement et contact.'),
     'contact.html': ('Contact école hôtelière Abidjan Cocody : téléphone, WhatsApp',
         'Contactez l’école hôtelière d’Abidjan : Angré Star 14, Cocody. Téléphone et WhatsApp : +225 07 68 84 20 38. Formations hôtellerie et restauration.'),
 }
