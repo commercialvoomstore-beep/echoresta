@@ -37,7 +37,7 @@ def ecole_schema(phone, lat, lng, plus_code):
         'description': 'École de l’hôtellerie et de la restauration à Abidjan (Cocody, Angré) : formations '
                        'certifiantes en cuisine, service en salle, réception, hébergement, bar et management, avec double certification internationale (Côte d’Ivoire et Australie) et stage de 6 mois garanti.',
         'url': BASE_URL,
-        'logo': BASE_URL + 'images/logo.png',
+        'logo': BASE_URL + 'images/logo-512.png',
         'image': BASE_URL + 'images/hero-cuisine.jpg',
         'telephone': phone,
         'email': 'contact@echoresta.ci',
