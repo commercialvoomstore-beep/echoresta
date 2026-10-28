@@ -4,6 +4,7 @@ Usage : python3 _build/build.py   (depuis la racine du dépôt)
 En-tête, pied de page, icônes et contenus des formations sont partagés entre toutes les pages.
 """
 import json, pathlib, sys
+import re as _re_url
 from urllib.parse import quote
 
 S = pathlib.Path(__file__).resolve().parent
@@ -1140,6 +1141,23 @@ data = {
 }
 (OUT / 'assets' / 'data.js').write_text(''.join(f'window.{k}={json.dumps(v, ensure_ascii=False)};\n' for k, v in data.items()))
 exec((S / 'traduction.py').read_text())  # version anglaise (dossier en/)
+
+
+# =========================================================== Adresses sans « .html »
+# Les liens et les adresses déclarées à Google n'ont pas d'extension (« /formations » et non « /formations.html »).
+# Vercel sert les pages ainsi (cleanUrls dans vercel.json) et redirige les anciennes adresses en .html.
+NOMS_PAGES = sorted({f[:-5] for f, _ in PAGES_PUBLIEES} - {'index'}, key=len, reverse=True)
+_SANS_HTML = _re_url.compile(r'(?<=[/"\'=])(' + '|'.join(map(_re_url.escape, NOMS_PAGES)) + r')\.html\b')
+
+
+def sans_html(code):
+    code = _SANS_HTML.sub(r'\1', code)
+    code = _re_url.sub(r'/index\.html\b', '/', code)           # en/index.html → en/ ; ../index.html → ../
+    return _re_url.sub(r'(?<=["\'])index\.html\b', './', code)   # index.html → ./ (page d'accueil du dossier)
+
+
+for fichier in [*OUT.glob('*.html'), *(OUT / 'en').glob('*.html'), OUT / 'assets' / 'data.js', OUT / 'assets' / 'data-en.js']:
+    fichier.write_text(sans_html(fichier.read_text()))
 old_index = OUT / 'assets' / 'search-index.js'
 if old_index.exists():
     old_index.unlink()
@@ -1164,7 +1182,7 @@ def images_page(f):
 
 def url_xml(f, langue):
     """Une page du plan du site, en français ou en anglais, avec le lien vers l'autre langue."""
-    chemin = '' if f == 'index.html' else f
+    chemin = '' if f == 'index.html' else f[:-len('.html')]
     fr, en = seo.BASE_URL + chemin, seo.BASE_URL + 'en/' + chemin
     alternatives = (f'<xhtml:link rel="alternate" hreflang="fr" href="{fr}"/>'
                     f'<xhtml:link rel="alternate" hreflang="en" href="{en}"/>')

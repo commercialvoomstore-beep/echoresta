@@ -76,3 +76,11 @@ Sur vercel.com : **Add New… → Project → Import Git Repository**, choisir c
   `_build/traduction_manquante.json`. Ajoutez chaque texte et sa traduction dans `_build/traduction_en.json`, puis relancez.
   Tant qu'un texte n'est pas traduit, il reste en français sur la page anglaise.
 - Les balises `hreflang`, l'adresse canonique et le plan du site (`sitemap.xml`) indiquent à Google les deux versions.
+
+## Adresses sans « .html »
+
+- Les pages s'ouvrent sans extension : `https://www.echoresta.ci/formations`, `https://www.echoresta.ci/en/formation-cuisinier`…
+- `vercel.json` active `cleanUrls` : Vercel sert `formations.html` à l'adresse `/formations` et redirige
+  définitivement les anciennes adresses en `.html` (les liens déjà partagés continuent de fonctionner).
+- La construction retire `.html` de tous les liens internes, des adresses déclarées à Google et du `sitemap.xml`.
+- Adresse du site déclarée à Google : `BASE_URL` dans `_build/seo.py` (actuellement `https://www.echoresta.ci/`).

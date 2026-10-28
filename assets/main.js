@@ -153,7 +153,7 @@ const afficherEchec=(el,form,sujet,texte)=>{
       `<p class="quiz-count">Votre résultat</p>`+
       `<div class="quiz-result"><span class="m-ico"><svg class="ic"><use href="#${m.icon}"/></svg></span>`+
       `<div><h3>${m.titre}</h3><p>${m.accroche}</p></div></div>`+
-      `<div class="quiz-actions"><a class="btn btn-red" href="formation-${m.slug}.html">Découvrir la formation</a>`+
+      `<div class="quiz-actions"><a class="btn btn-red" href="formation-${m.slug}">Découvrir la formation</a>`+
       `<button type="button" class="btn btn-outline quiz-restart">Refaire le test</button></div>`;
     const again=card.querySelector('.quiz-restart');
     again.onclick=()=>{step=0;score={};render();card.querySelector('.quiz-answers button').focus();};

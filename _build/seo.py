@@ -7,7 +7,7 @@ Les mots-clés visés sont les recherches courantes en Côte d'Ivoire, surtout �
 import json
 
 # Adresse publique du site. À changer si le site passe sur un nom de domaine (ex. https://www.echoresta.ci/).
-BASE_URL = 'https://commercialvoomstore-beep.github.io/echoresta/'
+BASE_URL = 'https://www.echoresta.ci/'
 SITE_NAME = 'EchoResta'
 # Code fourni par Google Search Console (méthode « Balise HTML »), par ex. 'AbCdEf123…'. Vide = pas de balise.
 GOOGLE_VERIFICATION = ''
