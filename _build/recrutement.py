@@ -370,7 +370,38 @@ choix = f'''<section class="tw-bg-nuit-50 tw-px-4 tw-py-16 sm:tw-py-24">
   </div>
 </section>
 '''
+def etapes(titre, liste):
+    return (f'    <h3 class="etapes-titre">{titre}</h3>\n    <div class="steps trois">\n'
+            + '\n'.join(f'      <div class="step"><h4>{t}</h4><p>{d}</p></div>' for t, d in liste) + '\n    </div>')
+
+
+suite = f'''
+<section class="center">
+  <div class="container">
+    <h2>{ct.RECRUTEMENT_ETAPES_TITRE}</h2>
+    <div class="sep"></div>
+{etapes('Pour les employeurs', ct.RECRUTEMENT_ETAPES_EMPLOYEURS)}
+{etapes('Pour les candidats', ct.RECRUTEMENT_ETAPES_CANDIDATS)}
+  </div>
+</section>
+
+<section class="center bg-soft">
+  <div class="container">
+    <h2>{ct.RECRUTEMENT_ATOUTS_TITRE}</h2>
+    <div class="sep"></div>
+    {cartes(ct.RECRUTEMENT_ATOUTS)}
+  </div>
+</section>
+
+<section class="center">
+  <div class="container">
+    <h2>Questions fréquentes</h2>
+    <div class="sep"></div>
+    {faq_html(ct.RECRUTEMENT_FAQ)}
+  </div>
+</section>
+'''
 page('recrutement.html', *seo.PAGES['recrutement.html'],
-     page_hero('Recrutement en hôtellerie et restauration à Abidjan', 'Recrutement', 'images/apropos-diplomes.jpg') + choix,
+     page_hero('Recrutement en hôtellerie et restauration à Abidjan', 'Recrutement', 'images/apropos-diplomes.jpg') + choix + suite,
      'recrutement.html', head_extra=TAILWIND,
-     schemas=[seo.fil_ariane(('Accueil', ''), ('Recrutement', 'recrutement.html'))])
+     schemas=[seo.fil_ariane(('Accueil', ''), ('Recrutement', 'recrutement.html')), seo.faq_schema(ct.RECRUTEMENT_FAQ)])

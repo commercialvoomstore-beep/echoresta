@@ -763,3 +763,15 @@
   .plan-bloc a:hover{color:var(--red)}
   .plan-xml{margin-top:40px;color:var(--muted);font-size:14px}
   footer .bottom a{color:inherit;text-decoration:underline}
+
+  /* Cartes à quatre colonnes, étapes à trois colonnes (sections de texte ajoutées) */
+  .cards.quatre{grid-template-columns:repeat(4,1fr);gap:24px}
+  .cards.quatre .card{padding:32px 24px}
+  .cards .card p a.link{font-weight:600}
+  .steps.trois{grid-template-columns:repeat(3,1fr)}
+  .etapes-titre{font:700 22px var(--serif);color:var(--navy);margin:56px 0 0}
+  .etapes-titre + .steps{margin-top:40px}
+  .h-debouches .cards{margin-top:48px}
+  @media (max-width:1100px){.cards.quatre{grid-template-columns:1fr 1fr}}
+  @media (max-width:900px){.steps.trois{grid-template-columns:1fr;row-gap:44px}}
+  @media (max-width:600px){.cards.quatre{grid-template-columns:1fr}}

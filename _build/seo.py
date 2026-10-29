@@ -7,6 +7,8 @@ Les mots-clés visés sont les recherches courantes en Côte d'Ivoire, surtout �
 import json
 
 # Adresse publique du site. À changer si le site passe sur un nom de domaine (ex. https://www.echoresta.ci/).
+from contenu import ACCUEIL_FAQ_PLUS  # noqa: E402
+
 BASE_URL = 'https://www.echoresta.ci/'
 SITE_NAME = 'EchoResta'
 # Code fourni par Google Search Console (méthode « Balise HTML »), par ex. 'AbCdEf123…'. Vide = pas de balise.
@@ -219,3 +221,4 @@ ACCUEIL_FAQ = [
      'Remplissez la fiche d’inscription en ligne, appelez-nous ou écrivez-nous sur WhatsApp au +225 07 68 84 20 38. '
      'Un conseiller vous rappelle pour un entretien d’inscription.'),
 ]
+ACCUEIL_FAQ += ACCUEIL_FAQ_PLUS

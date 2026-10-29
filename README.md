@@ -84,3 +84,12 @@ Sur vercel.com : **Add New… → Project → Import Git Repository**, choisir c
   définitivement les anciennes adresses en `.html` (les liens déjà partagés continuent de fonctionner).
 - La construction retire `.html` de tous les liens internes, des adresses déclarées à Google et du `sitemap.xml`.
 - Adresse du site déclarée à Google : `BASE_URL` dans `_build/seo.py` (actuellement `https://www.echoresta.ci/`).
+
+## Contenu rédactionnel
+
+- Les textes ajoutés aux pages (description des métiers, déroulement des formations, questions fréquentes, guide de choix,
+  débouchés, étapes du recrutement) sont dans `_build/contenu.py`, à modifier pour changer le texte.
+- Règles : uniquement des faits vérifiables (adresse, horaires, niveaux, programme, certification, stage) ; pas de chiffre,
+  de salaire, de durée, de partenaire ni de témoignage inventé.
+- Après une modification, relancer `python3 _build/build.py` : la version anglaise signale les textes à traduire
+  (voir « Version anglaise »).

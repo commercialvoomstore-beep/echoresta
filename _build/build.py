@@ -12,6 +12,7 @@ OUT = S.parent
 sys.path.insert(0, str(S))
 from metiers import CATEGORIES, METIERS, QUIZ  # noqa: E402
 import seo  # noqa: E402
+import contenu as ct  # noqa: E402
 import drapeaux  # noqa: E402
 from PIL import Image  # noqa: E402
 
@@ -251,6 +252,17 @@ def page(file, title, desc, body, active, wa_text='Bonjour, je souhaite contacte
     (OUT / file).write_text(html)
 
 
+def cartes(items, classe=''):
+    """Cartes avec icône (même style que « Mission, vision et valeurs »)."""
+    return f'<div class="cards {classe}">\n' + '\n'.join(
+        f'      <div class="card"><div class="ico"><svg class="ic"><use href="#{i}"/></svg></div><h3>{t}</h3><p>{d}</p></div>'
+        for i, t, d in items) + '\n    </div>'
+
+
+def faq_html(faq, classe='faq'):
+    return f'<div class="{classe}">\n' + '\n'.join(f'      <details><summary>{q}</summary><p>{a}</p></details>' for q, a in faq) + '\n    </div>'
+
+
 def page_hero(title, crumb, img, sub=''):
     sub = f'\n    <p class="hero-sub">{sub}</p>' if sub else ''
     return f'''<section class="page-hero" style="background-image:url('{img}')">
@@ -416,6 +428,16 @@ home = f'''<section class="h-hero">
   </div>
 </section>
 
+<section class="center h-debouches">
+  <div class="container">
+    <div class="eyebrow">Débouchés</div>
+    <h2>{ct.ACCUEIL_DEBOUCHES_TITRE}</h2>
+    <div class="sep"></div>
+    <p class="muted" style="margin-top:30px">{ct.ACCUEIL_DEBOUCHES_INTRO}</p>
+    {cartes(ct.ACCUEIL_DEBOUCHES, 'quatre')}
+  </div>
+</section>
+
 <section class="center h-steps">
   <div class="container">
     <div class="eyebrow">Inscription</div>
@@ -499,11 +521,41 @@ about = page_hero('EchoResta, école hôtelière à Abidjan', 'À propos', 'imag
 
 <section class="center">
   <div class="container">
+    <div class="eyebrow">Notre méthode</div>
+    <h2>{ct.APROPOS_PEDAGOGIE_TITRE}</h2>
+    <div class="sep"></div>
+    {cartes(ct.APROPOS_PEDAGOGIE)}
+  </div>
+</section>
+
+<section class="center bg-soft">
+  <div class="container">
     <h2>Mission, vision et valeurs</h2>
     <div class="sep"></div>
     <div class="cards">
 {chr(10).join(f'      <div class="card"><div class="ico"><svg class="ic"><use href="#{i}"/></svg></div><h3>{t}</h3><p>{d}</p></div>' for i, t, d in values)}
     </div>
+  </div>
+</section>
+
+<section class="intro-seo">
+  <div class="container intro-grid">
+    <div>
+      <div class="eyebrow">Après la formation</div>
+      <h2>{ct.APROPOS_EMPLOI_TITRE}</h2>
+      <div class="sep"></div>
+    </div>
+    <div class="story">
+{chr(10).join(f'      <p>{t}</p>' for t in ct.APROPOS_EMPLOI)}
+    </div>
+  </div>
+</section>
+
+<section class="center bg-soft">
+  <div class="container">
+    <h2>Questions fréquentes sur l’école</h2>
+    <div class="sep"></div>
+    {faq_html(ct.APROPOS_FAQ)}
   </div>
 </section>
 
@@ -516,7 +568,7 @@ about = page_hero('EchoResta, école hôtelière à Abidjan', 'À propos', 'imag
 </section>
 '''
 page('apropos.html', *seo.PAGES['apropos.html'], about, 'apropos.html', image='apropos-diplomes.jpg',
-     schemas=[seo.fil_ariane(('Accueil', ''), ('À propos', 'apropos.html'))])
+     schemas=[seo.fil_ariane(('Accueil', ''), ('À propos', 'apropos.html')), seo.faq_schema(ct.APROPOS_FAQ)])
 
 # =========================================================== Formations
 cards = '\n'.join(f'''      <article class="course" id="{m['slug']}" data-cat="{m['cat']}">
@@ -533,12 +585,14 @@ cards = '\n'.join(f'''      <article class="course" id="{m['slug']}" data-cat="{
         </div>
       </article>''' for m in METIERS)
 steps = STEPS
+GUIDE = [(i, t, d.format(**{m['slug']: url(m) for m in METIERS})) for i, t, d in ct.FORMATIONS_GUIDE]
 faq = [('Quels sont les prérequis pour s’inscrire ?', 'La plupart de nos formations sont ouvertes dès 16 ans, sans diplôme exigé. Un entretien de motivation est réalisé avant l’inscription.'),
        ('Les formations sont-elles certifiantes ?', 'Oui. Chaque parcours donne lieu à une double certification internationale, reconnue en Côte d’Ivoire et en Australie.'),
        ('Le stage est-il vraiment garanti ?', 'Oui. Chaque stagiaire ayant validé sa formation effectue un stage de 6 mois garanti dans l’un des plus grands hôtels.'),
        ('Quels sont vos horaires ?', 'Nous vous accueillons du lundi au vendredi, de 8h à 17h. Selon la formation, les cours ont lieu le matin ou l’après-midi : contactez-nous pour connaître le prochain calendrier.'),
        ('Je ne sais pas quel métier choisir. Que faire ?', 'Faites notre test d’orientation en trois questions sur la page d’accueil, ou écrivez-nous sur WhatsApp : un conseiller vous aide à choisir.'),
-       ('Peut-on payer en plusieurs fois ?', 'Oui, un échéancier peut être mis en place. Les modalités vous sont présentées lors de l’entretien d’inscription.')]
+       ('Peut-on payer en plusieurs fois ?', 'Oui, un échéancier peut être mis en place. Les modalités vous sont présentées lors de l’entretien d’inscription.'),
+       *ct.FORMATIONS_FAQ_PLUS]
 INTRO_FORMATIONS = '''<section class="intro-seo">
   <div class="container intro-grid">
     <div>
@@ -576,6 +630,16 @@ formations = page_hero('Formations en hôtellerie et restauration à Abidjan', '
 
 <section class="bg-soft center">
   <div class="container">
+    <div class="eyebrow">Bien choisir</div>
+    <h2>{ct.FORMATIONS_GUIDE_TITRE}</h2>
+    <div class="sep"></div>
+    <p class="muted" style="margin-top:30px">{ct.FORMATIONS_GUIDE_INTRO}</p>
+    {cartes(GUIDE, 'quatre')}
+  </div>
+</section>
+
+<section class="center">
+  <div class="container">
     <h2>Comment ça marche ?</h2>
     <div class="sep"></div>
     <div class="steps">
@@ -584,7 +648,7 @@ formations = page_hero('Formations en hôtellerie et restauration à Abidjan', '
   </div>
 </section>
 
-<section class="center">
+<section class="bg-soft center">
   <div class="container">
     <h2>Questions fréquentes</h2>
     <div class="sep"></div>
@@ -606,7 +670,7 @@ def liste_fr(items, mot='et'):
 def faq_metier(m):
     """Questions fréquentes d'une fiche, construites à partir des informations validées de la formation."""
     t, c = m['titre'], m['carriere']
-    return [
+    base = [
         (f'À qui s’adresse la formation « {t} » à Abidjan ?',
          f'Niveau demandé : {m["niveau"]}. La formation est ouverte aux candidats d’Abidjan, de toute la Côte d’Ivoire et des pays '
          f'd’Afrique de l’Ouest. Les candidats de moins de 18 ans s’inscrivent avec l’accord d’un parent ou d’un tuteur.'),
@@ -623,6 +687,7 @@ def faq_metier(m):
          f'Remplissez la fiche d’inscription en ligne, puis préparez votre dossier : {liste_fr(d.lower() if i else d for i, d in enumerate(PIECES_DOSSIER))}. '
          f'Vous pouvez aussi prendre rendez-vous ou nous appeler au {PHONE}.'),
     ]
+    return base + ct.CONTENU_METIERS[m['slug']]['faq']
 
 
 LADDER_LABELS = ['Après la formation', 'Avec l’expérience', 'Ensuite', 'À terme']
@@ -642,6 +707,7 @@ for m in METIERS:
     others = '\n'.join(f'        <li><a href="{url(o)}">{o["titre"]}</a></li>' for o in others)
     others += '\n        <li><a href="formations.html">Toutes les formations →</a></li>'
     meta = seo.METIERS_SEO[m['slug']]
+    cm = ct.CONTENU_METIERS[m['slug']]
     body = page_hero(meta['h1'], f'<a href="formations.html">Formations</a><span>/</span>{m["titre"]}',
                      f'images/{m["fond"]}', m['accroche']) + f'''
 <section>
@@ -655,6 +721,9 @@ for m in METIERS:
       <h2 class="h3">Pourquoi suivre cette formation à Abidjan ?</h2>
       <p class="lead-p">{meta['pourquoi']}</p>
 
+      <h2 class="h3">{cm['titre_quotidien']}</h2>
+      <p class="lead-p">{cm['quotidien']}</p>
+
       <h2 class="h3">Ce que vous saurez faire</h2>
       <ul class="checks two">
 {savoir}
@@ -664,6 +733,9 @@ for m in METIERS:
       <ol class="modules">
 {modules}
       </ol>
+
+      <h2 class="h3">Comment se déroule la formation ?</h2>
+      <p class="lead-p">{cm['deroulement']}</p>
 
       <h2 class="h3">{m.get('journee_titre', 'Une journée type')}</h2>
       <ol class="timeline">
@@ -785,9 +857,26 @@ contact = page_hero('Contact et inscription : votre école hôtelière à Abidja
     </div>
   </div>
 </section>
+
+<section class="center bg-soft">
+  <div class="container">
+    <h2>{ct.CONTACT_VOIES_TITRE}</h2>
+    <div class="sep"></div>
+    {cartes(ct.CONTACT_VOIES)}
+  </div>
+</section>
+
+<section class="center">
+  <div class="container">
+    <h2>Questions fréquentes</h2>
+    <div class="sep"></div>
+    {faq_html(ct.CONTACT_FAQ)}
+  </div>
+</section>
 ''' + MAP
 page('contact.html', *seo.PAGES['contact.html'], contact, 'contact.html',
-     schemas=[seo.ecole_schema(PHONE, LAT, LNG, PLUS_CODE), seo.fil_ariane(('Accueil', ''), ('Contact', 'contact.html'))])
+     schemas=[seo.ecole_schema(PHONE, LAT, LNG, PLUS_CODE), seo.fil_ariane(('Accueil', ''), ('Contact', 'contact.html')),
+              seo.faq_schema(ct.CONTACT_FAQ)])
 
 # =========================================================== Inscription
 NIVEAUX_ETUDES = ['Sans diplôme', 'CEPE', 'BEPC', 'BAC', 'BTS / BAC+2', 'Licence / BAC+3', 'Master / BAC+5 et plus']
