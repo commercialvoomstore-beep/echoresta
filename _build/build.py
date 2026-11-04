@@ -1228,6 +1228,23 @@ data = {
     'QUIZ': [{'q': q['q'], 'r': [[label, pts] for label, pts in q['r']]} for q in QUIZ],
 }
 (OUT / 'assets' / 'data.js').write_text(''.join(f'window.{k}={json.dumps(v, ensure_ascii=False)};\n' for k, v in data.items()))
+
+
+def verifier_libelles(f):
+    """Deux champs d'un même formulaire ne doivent pas avoir le même libellé : l'un écraserait l'autre dans l'e-mail et la base."""
+    from bs4 import BeautifulSoup as _BS
+    for form in _BS((OUT / f).read_text(), 'html.parser').find_all('form'):
+        vus = {}
+        for el in form.find_all(attrs={'data-label': True}):
+            if el.name == 'input' and el.get('type') in ('checkbox', 'radio'):
+                continue
+            vus[el['data-label']] = vus.get(el['data-label'], 0) + 1
+        doubles = [k for k, n in vus.items() if n > 1]
+        assert not doubles, f'{f} : libellés en double dans #{form.get("id")} : {doubles}'
+
+
+for _f, _ in PAGES_PUBLIEES:
+    verifier_libelles(_f)
 exec((S / 'traduction.py').read_text())  # version anglaise (dossier en/)
 
 

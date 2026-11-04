@@ -2,11 +2,11 @@
 // Mise en page dans le style du site : Merriweather et Open Sans, bleu nuit et rouge, logo EchoResta.
 // Fichier préfixé par « _ » : Vercel ne le publie pas comme une adresse.
 
-const { PDFDocument, rgb, setCharacterSpacing } = require('pdf-lib');
+const { PDFDocument, PDFString, rgb, setCharacterSpacing } = require('pdf-lib');
 const fontkit = require('@pdf-lib/fontkit');
 const POLICES = require('./_polices');
 const LOGO = require('./_logo');
-const { TYPES, personne, dateLongue } = require('./_gabarits');
+const { TYPES, personne, dateLongue, tailleLisible } = require('./_gabarits');
 
 const hex = h => rgb(parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255);
 const C = { navy: hex('#13296b'), red: hex('#c0152f'), ink: hex('#222222'), muted: hex('#6b6f7b'), line: hex('#e3e6ee'),
@@ -16,9 +16,11 @@ const COL = 170; // largeur de la colonne des libellés
 
 const MOTS = {
   fr: { doc: 'Récapitulatif de demande', no: 'n°', ecole: 'École de l’Hôtellerie & Restauration', recue: 'Reçue le', demandeur: 'Demandeur', autres: 'Autres informations', suite: 'suite',
+        documents: 'Documents', ouvrir: 'Ouvrir le document', consentement: 'Consentement donné (case cochée) :',
         page: (i, n) => `Page ${i} / ${n}`, fichier: 'demande',
         note: (date, page) => `Document généré automatiquement le ${date} à partir du formulaire du site www.echoresta.ci${page}. Conservez-le comme trace de votre demande.` },
   en: { doc: 'Request summary', no: 'no.', ecole: 'School of Hospitality & Catering', recue: 'Received on', demandeur: 'Requester', autres: 'Other information', suite: 'continued',
+        documents: 'Documents', ouvrir: 'Open the document', consentement: 'Consent given (box ticked):',
         page: (i, n) => `Page ${i} of ${n}`, fichier: 'request',
         note: (date, page) => `Document generated automatically on ${date} from the form on www.echoresta.ci${page}. Keep it as a record of your request.` },
 };
@@ -61,13 +63,21 @@ function groupes(d, autres) {
 const rectArrondi = (x, y, l, h, r) => // chemin SVG d'un rectangle à coins arrondis (y = haut du rectangle)
   `M ${x + r} ${y} H ${x + l - r} Q ${x + l} ${y} ${x + l} ${y + r} V ${y + h - r} Q ${x + l} ${y + h} ${x + l - r} ${y + h} H ${x + r} Q ${x} ${y + h} ${x} ${y + h - r} V ${y + r} Q ${x} ${y} ${x + r} ${y} Z`;
 
-async function pdfDemande(d, langue = 'fr') {
+// options.liens : liens « Ouvrir le document » cliquables (exemplaire de l'école seulement)
+async function pdfDemande(d, langue = 'fr', options = {}) {
   const lg = langue === 'en' ? 'en' : 'fr', m = MOTS[lg], t = (TYPES[d.formulaire] || TYPES.autre)[lg], p = personne(d);
   const doc = await PDFDocument.create();
   doc.registerFontkit(fontkit);
   const f = {};
   for (const [k, v] of Object.entries(POLICES)) f[k] = await doc.embedFont(Buffer.from(v, 'base64'), { subset: true });
   const logo = await doc.embedPng(Buffer.from(LOGO, 'base64'));
+  let photo = null; // photo du candidat (JPEG ou PNG), ignorée si elle ne peut pas être lue
+  if (d.photo) {
+    try { photo = d.photo.type === 'image/png' ? await doc.embedPng(d.photo.contenu) : await doc.embedJpg(d.photo.contenu); } catch { photo = null; }
+  }
+  const lienCliquable = (pg, x, y, l, h, url) => pg.node.addAnnot(doc.context.register(doc.context.obj({
+    Type: 'Annot', Subtype: 'Link', Rect: [x, y, x + l, y + h], Border: [0, 0, 0],
+    A: { Type: 'Action', S: 'URI', URI: PDFString.of(url) } })));
   const date = dateLongue(d.date, lg);
   const ref = d.id ? `${m.no} ${d.id}` : '';
   const titreDoc = `EchoResta – ${t.nom}${ref ? ' ' + ref : ''}`;
@@ -104,10 +114,16 @@ async function pdfDemande(d, langue = 'fr') {
   texte(`${m.recue} ${date}`, M, haut - hBande + 14, f.texte, 8.5, C.clair);
   y = haut - hBande - 22;
 
-  if (p.nom || p.tel || p.email) {
+  if (p.nom || p.tel || p.email || photo) {
     const infos = [p.societe, p.tel, p.email].filter(Boolean);
-    const hCarte = 52 + infos.length * 14;
+    const hCarte = Math.max(52 + infos.length * 14, photo ? 104 : 0);
     page.drawSvgPath(rectArrondi(0, 0, L - 2 * M, hCarte, 8), { x: M, y, color: C.soft });
+    if (photo) { // photo à droite de la carte, dans un cadre de 66 × 82 points
+      const r = Math.min(66 / photo.width, 82 / photo.height), lp = photo.width * r, hp = photo.height * r;
+      const xp = L - M - 12 - 66 + (66 - lp) / 2, yp = y - 11 - 82 + (82 - hp) / 2;
+      page.drawRectangle({ x: xp - 2, y: yp - 2, width: lp + 4, height: hp + 4, color: C.blanc, borderColor: C.line, borderWidth: 0.6 });
+      page.drawImage(photo, { x: xp, y: yp, width: lp, height: hp });
+    }
     texte(m.demandeur.toUpperCase(), M + 16, y - 20, f.gras, 7.5, C.muted, 1.4);
     texte(p.nom || '—', M + 16, y - 38, f.titre, 13, C.ink);
     infos.forEach((s, i) => texte(s, M + 16, y - 56 - i * 14, f.texte, 9.5, i === 0 && p.societe ? C.ink : C.navy));
@@ -147,8 +163,32 @@ async function pdfDemande(d, langue = 'fr') {
     }
   }
 
+  // ---------------------------------------------------------------- documents joints à la fiche
+  const docs = d.documents || [];
+  if (docs.length) {
+    place(48);
+    titreSection(`${m.documents} (${docs.length})`);
+    for (const doc_ of docs) {
+      const lv = couper(`${doc_.nom} · ${tailleLisible(doc_.taille, lg)}`, f.gras, 9.5, lValeur), lk = couper(doc_.champ, f.texte, 9, COL - 14);
+      const avecLien = options.liens && doc_.lien;
+      const h = Math.max(lv.length * 13.5 + (avecLien ? 14 : 0), lk.length * 12.5) + 14;
+      if (place(h)) titreSection(`${m.documents} (${m.suite})`);
+      page.drawLine({ start: { x: M, y }, end: { x: L - M, y }, thickness: 0.5, color: C.line });
+      lk.forEach((l, i) => texte(l, M, y - 17 - i * 12.5, f.texte, 9, C.muted));
+      lv.forEach((l, i) => texte(l, xValeur, y - 17 - i * 13.5, f.gras, 9.5, C.ink));
+      if (avecLien) {
+        const yl = y - 17 - lv.length * 13.5 - 1, lt = largeur(m.ouvrir + ' ›', f.gras, 8.5);
+        texte(m.ouvrir + ' ›', xValeur, yl, f.gras, 8.5, C.red);
+        page.drawLine({ start: { x: xValeur, y: yl - 2 }, end: { x: xValeur + lt, y: yl - 2 }, thickness: 0.5, color: C.red });
+        lienCliquable(page, xValeur, yl - 4, lt, 14, doc_.lien);
+      }
+      y -= h;
+    }
+  }
+
   // ---------------------------------------------------------------- note finale
-  const note = couper(m.note(date, d.page || ''), f.italique, 8.5, L - 2 * M - 28);
+  const note = [...couper(m.note(date, d.page || ''), f.italique, 8.5, L - 2 * M - 28),
+                ...(d.consentement ? couper(`${m.consentement} « ${d.consentement} »`, f.italique, 8.5, L - 2 * M - 28) : [])];
   const hNote = 22 + note.length * 12;
   place(hNote + 24);
   y -= 18;

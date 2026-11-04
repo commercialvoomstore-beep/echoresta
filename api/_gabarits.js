@@ -48,11 +48,13 @@ const TYPES = {
   },
   candidature: {
     fr: { nom: 'Candidature emploi', objet: 'Votre candidature est bien reçue', recu: 'votre candidature',
-          etapes: [`Dernière étape : envoyez votre CV, votre photo et vos diplômes sur WhatsApp au ${TEL}.`,
-                   'Notre équipe vous met ensuite en relation avec des hôtels et des restaurants qui recrutent.'] },
+          etapes: ['Notre équipe étudie votre candidature et vos documents.',
+                   'Nous vous mettons ensuite en relation avec des hôtels et des restaurants qui recrutent.'],
+          sansDocuments: `Dernière étape : envoyez votre CV, votre photo et vos diplômes sur WhatsApp au ${TEL}.` },
     en: { nom: 'Job application', objet: 'We have received your application', recu: 'your application',
-          etapes: [`Last step: send your CV, photo and diplomas on WhatsApp to ${TEL}.`,
-                   'Our team will then put you in touch with hotels and restaurants that are hiring.'] },
+          etapes: ['Our team is reviewing your application and your documents.',
+                   'We will then put you in touch with hotels and restaurants that are hiring.'],
+          sansDocuments: `Last step: send your CV, photo and diplomas on WhatsApp to ${TEL}.` },
   },
   autre: {
     fr: { nom: 'Demande', objet: 'Votre demande est bien reçue', recu: 'votre demande', etapes: ['Notre équipe étudie votre demande et vous recontacte rapidement.'] },
@@ -66,6 +68,7 @@ const MOTS = {
         horaires: 'Du lundi au vendredi, de 8h à 17h', adresse: 'Angré Star 14, Cocody, Abidjan', wa: 'Écrire sur WhatsApp',
         appeler: 'Appeler l’école', site: 'Voir le site', envoiDocs: 'Envoyer mes documents sur WhatsApp',
         pdf: 'Le récapitulatif de votre demande est joint à cet e-mail : conservez-le.',
+        documents: 'Vos documents', documentsRecus: n => `${n} document${n > 1 ? 's' : ''} bien reçu${n > 1 ? 's' : ''} avec votre fiche :`,
         ecole: 'École de l’Hôtellerie &amp; Restauration',
         pied: 'Vous recevez cet e-mail car vous avez rempli un formulaire sur www.echoresta.ci. Si ce n’est pas vous, ignorez simplement ce message.' },
   en: { merci: 'Thank you', bienRecu: 'We have received', suite: 'What happens next', reference: 'Your request reference', le: 'on',
@@ -73,6 +76,7 @@ const MOTS = {
         horaires: 'Monday to Friday, 8 am to 5 pm', adresse: 'Angré Star 14, Cocody, Abidjan', wa: 'Message us on WhatsApp',
         appeler: 'Call the school', site: 'Visit the website', envoiDocs: 'Send my documents on WhatsApp',
         pdf: 'Your request summary is attached to this email: keep it for your records.',
+        documents: 'Your documents', documentsRecus: n => `${n} document${n > 1 ? 's' : ''} received with your form:`,
         ecole: 'School of Hospitality &amp; Catering',
         pied: 'You are receiving this email because you filled in a form on www.echoresta.ci. If this was not you, simply ignore this message.' },
 };
@@ -99,9 +103,18 @@ const lienWhatsApp = tel => (/^\+/.test(tel.trim()) ? 'https://wa.me/' + tel.rep
 const lienTel = tel => 'tel:' + tel.replace(/[^\d+]/g, '');
 
 // ------------------------------------------------------------------ Briques de mise en page
-const bouton = (texte, lien, fond = C.red) =>
-  `<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="display:inline-table;margin:0 8px 8px 0"><tr>` +
-  `<td bgcolor="${fond}" style="border-radius:6px"><a href="${e(lien)}" style="display:inline-block;padding:11px 18px;font:bold 14px ${SANS};color:#ffffff;text-decoration:none;border-radius:6px">${texte}</a></td></tr></table>`;
+const bouton = (texte, lien, fond = C.red, petit = false) =>
+  `<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="display:inline-table;margin:${petit ? '0' : '0 8px 8px 0'}"><tr>` +
+  `<td bgcolor="${fond}" style="border-radius:6px"><a href="${e(lien)}" style="display:inline-block;padding:${petit ? '8px 14px' : '11px 18px'};font:bold ${petit ? 13 : 14}px ${SANS};color:#ffffff;text-decoration:none;border-radius:6px;white-space:nowrap">${texte}</a></td></tr></table>`;
+
+// Taille d'un fichier lisible : « 240 Ko », « 1,2 Mo » (« 240 KB », « 1.2 MB » en anglais)
+const tailleLisible = (n, langue = 'fr') => {
+  const [ko, mo] = langue === 'en' ? ['KB', 'MB'] : ['Ko', 'Mo'];
+  const t = n < 1024 * 1024 ? `${Math.max(1, Math.round(n / 1024))} ${ko}` : `${(n / 1024 / 1024).toFixed(1)} ${mo}`;
+  return langue === 'en' ? t : t.replace('.', ',');
+};
+const titreSection = (texte, marge = '26px 0 8px') =>
+  `<div style="font:bold 11px ${SANS};letter-spacing:1.5px;text-transform:uppercase;color:${C.red};border-left:3px solid ${C.red};padding-left:10px;margin:${marge}">${texte}</div>`;
 
 function entete(badge, ecole) {
   return `<tr><td style="padding:22px 28px;border-bottom:1px solid ${C.line}">
@@ -134,7 +147,7 @@ function tableaux(d, mots, maxValeur) {
   const reste = d.champs.filter(([k]) => !vus.has(k));
   if (reste.length) groupes.push([groupes.length ? mots.autres : '', reste]);
   return groupes.map(([titre, lignes]) => `
-  ${titre ? `<div style="font:bold 11px ${SANS};letter-spacing:1.5px;text-transform:uppercase;color:${C.red};border-left:3px solid ${C.red};padding-left:10px;margin:26px 0 8px">${e(titre)}</div>` : ''}
+  ${titre ? titreSection(e(titre)) : ''}
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-collapse:collapse">
   ${lignes.map(([k, v]) => `<tr>
     <td width="38%" valign="top" style="padding:10px 12px 10px 0;border-top:1px solid ${C.line};font:13px ${SANS};color:${C.muted}">${e(k)}</td>
@@ -179,11 +192,31 @@ function emailEcole(d) {
     </div>
     ${boutons ? `<div style="margin-top:14px">${boutons}</div>` : ''}
   </td></tr></table></td></tr>`;
+  const docs = d.documents || [];
+  const documents = docs.length ? `<tr><td style="padding:20px 28px 0">
+  ${titreSection(`${d.formulaire === 'candidature' ? 'Documents du candidat' : 'Documents joints'} (${docs.length})`, '0 0 8px')}
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-collapse:collapse">
+  ${docs.map(f => `<tr>
+    <td valign="middle" style="padding:11px 12px 11px 0;border-top:1px solid ${C.line}">
+      <div style="font:13px ${SANS};color:${C.muted}">${e(f.champ)}</div>
+      <div style="font:bold 14px ${SANS};color:${C.ink};margin-top:2px;word-break:break-all">${e(f.nom)}</div>
+      <div style="font:12px ${SANS};color:${f.joint ? C.green : C.muted};margin-top:2px">${tailleLisible(f.taille)} · ${f.joint ? 'joint à cet e-mail' : 'trop volumineux pour être joint : utilisez le lien'}</div>
+    </td>
+    <td align="right" valign="middle" width="96" style="padding:11px 0;border-top:1px solid ${C.line}">${bouton('Ouvrir', f.lien, C.navy, true)}</td>
+  </tr>`).join('')}
+  </table>
+  <div style="font:12px ${SANS};color:${C.muted};line-height:1.5;margin-top:8px">Les liens « Ouvrir » restent valables : ils ouvrent le document enregistré dans la base. Ne les transmettez qu’à des personnes de confiance.</div>
+</td></tr>` : d.formulaire === 'candidature' ? `<tr><td style="padding:20px 28px 0">
+  <div style="background:#fff7e6;border:1px solid #f3d38b;border-radius:8px;padding:12px 16px;font:13px ${SANS};color:#7a4b00;line-height:1.5">
+    <b>Aucun document reçu avec cette fiche.</b> Le candidat a été invité à envoyer son CV, sa photo et ses diplômes sur WhatsApp.</div>
+</td></tr>` : '';
   const html = page(`${entete('Nouvelle demande', MOTS.fr.ecole)}
 ${bandeau(t.nom, titre, infos)}
 ${demandeur}
+${documents}
 <tr><td style="padding:4px 28px 8px">${tableaux(d, MOTS.fr, 5000)}</td></tr>
 <tr><td style="padding:22px 28px 26px;border-top:1px solid ${C.line};font:12px ${SANS};color:${C.muted};line-height:1.6">
+  ${d.consentement ? `Consentement donné par la personne (case cochée) : « ${e(d.consentement)} »<br>` : ''}
   ${d.pdf && d.pdf.fr ? `Récapitulatif PDF joint : <b style="color:${C.ink}">${e(d.pdf.fr)}</b>.<br>` : ''}
   ${p.email ? 'Le bouton « Répondre » de votre messagerie écrit directement à la personne.<br>' : ''}
   Envoyé automatiquement par le formulaire du site <a href="${SITE}${e(d.page || '/')}" style="color:${C.navy}">www.echoresta.ci${e(d.page || '')}</a>${d.id ? ` · enregistré dans la base Neon (table demandes, n° ${e(d.id)})` : ''}.
@@ -194,7 +227,9 @@ ${demandeur}
 // ------------------------------------------------------------------ Accusé de réception pour la personne
 function emailDemandeur(d) {
   const L = d.langue === 'en' ? 'en' : 'fr', m = MOTS[L], t = (TYPES[d.formulaire] || TYPES.autre)[L], p = personne(d);
-  const etapes = [...t.etapes];
+  const docs = d.documents || [];
+  const sansDocs = d.formulaire === 'candidature' && !docs.length;
+  const etapes = sansDocs ? [t.sansDocuments, t.etapes[1]] : [...t.etapes];
   const creneau = d.champs.find(([k]) => k === 'Rendez-vous' || k === 'Appointment');
   if (creneau) etapes.unshift((L === 'en' ? 'Requested slot: ' : 'Créneau demandé : ') + creneau[1] + '.');
   const ref = d.id ? `<tr><td style="padding:0 28px">
@@ -210,8 +245,14 @@ ${bandeau(e(t.nom), L === 'en' ? `${m.merci}${p.prenom ? ', ' + e(p.prenom) : ''
   ${etapes.map(x => `<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 10px"><tr>
     <td valign="top" style="padding:1px 10px 0 0;font:bold 15px ${SANS};color:${C.green}">✓</td>
     <td style="font:15px ${SANS};color:${C.ink};line-height:1.55">${e(x)}</td></tr></table>`).join('')}
-  ${d.formulaire === 'candidature' ? `<div style="margin-top:12px">${bouton(m.envoiDocs, WA, C.green)}</div>` : ''}
+  ${sansDocs ? `<div style="margin-top:12px">${bouton(m.envoiDocs, WA, C.green)}</div>` : ''}
 </td></tr>
+${docs.length ? `<tr><td style="padding:0 28px 18px">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="${C.soft}" style="background:${C.soft};border-radius:8px"><tr><td style="padding:14px 18px">
+    <div style="font:bold 15px ${SERIF};color:${C.ink}">${m.documents}</div>
+    <div style="font:13px ${SANS};color:${C.muted};margin:4px 0 6px">${m.documentsRecus(docs.length)}</div>
+    ${docs.map(f => `<div style="font:14px ${SANS};color:${C.ink};line-height:1.6;word-break:break-all"><span style="color:${C.green};font-weight:bold">✓</span>&nbsp; ${e(f.nom)} <span style="color:${C.muted}">(${tailleLisible(f.taille, L)})</span></div>`).join('')}
+  </td></tr></table></td></tr>` : ''}
 ${ref}
 <tr><td style="padding:10px 28px 6px">
   <div style="font:bold 17px ${SERIF};color:${C.ink};margin-top:14px">${m.recap}</div>
@@ -230,4 +271,4 @@ ${ref}
   return { sujet: 'EchoResta – ' + t.objet, html };
 }
 
-module.exports = { emailEcole, emailDemandeur, LOGO_CID, TYPES, personne, dateLongue };
+module.exports = { emailEcole, emailDemandeur, LOGO_CID, TYPES, personne, dateLongue, tailleLisible, SITE };

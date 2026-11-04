@@ -71,15 +71,21 @@
 // et l'envoie par e-mail dans la boîte Microsoft 365 de l'école (contact@voomnetformation.ci).
 // Si elle échoue, le visiteur peut envoyer la même demande sur WhatsApp (afficherEchec).
 const emailDe=champs=>Object.values(champs).find(v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim()))||'';
-// Réponse : {ok, numero} (numero = référence de la demande dans la base) ; {ok:false} en cas d'échec.
+// Réponse : {ok, numero, documents} (numero = référence de la demande dans la base) ; {ok:false} en cas d'échec.
 // sections : [[titre, [libellés…]], …] pour regrouper les réponses dans les e-mails et le récapitulatif.
-const envoyerEmail=(form,sujet,champs,sections=[])=>fetch('/api/envoyer',{
+// fichiers : [{id, cle}, …] documents déjà envoyés à /api/fichier (fiche candidat).
+// Le texte de la case de consentement cochée est enregistré avec la demande.
+const consentementDe=form=>{const c=form.querySelector('input[type="checkbox"][required]:not([name])');return c&&c.checked?c.closest('label').textContent.replace(/\s+/g,' ').trim():'';};
+const envoyerEmail=(form,sujet,champs,sections=[],fichiers=[])=>fetch('/api/envoyer',{
   method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
-  body:JSON.stringify({sujet,champs,sections,formulaire:form.id,replyto:emailDe(champs),page:location.pathname,
-    langue:document.documentElement.lang,botcheck:!!(form.elements.botcheck&&form.elements.botcheck.checked)})
+  body:JSON.stringify({sujet,champs,sections,fichiers,formulaire:form.id,replyto:emailDe(champs),page:location.pathname,
+    langue:document.documentElement.lang,consentement:consentementDe(form),botcheck:!!(form.elements.botcheck&&form.elements.botcheck.checked)})
 }).then(r=>r.ok?r.json():{}).then(d=>d&&d.ok===true?d:{ok:false}).catch(()=>({ok:false}));
+// Taille d'un fichier lisible : « 240 Ko », « 1,2 Mo »
+const tailleLisible=n=>n<1048576?Math.max(1,Math.round(n/1024))+' KB':(n/1048576).toLocaleString('en-GB',{maximumFractionDigits:1})+' MB';
 // Récapitulatif affiché après l'envoi : référence de la demande, puis les réponses regroupées par section
-const afficherRecap=(el,champs,sections,numero)=>{
+// documents : [{champ, nom, taille, ok}] (fiche candidat), affichés dans une section « Vos documents »
+const afficherRecap=(el,champs,sections,numero,documents=[])=>{
   const creer=(balise,classe,texte)=>{const x=document.createElement(balise);if(classe)x.className=classe;if(texte!=null)x.textContent=texte;return x;};
   const vus=new Set(), groupes=[];
   for(const [titre,cles] of sections){const l=cles.filter(k=>champs[k]);l.forEach(k=>vus.add(k));if(l.length)groupes.push([titre,l]);}
@@ -90,6 +96,11 @@ const afficherRecap=(el,champs,sections,numero)=>{
   for(const [titre,cles] of groupes){
     const s=creer('div','recap-section');if(titre)s.append(creer('h4','',titre));
     const dl=creer('dl');cles.forEach(k=>dl.append(creer('dt','',k),creer('dd','',champs[k])));
+    s.append(dl);el.append(s);
+  }
+  if(documents.length){
+    const s=creer('div','recap-section');s.append(creer('h4','','Your documents'));
+    const dl=creer('dl');documents.forEach(f=>dl.append(creer('dt','',f.champ),creer('dd',f.ok?'':'recap-ko',f.nom+' · '+(f.ok?tailleLisible(f.taille):'not received'))));
     s.append(dl);el.append(s);
   }
   el.hidden=false;
@@ -344,6 +355,48 @@ const listesDrapeaux={};
   });
 })();
 
+// Documents des fiches candidat : envoyés un par un à /api/fichier (voir api/fichier.js), avant la fiche elle-même
+const MAX_DOCUMENT=4*1024*1024, MAX_DOCUMENTS=6;
+const formatAccepte=f=>/^(application\/pdf|application\/msword|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document|image\/(jpeg|png|webp|heic|heif))$/.test(f.type)
+  ||/\.(pdf|docx?|jpe?g|png|webp|heic|heif)$/i.test(f.name);
+// Photo réduite à 1600 px en JPEG (une photo de téléphone passe de 4 Mo à environ 300 Ko) ; les autres fichiers ne changent pas
+const reduireImage=f=>new Promise(ok=>{
+  if(!/^image\/(jpeg|png|webp)$/.test(f.type)) return ok(f);
+  const url=URL.createObjectURL(f), img=new Image();
+  img.onload=()=>{
+    URL.revokeObjectURL(url);
+    const r=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight));
+    if(r===1&&f.size<800*1024) return ok(f);
+    const c=document.createElement('canvas');c.width=Math.round(img.naturalWidth*r);c.height=Math.round(img.naturalHeight*r);
+    const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0,c.width,c.height);
+    c.toBlob(b=>ok(b&&b.size<f.size?new File([b],f.name.replace(/\.[^.]+$/,'')+'.jpg',{type:'image/jpeg'}):f),'image/jpeg',0.85);
+  };
+  img.onerror=()=>{URL.revokeObjectURL(url);ok(f);};
+  img.src=url;
+});
+const envoyerDocument=(f,champ,progres)=>new Promise(ok=>{
+  const x=new XMLHttpRequest();
+  x.open('POST','/api/fichier');
+  x.setRequestHeader('Content-Type','application/octet-stream');
+  x.setRequestHeader('X-Nom-Fichier',encodeURIComponent(f.name));
+  x.setRequestHeader('X-Champ',encodeURIComponent(champ));
+  x.upload.onprogress=e=>{if(e.lengthComputable)progres(Math.round(e.loaded/e.total*100));};
+  x.onload=()=>{let r={};try{r=JSON.parse(x.responseText);}catch(_){}ok(x.status===200&&r.ok?r:null);};
+  x.onerror=x.ontimeout=()=>ok(null);
+  x.timeout=120000;
+  x.send(f);
+});
+// Résultat : [{champ, nom, taille, ok, id, cle}] ; un fichier refusé ou perdu est réessayé une fois
+const envoyerDocuments=async(liste,progres)=>{
+  const res=[];
+  for(const [k,{f,champ}] of liste.entries()){
+    let r=null;
+    for(let essai=0;essai<2&&!r;essai++) r=await envoyerDocument(f,champ,pc=>progres(k+1,liste.length,pc));
+    res.push(r?{champ,nom:r.nom,taille:r.taille,ok:true,id:r.id,cle:r.cle}:{champ,nom:f.name,taille:f.size,ok:false});
+  }
+  return res;
+};
+
 // Fiches de l'espace recrutement (employeurs et candidats) : envoi par e-mail, récapitulatif
 (function(){
   document.querySelectorAll('form.fiche').forEach(form=>{
@@ -351,9 +404,23 @@ const listesDrapeaux={};
     const btnTexte=btn.textContent;
     // Montants en FCFA : espaces des milliers pendant la saisie
     form.querySelectorAll('[data-fcfa]').forEach(i=>i.addEventListener('input',()=>{const d=i.value.replace(/\D/g,'').slice(0,10);i.value=d?Number(d).toLocaleString('en-GB').replace(/ | /g,' '):'';}));
-    // Noms des fichiers choisis
-    form.querySelectorAll('input[type="file"]').forEach(i=>i.addEventListener('change',()=>{
-      const zone=form.querySelector(`[data-fichiers="${i.id}"]`); if(zone){zone.textContent=[...i.files].map(f=>f.name).join(', ');zone.classList.remove('tw-text-red-700');}}));
+    // Documents : photos réduites dans le navigateur (envoi plus rapide), format et taille contrôlés dès le choix
+    const fichiers=[...form.querySelectorAll('input[type="file"]')];
+    const prets=new Map(); // champ → {liste, erreur, attente}
+    const majZone=(i,texte,erreur)=>{const zone=form.querySelector(`[data-fichiers="${i.id}"]`);if(zone){zone.textContent=texte;zone.classList.toggle('tw-text-red-700',!!erreur);}};
+    fichiers.forEach(i=>i.addEventListener('change',()=>{
+      const choisis=[...i.files];
+      const attente=Promise.all(choisis.map(reduireImage)).then(liste=>{
+        let erreur='';
+        if(liste.length>MAX_DOCUMENTS) erreur='Choose 6 files at most.';
+        const mauvais=liste.find(f=>!formatAccepte(f)), lourd=liste.find(f=>f.size>MAX_DOCUMENT);
+        if(mauvais) erreur='Format not accepted (PDF, Word or image): '+mauvais.name;
+        else if(lourd) erreur='File too large (4 MB maximum): '+lourd.name;
+        prets.set(i,{liste,erreur});
+        majZone(i,erreur||liste.map(f=>f.name+' ('+tailleLisible(f.size)+')').join(', '),erreur);
+      });
+      prets.set(i,{liste:[],erreur:'',attente});
+    }));
     // Groupes de choix obligatoires
     const groupes=[...form.querySelectorAll('[data-groupe]')];
     const groupeOk=g=>!g.dataset.requis||!!g.querySelector('input:checked');
@@ -370,7 +437,8 @@ const listesDrapeaux={};
         if(!el.name||el.name==='botcheck'||vus.has(el.name)||(el.type==='hidden'&&!el.dataset.label)||(el.type==='checkbox'&&!el.closest('[data-groupe]'))||el.closest('[data-si].tw-hidden')) return;
         const g=el.closest('[data-groupe]');
         if(g){vus.add(el.name);const v=[...g.querySelectorAll('input:checked')].map(x=>x.value).join(', ');if(v){champs[g.dataset.label]=v;ranger(g,g.dataset.label);}return;}
-        let v=el.type==='file'?[...el.files].map(f=>f.name).join(', '):el.tagName==='SELECT'?(el.value?el.selectedOptions[0].textContent:''):el.value.trim();
+        if(el.type==='file') return; // documents envoyés à part (voir envoyerDocuments)
+        let v=el.tagName==='SELECT'?(el.value?el.selectedOptions[0].textContent:''):el.value.trim();
         if('paysRequis' in el.dataset&&/^Autre/.test(v)){const a=form.elements[el.name+'_autre'];if(a&&a.value.trim())v=a.value.trim();}
         if('paysRequis' in el.dataset) vus.add(el.name+'_autre');
         if(el.dataset.indicatif&&v){const ind=form.elements[el.dataset.indicatif].value;if(ind&&ind!=='Other'&&!v.startsWith('+'))v=ind+' '+v;}
@@ -379,29 +447,43 @@ const listesDrapeaux={};
       });
       return [champs,[...parSection]];
     };
-    form.addEventListener('submit',e=>{
+    form.addEventListener('submit',async e=>{
       e.preventDefault(); echec.classList.add('tw-hidden');
+      await Promise.all([...prets.values()].map(x=>x.attente)); // photos en cours de réduction
       const mauvais=groupes.filter(g=>!groupeOk(g));
       mauvais.forEach(g=>g.querySelector('[data-erreur]').classList.remove('tw-hidden'));
-      form.querySelectorAll('input[type="file"][required]').forEach(i=>{const zone=form.querySelector(`[data-fichiers="${i.id}"]`);
-        if(!i.files.length&&zone){zone.textContent='File required';zone.classList.add('tw-text-red-700');}});
+      fichiers.filter(i=>i.required&&!i.files.length).forEach(i=>majZone(i,'File required',true));
       const paysKo=[...form.querySelectorAll('[data-pays-requis]')].filter(i=>!listesDrapeaux[i.name].valide());
       if(!form.checkValidity()){form.reportValidity();return;}
       if(paysKo.length){const l=listesDrapeaux[paysKo[0].name];l.btn.scrollIntoView({block:'center'});l.btn.focus();return;}
       if(mauvais.length){mauvais[0].scrollIntoView({block:'center'});return;}
+      const fichierKo=fichiers.find(i=>prets.has(i)&&prets.get(i).erreur);
+      if(fichierKo){const z=form.querySelector(`[data-fichiers="${fichierKo.id}"]`);(z||fichierKo).scrollIntoView({block:'center'});return;}
       const [champs,sections]=valeurs();
       const nom=champs['Establishment or company']||[champs['First names'],champs['Last name']].filter(Boolean).join(' ');
       const objet=champs['I am looking for']||champs['Job sought']||'';
       const sujet=form.dataset.sujet+' : '+objet+' – '+nom;
       btn.disabled=true; btn.textContent='Sending…';
-      envoyerEmail(form,sujet,champs,sections).then(rep=>{
-        btn.disabled=false; btn.textContent=btnTexte;
-        if(!rep.ok){afficherEchec(echec,form,sujet,texteDemande(champs));echec.classList.remove('tw-hidden');return;}
-        afficherRecap(merci.querySelector('[data-recap]'),champs,sections,rep.numero);
-        const wa=merci.querySelector('[data-wa-fichiers]');
-        if(wa) wa.href='https://wa.me/'+form.dataset.wa+'?text='+encodeURIComponent('Hello EchoResta, here are the supporting documents for my application ('+nom+', '+objet+'): CV, photo and diplomas.');
-        form.classList.add('tw-hidden'); merci.classList.remove('tw-hidden'); merci.scrollIntoView({block:'start'});
-      });
+      // 1. les documents, un par un (4 Mo au plus chacun) ; 2. la fiche, avec les références des documents reçus
+      const aEnvoyer=fichiers.flatMap(i=>(prets.has(i)?prets.get(i).liste:[...i.files]).map(f=>({f,champ:i.dataset.label})));
+      const docs=await envoyerDocuments(aEnvoyer,(k,n,pc)=>{btn.textContent='Sending your documents… '+k+'/'+n+(pc<100?' ('+pc+' %)':'');});
+      btn.textContent='Sending…';
+      const rep=await envoyerEmail(form,sujet,champs,sections,docs.filter(x=>x.ok).map(x=>({id:x.id,cle:x.cle})));
+      btn.disabled=false; btn.textContent=btnTexte;
+      if(!rep.ok){afficherEchec(echec,form,sujet,texteDemande(champs));echec.classList.remove('tw-hidden');return;}
+      // Documents non reçus (connexion coupée, base indisponible…) : envoi de secours sur WhatsApp
+      if(rep.documents!==undefined&&rep.documents<docs.filter(x=>x.ok).length) docs.forEach(x=>{x.ok=false;});
+      const manquants=docs.filter(x=>!x.ok);
+      afficherRecap(merci.querySelector('[data-recap]'),champs,sections,rep.numero,docs);
+      const wa=merci.querySelector('[data-wa-fichiers]'), alerte=merci.querySelector('[data-docs-manquants]');
+      if(wa&&(manquants.length||(fichiers.length&&!docs.length))){
+        wa.href='https://wa.me/'+form.dataset.wa+'?text='+encodeURIComponent('Hello EchoResta, here are the supporting documents for my application ('+nom+', '+objet+'): CV, photo and diplomas.');
+        wa.classList.remove('tw-hidden'); wa.classList.add('tw-inline-flex');
+        const intro=merci.querySelector('h2 + p');
+        if(intro&&manquants.length) intro.textContent='Thank you! We have received your form. Our team will review your application and get back to you quickly.';
+        if(alerte&&manquants.length){alerte.textContent='Some documents could not be sent: '+manquants.map(x=>x.nom).join(', ')+'. Send them on WhatsApp with the button below.';alerte.classList.remove('tw-hidden');}
+      }
+      form.classList.add('tw-hidden'); merci.classList.remove('tw-hidden'); merci.scrollIntoView({block:'start'});
     });
   });
 })();

@@ -222,7 +222,7 @@ client_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec">
       <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 {bloc(1, 'Identification du besoin', 'Le profil de la ou des personnes que vous recherchez.',
       liste('ec-nombre', 'Je cherche', [f'{n} personne' + ('s' if n > 1 else '') for n in range(1, 11)] + ['Plus de 10 personnes'], A, True)
-      + liste('ec-genre', 'Genre', ['Homme', 'Femme', 'Peu importe'], A, True)
+      + liste('ec-genre', 'Genre recherché', ['Homme', 'Femme', 'Peu importe'], A, True)
       + groupe('ec-age', 'Tranche d’âge', ['18 à 25 ans', '25 à 30 ans', '30 à 35 ans', '35 à 40 ans', '40 à 45 ans', '45 à 50 ans',
                                            '50 ans et +', 'Peu importe l’âge'], A, type_='radio', requis=True, grille=True)
       + groupe('ec-sachant', 'Sachant', ['Lire', 'Écrire', 'Peu importe'], A, requis=True)
@@ -325,15 +325,16 @@ candidat_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec 
       + groupe('cd-contrat', 'Type de contrat souhaité', ['CDI', 'CDD', 'Extra'], A)
       + liste('cd-dispo', 'Disponibilité', ['Immédiate', 'Sous 1 semaine', 'Sous 15 jours', 'Sous 1 mois', 'À convenir'], A, True)
       + liste('cd-salaire', 'Salaire idéal (FCFA)', SALAIRES, A, True)
-      + intertitre('Vos documents', 'Sélectionnez vos fichiers : après l’envoi de la fiche, vous nous les transmettez en un clic sur WhatsApp.')
-      + fichier('cd-cv', 'Votre CV', 'PDF, Word ou photo · 5 Mo maximum', '.pdf,.doc,.docx,image/*', requis=True)
+      + intertitre('Vos documents', 'Joignez vos fichiers : ils sont envoyés avec votre fiche et enregistrés en toute sécurité.')
+      + fichier('cd-cv', 'Votre CV', 'PDF, Word ou photo · 4 Mo maximum', '.pdf,.doc,.docx,image/*', requis=True)
       + fichier('cd-photo', 'Une photo récente', 'JPG ou PNG, de face, tenue correcte', 'image/*', requis=True)
-      + fichier('cd-diplomes', 'Documents attestant votre expérience', 'Certificats, diplômes, attestations de travail… (si vous en avez)', '.pdf,image/*', multiple=True), A)}
+      + fichier('cd-diplomes', 'Documents attestant votre expérience', 'Certificats, diplômes, attestations de travail… (si vous en avez) · 6 fichiers maximum', '.pdf,image/*', multiple=True), A)}
 {pied_formulaire(A, 'Je certifie l’exactitude des informations et j’accepte d’être recontacté(e) par EchoResta pour des offres d’emploi.',
                  'Envoyer ma candidature', f'Votre fiche est envoyée à notre équipe par e-mail. Une question ? {PHONE}')}
     </form>
-{merci('Votre candidature est enregistrée', 'Dernière étape : envoyez vos justificatifs (CV, photo, diplômes) sur WhatsApp. Le message est déjà rédigé, il ne reste qu’à joindre vos fichiers.', A,
-       '<a class="tw-mt-6 tw-inline-flex tw-items-center tw-justify-center tw-gap-2 tw-rounded-xl tw-bg-[#15803d] tw-px-6 tw-py-4 tw-font-bold tw-text-white tw-no-underline hover:tw-bg-[#116a32]" data-wa-fichiers target="_blank" rel="noopener"><svg class="ic tw-h-5 tw-w-5"><use href="#i-chat"/></svg>Envoyer mes justificatifs sur WhatsApp</a>')}
+{merci('Votre candidature est enregistrée', 'Merci ! Votre fiche et vos documents sont bien reçus. Notre équipe étudie votre candidature et vous met en relation avec des hôtels et des restaurants qui recrutent.', A,
+       '<p class="tw-mx-auto tw-mb-0 tw-mt-5 tw-hidden tw-max-w-lg tw-rounded-lg tw-bg-amber-50 tw-p-4 tw-text-left tw-text-sm tw-font-semibold tw-text-amber-900" data-docs-manquants></p>'
+       '<a class="tw-mt-6 tw-hidden tw-items-center tw-justify-center tw-gap-2 tw-rounded-xl tw-bg-[#15803d] tw-px-6 tw-py-4 tw-font-bold tw-text-white tw-no-underline hover:tw-bg-[#116a32]" data-wa-fichiers target="_blank" rel="noopener"><svg class="ic tw-h-5 tw-w-5"><use href="#i-chat"/></svg>Envoyer mes justificatifs sur WhatsApp</a>')}
   </div>
 </section>
 '''

@@ -791,6 +791,7 @@
   .recap dt,.recap dd{padding:9px 0;border-top:1px solid #eef0f5;font-size:14px;line-height:1.5}
   .recap dt{color:var(--muted);padding-right:16px}
   .recap dd{margin:0;color:var(--ink);font-weight:600;overflow-wrap:anywhere}
+  .recap dd.recap-ko{color:var(--red)}
   .recap dl > :nth-child(-n+2){border-top:0}
   @media (max-width:600px){
     .recap-section{padding:4px 16px 8px}.recap-ref{padding:12px 16px}

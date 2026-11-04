@@ -156,6 +156,10 @@ JS_CHAINES = [
     'Téléphone', 'Téléphone / WhatsApp', 'Téléphone du tuteur', 'Téléphone principal', 'Téléphone secondaire', 'Ville / Commune',
     'Établissement ou société', '— Choisir l’heure —', '<li class="empty">Aucun résultat.</li>', ' ans)',
     'Vos coordonnées', 'Votre demande', 'Votre rendez-vous', 'Autres informations', 'Référence de votre demande',
+    'Vos documents', 'non reçu', ' Ko', ' Mo', 'Choisissez 6 fichiers au maximum.', 'Format non accepté (PDF, Word ou image) : ',
+    'Fichier trop volumineux (4 Mo maximum) : ', 'Envoi de vos documents… ', 'Certains documents n’ont pas pu être envoyés : ',
+    '. Envoyez-les sur WhatsApp avec le bouton ci-dessous.',
+    'Merci ! Votre fiche est bien reçue. Notre équipe étudie votre candidature et vous recontacte rapidement.',
     '" target="_blank" rel="noopener">Envoyez la demande sur WhatsApp</a> (message déjà rédigé) ou appelez-nous au +225 07 68 84 20 38.',
 ]
 JS_FRAGMENTS = ['>Votre résultat<', '>Découvrir la formation<', '>Refaire le test<']

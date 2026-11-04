@@ -222,7 +222,7 @@ RECRUTEMENT_ETAPES_EMPLOYEURS = [
 ]
 RECRUTEMENT_ETAPES_CANDIDATS = [
     ('Remplissez votre fiche', 'Indiquez votre identité, vos expériences, l’emploi recherché et vos conditions de travail.'),
-    ('Envoyez vos justificatifs', 'Transmettez en un clic votre CV, votre photo et vos diplômes sur WhatsApp, depuis la page de confirmation.'),
+    ('Joignez vos documents', 'Ajoutez votre CV, votre photo et vos diplômes directement à la fiche : ils nous arrivent avec votre candidature.'),
     ('Soyez mis en relation', 'Notre équipe vous met en relation avec des hôtels et des restaurants qui recrutent.'),
 ]
 RECRUTEMENT_ATOUTS_TITRE = 'Pourquoi passer par EchoResta ?'
@@ -237,7 +237,7 @@ RECRUTEMENT_FAQ = [
     ('À qui s’adresse l’espace candidat ?',
      'Aux professionnels de l’hôtellerie et de la restauration qui cherchent un emploi : cuisine, salle, bar, réception, étages. La fiche d’inscription candidat se remplit en quelques minutes.'),
     ('Comment envoyer mon CV et mes diplômes ?',
-     'Remplissez la fiche candidat en ligne, puis envoyez votre CV, votre photo et vos diplômes sur WhatsApp en un clic depuis la page de confirmation : le message est déjà rédigé.'),
+     'Joignez-les à la fiche candidat en ligne, dans la partie « Vos documents » : CV en PDF, Word ou photo, une photo récente et, si vous en avez, vos diplômes et attestations (4 Mo maximum par fichier). Ils sont envoyés à notre équipe avec votre fiche. Un fichier trop lourd ? Envoyez-le sur WhatsApp au +225 07 68 84 20 38.'),
     ('En combien de temps suis-je recontacté ?',
      'Notre équipe étudie votre demande et vous recontacte rapidement. Pour toute question, appelez le +225 07 68 84 20 38 ou écrivez-nous sur WhatsApp du lundi au vendredi, de 8h à 17h.'),
 ]

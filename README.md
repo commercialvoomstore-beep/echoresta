@@ -59,8 +59,7 @@ Sur vercel.com : **Add New… → Project → Import Git Repository**, choisir c
 - `recrutement.html` : page d'accueil du recrutement avec deux boutons, vers `espace_client.html`
   (fiche de besoin de personnel, pour les établissements) et `espace_candidat.html` (fiche d'inscription candidat).
 - Ces pages sont générées par `_build/recrutement.py` ; leurs fiches sont reçues comme les autres formulaires.
-  Les pièces jointes (CV, photo, diplômes) ne sont pas envoyées par le formulaire :
-  après l'envoi, le candidat les transmet en un clic sur WhatsApp.
+  La fiche candidat envoie les documents (CV, photo, diplômes) avec la fiche : voir « Documents des candidats » ci-dessous.
 - Le style vient de Tailwind CSS, compilé dans `assets/recrutement.css` (classes préfixées `tw-`).
   Après avoir modifié les classes de ces pages, recompiler :
   `npx tailwindcss@3.4.17 -c _build/tailwind.config.js -i _build/tailwind.css -o assets/recrutement.css --minify`
@@ -107,6 +106,26 @@ Réglages, dans Vercel → projet → Settings → Environment Variables (puis *
 - `DATABASE_URL` : ajoutée automatiquement quand la base Neon est reliée au projet (Storage → Neon) ;
 - facultatif : `MS_TENANT_ID`, `MS_CLIENT_ID`, `MAIL_FROM`, `MAIL_TO` (valeurs par défaut dans `api/envoyer.js`).
 
+Ce qui est enregistré pour chaque demande (table `demandes`) : les réponses complètes (`champs`), regroupées comme sur la
+page (`sections`), et des colonnes lisibles pour chercher vite : `nom`, `telephone`, `email`, `societe`, `consentement`
+(texte de la case cochée), `documents` (liste des documents avec leur lien), `envoi_email`, `accuse_email`.
+Les tables sont créées et complétées automatiquement (`api/_base.js`) : aucune manipulation dans Neon.
+
 Consulter les demandes : console Neon → SQL Editor → `SELECT * FROM demandes ORDER BY recue_le DESC;`
+Les candidatures avec leurs documents :
+`SELECT d.id, d.recue_le, d.nom, d.telephone, f.champ, f.nom AS fichier, f.lien FROM demandes d JOIN fichiers f ON f.demande_id = d.id ORDER BY d.id DESC;`
 En cas de problème : Vercel → Logs, filtre `/api/envoyer` (les erreurs de Neon et de Microsoft y sont affichées).
 Le secret client a une date d'expiration (Entra ID → Certificats et secrets) : le renouveler avant et mettre à jour Vercel.
+
+### Documents des candidats (CV, photo, diplômes)
+
+- La fiche candidat (`espace_candidat`) envoie chaque fichier à la fonction `api/fichier.js` avant la fiche elle-même :
+  4 Mo au plus par fichier (limite de Vercel), formats PDF, Word, JPEG, PNG, WebP, HEIC (reconnus à leur contenu).
+  Les photos sont réduites dans le navigateur (1600 px) : une photo de téléphone de 4 Mo arrive en 200 à 400 Ko.
+- Les fichiers sont gardés dans la base Neon, table `fichiers` (contenu, nom, taille, type, demande liée, lien).
+- L'e-mail de l'école joint les documents tant que le message reste sous la limite de Microsoft (4 Mo) ; chaque document
+  a aussi un bouton « Ouvrir » (lien secret `https://www.echoresta.ci/api/fichier?n=…&k=…`), présent également dans le
+  récapitulatif PDF de l'école. Le candidat reçoit la liste de ses documents, sans lien. La photo figure sur le PDF.
+- Un fichier qui n'a pas pu être envoyé est signalé au candidat, qui peut alors l'envoyer sur WhatsApp.
+- Place : l'offre gratuite de Neon donne 0,5 Go, soit plusieurs centaines de candidatures. Taille utilisée :
+  `SELECT pg_size_pretty(pg_total_relation_size('fichiers'));`
