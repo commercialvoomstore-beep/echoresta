@@ -20,8 +20,6 @@ PHONE = '+225 07 68 84 20 38'
 WHATSAPP = '2250768842038'  # numéro WhatsApp au format international, sans + ni espaces
 WHATSAPP_AFFICHE = '+225 07 68 84 20 38'
 EMAIL = 'contact@echoresta.ci'  # adresse affichée sur le site
-# Clé Web3Forms : les formulaires (contact, rendez-vous, inscription) sont envoyés en arrière-plan à contact@voomnetformation.ci
-WEB3FORMS_KEY = '8074f180-a24b-40cb-8ff6-127ec8b3fd9f'
 PLUS_CODE = '92JH+FW'  # code de localisation Google (Plus Code) du centre, à Abidjan
 GPS = '5.381188,-3.970187'  # coordonnées correspondant au Plus Code
 LIEU = quote(f'{PLUS_CODE} Abidjan')  # Google Maps reconnaît le Plus Code et y place son repère
@@ -825,7 +823,7 @@ contact = page_hero('Contact et inscription : votre école hôtelière à Abidja
     </aside>
 
     <div class="form" id="formulaire" style="scroll-margin-top:180px">
-      <form id="form-contact" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" novalidate>
+      <form id="form-contact" data-wa="{WHATSAPP}" novalidate>
         <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="eyebrow">Formulaire</div>
         <h3>Envoyez-nous un message</h3>
@@ -967,7 +965,7 @@ FAQ_INSCRIPTION = [
 ]
 FAQ_INSCRIPTION_HTML = '\n'.join(f'        <details><summary>{q}</summary><p>{r}</p></details>' for q, r in FAQ_INSCRIPTION)
 
-FORMULAIRE_INSCRIPTION = f'''      <form id="form-inscription" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" data-nationalites='{json.dumps(NATIONALITES, ensure_ascii=False).replace("'", "&#39;")}' novalidate>
+FORMULAIRE_INSCRIPTION = f'''      <form id="form-inscription" data-wa="{WHATSAPP}" data-nationalites='{json.dumps(NATIONALITES, ensure_ascii=False).replace("'", "&#39;")}' novalidate>
         <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <h3 class="ins-title">Formulaire de candidature</h3>
         <div class="sep"></div>
@@ -1126,7 +1124,7 @@ rdv = page_hero('Prendre rendez-vous avec notre école à Abidjan', 'Rendez-vous
     </aside>
 
     <div class="form rdv-form" id="rendez-vous" style="scroll-margin-top:180px">
-      <form id="form-rdv" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" novalidate>
+      <form id="form-rdv" data-wa="{WHATSAPP}" novalidate>
         <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="eyebrow">Formulaire de rendez-vous</div>
         <h3>Réservez votre créneau</h3>

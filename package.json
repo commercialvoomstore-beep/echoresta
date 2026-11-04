@@ -1,0 +1,8 @@
+{
+  "name": "echoresta",
+  "private": true,
+  "description": "Site de l'école EchoResta : pages statiques (générées par _build/build.py) et fonction d'envoi des formulaires (api/envoyer.js).",
+  "dependencies": {
+    "@neondatabase/serverless": "1.2.0"
+  }
+}

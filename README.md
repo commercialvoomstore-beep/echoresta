@@ -52,16 +52,14 @@ Sur vercel.com : **Add New… → Project → Import Git Repository**, choisir c
 
 - Remplacer les photos de `images/` par les originales (mêmes noms de fichiers).
 - Vérifier les durées, niveaux et rythmes des formations dans `_build/metiers.py`.
-- Formulaires Contact, Rendez-vous et Inscription : envoyés par e-mail via Web3Forms (clé `WEB3FORMS_KEY` dans
-  `_build/build.py`) à contact@voomnetformation.ci ; l'adresse affichée sur le site reste contact@echoresta.ci.
-  En cas d'échec d'envoi, le visiteur peut transmettre sa demande sur WhatsApp.
+- Formulaires : voir « Réception des formulaires » ci-dessous. L'adresse affichée sur le site reste contact@echoresta.ci.
 
 ## Espace recrutement
 
 - `recrutement.html` : page d'accueil du recrutement avec deux boutons, vers `espace_client.html`
   (fiche de besoin de personnel, pour les établissements) et `espace_candidat.html` (fiche d'inscription candidat).
-- Ces pages sont générées par `_build/recrutement.py` et envoyées par e-mail via Web3Forms, comme les autres formulaires.
-  Les pièces jointes (CV, photo, diplômes) ne passent pas par e-mail avec l'offre gratuite de Web3Forms :
+- Ces pages sont générées par `_build/recrutement.py` ; leurs fiches sont reçues comme les autres formulaires.
+  Les pièces jointes (CV, photo, diplômes) ne sont pas envoyées par le formulaire :
   après l'envoi, le candidat les transmet en un clic sur WhatsApp.
 - Le style vient de Tailwind CSS, compilé dans `assets/recrutement.css` (classes préfixées `tw-`).
   Après avoir modifié les classes de ces pages, recompiler :
@@ -93,3 +91,22 @@ Sur vercel.com : **Add New… → Project → Import Git Repository**, choisir c
   de salaire, de durée, de partenaire ni de témoignage inventé.
 - Après une modification, relancer `python3 _build/build.py` : la version anglaise signale les textes à traduire
   (voir « Version anglaise »).
+
+## Réception des formulaires (Neon Postgres + Microsoft 365)
+
+Tous les formulaires (contact, rendez-vous, inscription, recherche du personnel, recherche d'emploi) sont envoyés à la
+fonction Vercel `api/envoyer.js`, qui :
+1. enregistre la demande dans la base **Neon Postgres**, table `demandes` (créée automatiquement au premier envoi) ;
+2. l'envoie par e-mail dans la boîte **contact@voomnetformation.ci** (Microsoft 365, via Microsoft Graph, application
+   « Echoresta » de Microsoft Entra ID, permission *Mail.Send* de type Application), avec « Répondre » vers le visiteur ;
+3. note dans la colonne `envoi_email` si l'e-mail est parti.
+Si rien n'a pu être enregistré ni envoyé, la page propose au visiteur d'envoyer sa demande sur WhatsApp.
+
+Réglages, dans Vercel → projet → Settings → Environment Variables (puis **Redeploy**) :
+- `MS_CLIENT_SECRET` : la **Valeur** du secret client (pas l'« ID du secret ») ;
+- `DATABASE_URL` : ajoutée automatiquement quand la base Neon est reliée au projet (Storage → Neon) ;
+- facultatif : `MS_TENANT_ID`, `MS_CLIENT_ID`, `MAIL_FROM`, `MAIL_TO` (valeurs par défaut dans `api/envoyer.js`).
+
+Consulter les demandes : console Neon → SQL Editor → `SELECT * FROM demandes ORDER BY recue_le DESC;`
+En cas de problème : Vercel → Logs, filtre `/api/envoyer` (les erreurs de Neon et de Microsoft y sont affichées).
+Le secret client a une date d'expiration (Entra ID → Certificats et secrets) : le renouveler avant et mettre à jour Vercel.

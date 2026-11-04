@@ -2,7 +2,7 @@
 
 Les pages utilisent Tailwind CSS (compilé dans assets/recrutement.css, voir _build/tailwind.config.js ;
 préfixe « tw- », sans remise à zéro des styles du site)
-et sont envoyés par e-mail via Web3Forms, comme les autres formulaires du site.
+et sont envoyées par la fonction api/envoyer.js (base Neon + boîte Microsoft 365), comme les autres formulaires du site.
 """
 
 TAILWIND = '<link rel="stylesheet" href="assets/recrutement.css">'
@@ -218,7 +218,7 @@ client_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec">
   <div class="tw-mx-auto tw-max-w-4xl">
 {entete('Recherche du personnel · Employeurs', 'Fiche de besoin de personnel',
         'Hôtels, restaurants, résidences et particuliers : décrivez le profil recherché et les conditions de travail. Notre équipe vous propose des candidats formés aux métiers de l’hôtellerie et de la restauration.', A)}
-    <form id="form-client" class="{PANNEAU.format(bord='tw-border-nuit-800')}" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" data-sujet="Besoin de personnel" novalidate>
+    <form id="form-client" class="{PANNEAU.format(bord='tw-border-nuit-800')}" data-wa="{WHATSAPP}" data-sujet="Besoin de personnel" novalidate>
       <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 {bloc(1, 'Identification du besoin', 'Le profil de la ou des personnes que vous recherchez.',
       liste('ec-nombre', 'Je cherche', [f'{n} personne' + ('s' if n > 1 else '') for n in range(1, 11)] + ['Plus de 10 personnes'], A, True)
@@ -298,7 +298,7 @@ candidat_form = f'''<section class="tw-bg-white tw-px-4 tw-py-14 sm:tw-py-20 ec 
   <div class="tw-mx-auto tw-max-w-4xl">
 {entete('Recherche un emploi · Candidats', 'Fiche d’inscription candidat',
         'Valet, gouvernante, réceptionniste, serveur, cuisinier, barman… : inscrivez-vous pour être mis en relation avec des hôtels et restaurants qui recrutent.', A)}
-    <form id="form-candidat" class="{PANNEAU.format(bord='tw-border-amber-500')}" data-key="{WEB3FORMS_KEY}" data-wa="{WHATSAPP}" data-sujet="Candidature emploi" novalidate>
+    <form id="form-candidat" class="{PANNEAU.format(bord='tw-border-amber-500')}" data-wa="{WHATSAPP}" data-sujet="Candidature emploi" novalidate>
       <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 {bloc(1, 'Identification', 'Vos coordonnées, votre parcours et vos expériences.',
       liste('cd-genre', 'Genre', ['Femme', 'Homme'], A, True)
