@@ -31,7 +31,7 @@ jobs:
         run: |
           curl -sS -o reponse.json -w 'HTTP %{http_code}\n' -X POST "$SITE/api/envoyer" \
             -H 'Content-Type: application/json' -H "Origin: $SITE" \
-            -d '{"sujet":"TEST – vérification des formulaires du site (à ignorer)","formulaire":"form-contact","langue":"fr","page":"/contact","champs":{"Nom":"Test automatique","Message":"Message envoyé automatiquement pour vérifier que les formulaires du site arrivent dans cette boîte et dans la base Neon. Vous pouvez le supprimer."}}'
+            -d '{"sujet":"TEST – vérification des formulaires du site (à ignorer)","formulaire":"form-contact","langue":"fr","page":"/contact","champs":{"Nom":"Test automatique","Téléphone":"+225 07 68 84 20 38","Objet":"Demande d’information","Formation":"Cuisinier","Message":"Message envoyé automatiquement pour vérifier que les formulaires du site arrivent dans cette boîte et dans la base Neon. Vous pouvez le supprimer."},"sections":[["Vos coordonnées",["Nom","Téléphone"]],["Votre demande",["Objet","Formation","Message"]]]}'
           cat reponse.json; echo
           grep -q '"ok":true' reponse.json
       - name: Enregistrement dans la base Neon
