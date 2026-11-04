@@ -65,12 +65,14 @@ const MOTS = {
         recap: 'Récapitulatif de votre demande', autres: 'Autres informations', question: 'Une question ?',
         horaires: 'Du lundi au vendredi, de 8h à 17h', adresse: 'Angré Star 14, Cocody, Abidjan', wa: 'Écrire sur WhatsApp',
         appeler: 'Appeler l’école', site: 'Voir le site', envoiDocs: 'Envoyer mes documents sur WhatsApp',
+        pdf: 'Le récapitulatif de votre demande est joint à cet e-mail : conservez-le.',
         ecole: 'École de l’Hôtellerie &amp; Restauration',
         pied: 'Vous recevez cet e-mail car vous avez rempli un formulaire sur www.echoresta.ci. Si ce n’est pas vous, ignorez simplement ce message.' },
   en: { merci: 'Thank you', bienRecu: 'We have received', suite: 'What happens next', reference: 'Your request reference', le: 'on',
         recap: 'Summary of your request', autres: 'Other information', question: 'Any questions?',
         horaires: 'Monday to Friday, 8 am to 5 pm', adresse: 'Angré Star 14, Cocody, Abidjan', wa: 'Message us on WhatsApp',
         appeler: 'Call the school', site: 'Visit the website', envoiDocs: 'Send my documents on WhatsApp',
+        pdf: 'Your request summary is attached to this email: keep it for your records.',
         ecole: 'School of Hospitality &amp; Catering',
         pied: 'You are receiving this email because you filled in a form on www.echoresta.ci. If this was not you, simply ignore this message.' },
 };
@@ -182,6 +184,7 @@ ${bandeau(t.nom, titre, infos)}
 ${demandeur}
 <tr><td style="padding:4px 28px 8px">${tableaux(d, MOTS.fr, 5000)}</td></tr>
 <tr><td style="padding:22px 28px 26px;border-top:1px solid ${C.line};font:12px ${SANS};color:${C.muted};line-height:1.6">
+  ${d.pdf && d.pdf.fr ? `Récapitulatif PDF joint : <b style="color:${C.ink}">${e(d.pdf.fr)}</b>.<br>` : ''}
   ${p.email ? 'Le bouton « Répondre » de votre messagerie écrit directement à la personne.<br>' : ''}
   Envoyé automatiquement par le formulaire du site <a href="${SITE}${e(d.page || '/')}" style="color:${C.navy}">www.echoresta.ci${e(d.page || '')}</a>${d.id ? ` · enregistré dans la base Neon (table demandes, n° ${e(d.id)})` : ''}.
 </td></tr>`, `${t.nom} · ${p.nom} · ${p.tel || p.email}`);
@@ -198,9 +201,10 @@ function emailDemandeur(d) {
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border:1px solid ${C.line};border-radius:8px"><tr>
     <td style="padding:14px 18px;font:13px ${SANS};color:${C.muted}">${m.reference}<br><span style="font:bold 20px ${SERIF};color:${C.navy}">n° ${e(d.id)}</span></td>
     <td align="right" style="padding:14px 18px;font:13px ${SANS};color:${C.muted}">${e(dateLongue(d.date, L))}</td>
-  </tr></table></td></tr>` : '';
+  </tr>${d.pdf && d.pdf[L] ? `<tr><td colspan="2" style="padding:12px 18px;border-top:1px solid ${C.line};font:13px ${SANS};color:${C.ink}">
+    <b style="color:${C.red}">PDF</b>&nbsp; ${m.pdf} <span style="color:${C.muted}">(${e(d.pdf[L])})</span></td></tr>` : ''}</table></td></tr>` : '';
   const html = page(`${entete('', m.ecole)}
-${bandeau(e(t.nom), `${m.merci}${p.prenom ? ' ' + e(p.prenom) : ''} !`, `${m.bienRecu} ${t.recu}.`)}
+${bandeau(e(t.nom), L === 'en' ? `${m.merci}${p.prenom ? ', ' + e(p.prenom) : ''}!` : `${m.merci}${p.prenom ? ' ' + e(p.prenom) : ''}&nbsp;!`, `${m.bienRecu} ${t.recu}.`)}
 <tr><td style="padding:26px 28px 18px">
   <div style="font:bold 17px ${SERIF};color:${C.ink};margin-bottom:10px">${m.suite}</div>
   ${etapes.map(x => `<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 10px"><tr>
@@ -226,4 +230,4 @@ ${ref}
   return { sujet: 'EchoResta – ' + t.objet, html };
 }
 
-module.exports = { emailEcole, emailDemandeur, LOGO_CID };
+module.exports = { emailEcole, emailDemandeur, LOGO_CID, TYPES, personne, dateLongue };

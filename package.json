@@ -3,6 +3,8 @@
   "private": true,
   "description": "Site de l'école EchoResta : pages statiques (générées par _build/build.py) et fonction d'envoi des formulaires (api/envoyer.js).",
   "dependencies": {
-    "@neondatabase/serverless": "1.2.0"
+    "@neondatabase/serverless": "1.2.0",
+    "@pdf-lib/fontkit": "1.1.1",
+    "pdf-lib": "1.17.1"
   }
 }

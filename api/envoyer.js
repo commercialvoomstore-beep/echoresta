@@ -2,7 +2,8 @@
 //   1. les enregistre dans la base Neon Postgres (table « demandes »),
 //   2. envoie la demande par e-mail dans la boîte Microsoft 365 de l'école (Microsoft Graph),
 //   3. envoie un accusé de réception à la personne, si elle a donné son adresse e-mail.
-// Mise en page des e-mails : api/_gabarits.js ; logo intégré : api/_logo.js.
+// Mise en page des e-mails : api/_gabarits.js ; logo intégré : api/_logo.js ;
+// récapitulatif PDF joint aux deux e-mails : api/_pdf.js (français pour l'école, langue du formulaire pour la personne).
 //
 // Les secrets ne sont jamais dans le code : ils se règlent dans Vercel → Settings → Environment Variables.
 //   MS_CLIENT_SECRET : la « Valeur » du secret client de l'application « Echoresta » (Microsoft Entra ID)
@@ -12,6 +13,7 @@
 
 const { neon } = require('@neondatabase/serverless');
 const { emailEcole, emailDemandeur, LOGO_CID } = require('./_gabarits');
+const { pdfDemande } = require('./_pdf');
 const LOGO = require('./_logo');
 
 const TENANT = process.env.MS_TENANT_ID || 'ffe8f65f-6b4d-42cc-b8f8-b6a4febd98e4';
@@ -81,14 +83,17 @@ async function obtenirJeton() {
 }
 
 // Envoi d'un message HTML, avec le logo joint « en ligne » (affiché dans le message, sans téléchargement)
-async function envoyer({ a, sujet, html, repondreA }) {
+// et, s'il a pu être créé, le récapitulatif PDF en pièce jointe
+async function envoyer({ a, sujet, html, repondreA, pdf }) {
   const message = {
     subject: sujet,
     body: { contentType: 'HTML', content: html },
     toRecipients: [{ emailAddress: { address: a } }],
     ...(repondreA ? { replyTo: [{ emailAddress: { address: repondreA } }] } : {}),
     attachments: [{ '@odata.type': '#microsoft.graph.fileAttachment', name: 'logo-echoresta.png', contentType: 'image/png',
-                    contentBytes: LOGO, isInline: true, contentId: LOGO_CID }],
+                    contentBytes: LOGO, isInline: true, contentId: LOGO_CID },
+                  ...(pdf ? [{ '@odata.type': '#microsoft.graph.fileAttachment', name: pdf.nom, contentType: 'application/pdf',
+                               contentBytes: pdf.contenu.toString('base64') }] : [])],
   };
   const r = await fetch(`https://graph.microsoft.com/v1.0/users/${encodeURIComponent(DE)}/sendMail`, {
     method: 'POST',
@@ -145,9 +150,15 @@ module.exports = async (req, res) => {
     try { d.id = await enregistrer(d); enregistre = true; } catch (e) { console.error('Neon :', e.message); }
   }
   if (microsoft) {
+    // Récapitulatifs PDF : en français pour l'école, dans la langue du formulaire pour la personne
+    const pdfs = {};
+    for (const lg of new Set(['fr', d.repondreA ? d.langue : 'fr'])) {
+      try { pdfs[lg] = await pdfDemande(d, lg); } catch (e) { console.error('PDF :', e.message); }
+    }
+    d.pdf = Object.fromEntries(Object.entries(pdfs).map(([lg, x]) => [lg, x.nom]));
     try {
       const m = emailEcole(d);
-      await envoyer({ a: A, sujet: m.sujet, html: m.html, repondreA: d.repondreA });
+      await envoyer({ a: A, sujet: m.sujet, html: m.html, repondreA: d.repondreA, pdf: pdfs.fr });
       envoye = true;
     } catch (e) { console.error('Microsoft Graph (école) :', e.message); d.erreur = e.message; }
     if (d.repondreA) {
@@ -155,7 +166,7 @@ module.exports = async (req, res) => {
         if (enregistre && await accusesRecents(d.repondreA) >= ACCUSES_PAR_JOUR) accuse = 'non : limite atteinte';
         else {
           const m = emailDemandeur(d);
-          await envoyer({ a: d.repondreA, sujet: m.sujet, html: m.html });
+          await envoyer({ a: d.repondreA, sujet: m.sujet, html: m.html, pdf: pdfs[d.langue] });
           accuse = 'envoyé';
         }
       } catch (e) { console.error('Microsoft Graph (accusé) :', e.message); accuse = 'échec : ' + e.message.slice(0, 200); }
