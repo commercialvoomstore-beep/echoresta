@@ -67,14 +67,22 @@
   });
 })();
 
-// Envoi des formulaires par e-mail (service Web3Forms, sans serveur à gérer) :
-// la clé du formulaire désigne la boîte qui reçoit les demandes, l'adresse n'apparaît pas dans la page.
-// En cas d'échec, le visiteur peut envoyer la même demande sur WhatsApp.
-const envoyerEmail=(form,sujet,champs)=>fetch('https://api.web3forms.com/submit',{
+// Envoi des formulaires par e-mail, dans la boîte Microsoft 365 de l'école (contact@voomnetformation.ci) :
+// 1. par la fonction /api/envoyer (Microsoft Graph, voir api/envoyer.js) ;
+// 2. si elle ne répond pas, par le service de secours Web3Forms (même boîte de réception) ;
+// 3. en dernier recours, le visiteur peut envoyer la même demande sur WhatsApp (afficherEchec).
+const emailDe=champs=>Object.values(champs).find(v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim()))||'';
+const robot=form=>!!(form.elements.botcheck&&form.elements.botcheck.checked);
+const viaMicrosoft=(form,sujet,champs)=>fetch('/api/envoyer',{
+  method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
+  body:JSON.stringify({sujet,champs,replyto:emailDe(champs),page:location.pathname,botcheck:robot(form)})
+}).then(r=>r.ok?r.json():{}).then(d=>d.ok===true).catch(()=>false);
+const viaWeb3Forms=(form,sujet,champs)=>fetch('https://api.web3forms.com/submit',{
   method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
   body:JSON.stringify(Object.assign({access_key:form.dataset.key,subject:sujet,from_name:'Site EchoResta',
-    replyto:champs['E-mail']||'',botcheck:!!(form.elements.botcheck&&form.elements.botcheck.checked)},champs))
+    replyto:emailDe(champs),botcheck:robot(form)},champs))
 }).then(r=>r.json()).then(d=>d.success===true).catch(()=>false);
+const envoyerEmail=(form,sujet,champs)=>viaMicrosoft(form,sujet,champs).then(ok=>ok||viaWeb3Forms(form,sujet,champs));
 const texteDemande=champs=>Object.entries(champs).filter(([,v])=>v).map(([k,v])=>k+' : '+v).join('\n');
 const afficherEchec=(el,form,sujet,texte)=>{
   const wa='https://wa.me/'+form.dataset.wa+'?text='+encodeURIComponent(sujet+'\n\n'+texte);
