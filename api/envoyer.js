@@ -140,6 +140,7 @@ module.exports = async (req, res) => {
     const statut = envoye ? 'envoyé' : (process.env.MS_CLIENT_SECRET ? 'échec : ' + (d.erreur || '').slice(0, 200) : 'non configuré');
     try { await sql`UPDATE demandes SET envoi_email = ${statut} WHERE id = ${d.id}`; } catch (e) { console.error('Neon :', e.message); }
   }
-  if (!enregistre && !envoye) return res.status(502).json({ ok: false });
-  return res.status(200).json({ ok: true });
+  // enregistre / envoye : utiles pour le test automatique (.github/workflows/test-formulaires.yml)
+  if (!enregistre && !envoye) return res.status(502).json({ ok: false, enregistre, envoye });
+  return res.status(200).json({ ok: true, enregistre, envoye });
 };
