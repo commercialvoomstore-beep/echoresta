@@ -177,7 +177,8 @@ module.exports = async (req, res) => {
     try { await sql`UPDATE demandes SET envoi_email = ${statut}, accuse_email = ${accuse} WHERE id = ${d.id}`; }
     catch (e) { console.error('Neon :', e.message); }
   }
-  // enregistre / envoye : utiles pour le test automatique (.github/workflows/test-formulaires.yml)
+  // enregistre / envoye / pdf : utiles pour le test automatique (.github/workflows/test-formulaires.yml)
   if (!enregistre && !envoye) return res.status(502).json({ ok: false, enregistre, envoye });
-  return res.status(200).json({ ok: true, enregistre, envoye, accuse: accuse === 'envoyé', ...(d.id ? { numero: String(d.id) } : {}) });
+  return res.status(200).json({ ok: true, enregistre, envoye, accuse: accuse === 'envoyé', pdf: Boolean(d.pdf && d.pdf.fr),
+                               ...(d.id ? { numero: String(d.id) } : {}) });
 };
