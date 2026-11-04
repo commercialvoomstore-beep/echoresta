@@ -1,0 +1,42 @@
+# Vérification du site en ligne et envoi d'un formulaire de test (e-mail + base Neon).
+# Se lance tout seul quand ce fichier change, ou à la main : GitHub → Actions → « Test du site et des formulaires » → Run workflow.
+# Chaque lancement envoie UN e-mail « TEST » à contact@voomnetformation.ci et ajoute une ligne dans la table demandes.
+name: Test du site et des formulaires
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/test-formulaires.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      SITE: https://www.echoresta.ci
+    steps:
+      - name: Le site répond
+        run: curl -fsS -o /dev/null -w 'accueil %{http_code}\n' "$SITE/"
+      - name: Pages sans .html et redirection des anciennes adresses
+        run: |
+          curl -fsS -o /dev/null -w 'formations %{http_code}\n' "$SITE/formations"
+          code=$(curl -sS -o /dev/null -w '%{http_code}' "$SITE/formations.html"); echo "formations.html → $code"; test "$code" = 308 -o "$code" = 301
+      - name: Version anglaise
+        run: curl -fsS -o /dev/null -w 'en %{http_code}\n' "$SITE/en/"
+      - name: Sitemap et robots.txt
+        run: |
+          curl -fsS "$SITE/sitemap.xml" | grep -c '<loc>https://www.echoresta.ci/' 
+          curl -fsS "$SITE/robots.txt" | grep 'Sitemap: https://www.echoresta.ci/sitemap.xml'
+      - name: Envoi du formulaire de test
+        run: |
+          curl -sS -o reponse.json -w 'HTTP %{http_code}\n' -X POST "$SITE/api/envoyer" \
+            -H 'Content-Type: application/json' -H "Origin: $SITE" \
+            -d '{"sujet":"TEST – vérification des formulaires du site (à ignorer)","formulaire":"form-contact","langue":"fr","page":"/contact","champs":{"Nom":"Test automatique","Message":"Message envoyé automatiquement pour vérifier que les formulaires du site arrivent dans cette boîte et dans la base Neon. Vous pouvez le supprimer."}}'
+          cat reponse.json; echo
+          grep -q '"ok":true' reponse.json
+      - name: Enregistrement dans la base Neon
+        if: always()
+        run: grep -q '"enregistre":true' reponse.json
+      - name: Envoi de l'e-mail Microsoft 365
+        if: always()
+        run: grep -q '"envoye":true' reponse.json
