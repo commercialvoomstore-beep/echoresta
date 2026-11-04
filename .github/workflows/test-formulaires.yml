@@ -1,6 +1,7 @@
 # Vérification du site en ligne et envoi d'un formulaire de test (e-mail + base Neon).
 # Se lance tout seul quand ce fichier change, ou à la main : GitHub → Actions → « Test du site et des formulaires » → Run workflow.
-# Chaque lancement envoie UN e-mail « TEST » (avec son récapitulatif PDF) à contact@voomnetformation.ci et ajoute une ligne dans la table demandes.
+# Chaque lancement envoie UN e-mail « TEST » (avec son récapitulatif PDF et un document de test) à contact@voomnetformation.ci
+# et ajoute une ligne dans les tables demandes et fichiers.
 name: Test du site et des formulaires
 on:
   workflow_dispatch:
@@ -27,11 +28,25 @@ jobs:
         run: |
           curl -fsS "$SITE/sitemap.xml" | grep -c '<loc>https://www.echoresta.ci/' 
           curl -fsS "$SITE/robots.txt" | grep 'Sitemap: https://www.echoresta.ci/sitemap.xml'
+      - name: Envoi d'un document de test (comme le CV d'un candidat)
+        run: |
+          printf '%%PDF-1.4\n%% Document de test EchoResta : verification de l envoi des CV. Vous pouvez l ignorer.\n%%%%EOF\n' > test.pdf
+          curl -sS -o fichier.json -w 'HTTP %{http_code}\n' -X POST "$SITE/api/fichier" -H "Origin: $SITE" \
+            -H 'Content-Type: application/octet-stream' -H 'X-Nom-Fichier: TEST-document.pdf' -H 'X-Champ: Document de test' \
+            --data-binary @test.pdf
+          cat fichier.json; echo
+          jq -e '.ok == true and .type == "application/pdf"' fichier.json
       - name: Envoi du formulaire de test
         run: |
+          jq -n --slurpfile f fichier.json '{
+            sujet: "TEST – vérification des formulaires du site (à ignorer)", formulaire: "form-contact", langue: "fr", page: "/contact",
+            consentement: "Test automatique (case de consentement)",
+            champs: {"Nom": "Test automatique", "Téléphone": "+225 07 68 84 20 38", "Objet": "Demande d’information", "Formation": "Cuisinier",
+                     "Message": "Message envoyé automatiquement pour vérifier que les formulaires du site et leurs documents arrivent dans cette boîte et dans la base Neon. Vous pouvez le supprimer."},
+            sections: [["Vos coordonnées", ["Nom", "Téléphone"]], ["Votre demande", ["Objet", "Formation", "Message"]]],
+            fichiers: [{id: $f[0].id, cle: $f[0].cle}]}' > fiche.json
           curl -sS -o reponse.json -w 'HTTP %{http_code}\n' -X POST "$SITE/api/envoyer" \
-            -H 'Content-Type: application/json' -H "Origin: $SITE" \
-            -d '{"sujet":"TEST – vérification des formulaires du site (à ignorer)","formulaire":"form-contact","langue":"fr","page":"/contact","champs":{"Nom":"Test automatique","Téléphone":"+225 07 68 84 20 38","Objet":"Demande d’information","Formation":"Cuisinier","Message":"Message envoyé automatiquement pour vérifier que les formulaires du site arrivent dans cette boîte et dans la base Neon. Vous pouvez le supprimer."},"sections":[["Vos coordonnées",["Nom","Téléphone"]],["Votre demande",["Objet","Formation","Message"]]]}'
+            -H 'Content-Type: application/json' -H "Origin: $SITE" --data-binary @fiche.json
           cat reponse.json; echo
           grep -q '"ok":true' reponse.json
       - name: Enregistrement dans la base Neon
@@ -43,3 +58,9 @@ jobs:
       - name: Récapitulatif PDF joint à l'e-mail
         if: always()
         run: grep -q '"pdf":true' reponse.json
+      - name: Document relié à la demande et téléchargeable par son lien
+        if: always()
+        run: |
+          grep -q '"documents":1' reponse.json
+          curl -fsS -o recu.pdf "$SITE/api/fichier?n=$(jq -r .id fichier.json)&k=$(jq -r .cle fichier.json)"
+          cmp test.pdf recu.pdf && echo "document téléchargé identique"
