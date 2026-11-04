@@ -17,7 +17,7 @@ EN_DIR.mkdir(exist_ok=True)
 
 INLINE = {'a', 'strong', 'b', 'em', 'i', 'span', 'small', 'br', 'svg', 'use', 'sup', 'sub', 'u', 'abbr', 'time', 'mark', 's'}
 SANS_TEXTE = {'script', 'style', 'noscript', 'svg', 'template'}
-ATTRIBUTS = ['placeholder', 'aria-label', 'alt', 'title', 'data-label', 'data-requis']
+ATTRIBUTS = ['placeholder', 'aria-label', 'alt', 'title', 'data-label', 'data-requis', 'data-section']
 METAS = {'description', 'twitter:title', 'twitter:description', 'og:title', 'og:description', 'og:image:alt'}
 
 
@@ -155,6 +155,7 @@ JS_CHAINES = [
     'Prénoms', 'Remarques ou questions', 'Rendez-vous', 'Saisissez la date au format jj/mm/aaaa.', 'Sexe', 'Situation actuelle',
     'Téléphone', 'Téléphone / WhatsApp', 'Téléphone du tuteur', 'Téléphone principal', 'Téléphone secondaire', 'Ville / Commune',
     'Établissement ou société', '— Choisir l’heure —', '<li class="empty">Aucun résultat.</li>', ' ans)',
+    'Vos coordonnées', 'Votre demande', 'Votre rendez-vous', 'Autres informations', 'Référence de votre demande',
     '" target="_blank" rel="noopener">Envoyez la demande sur WhatsApp</a> (message déjà rédigé) ou appelez-nous au +225 07 68 84 20 38.',
 ]
 JS_FRAGMENTS = ['>Votre résultat<', '>Découvrir la formation<', '>Refaire le test<']
@@ -171,7 +172,7 @@ for c in JS_CHAINES:
     js = js.replace(f"'{c}'", f"'{_js(tr(c, 'main.js'))}'")
 for c in JS_FRAGMENTS:
     js = js.replace(c, '>' + tr(c[1:-1], 'main.js') + '<')
-js = js.replace("'fr-FR'", "'en-GB'").replace("' à '", "' at '").replace("' n° '", "' no. '")
+js = js.replace("'fr-FR'", "'en-GB'").replace("' à '", "' at '").replace("' n° '", "' no. '").replace("'n° '", "'no. '")
 (OUT / 'assets' / 'main-en.js').write_text(js)
 
 data_en = {

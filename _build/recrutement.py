@@ -122,7 +122,7 @@ def si(condition, contenu):
 def bloc(num, titre, sous_titre, contenu, accent):
     chiffre = 'tw-text-red-700' if accent == 'nuit' else 'tw-text-amber-600'
     filet = ' tw-border-0 tw-border-t tw-border-solid tw-border-slate-200' if num > 1 else ''
-    return f'''        <div class="tw-px-5 tw-py-8 sm:tw-px-10 sm:tw-py-10{filet}">
+    return f'''        <div class="tw-px-5 tw-py-8 sm:tw-px-10 sm:tw-py-10{filet}" data-section="{titre}">
           <div class="tw-mb-7 tw-flex tw-items-baseline tw-gap-4 sm:tw-gap-5">
             <span class="tw-font-serif tw-text-2xl tw-font-bold {chiffre} sm:tw-text-3xl">{num:02d}</span>
             <div><h2 class="tw-m-0 tw-font-serif tw-text-xl tw-leading-snug tw-text-slate-900 sm:tw-text-2xl">{titre}</h2>
@@ -164,7 +164,7 @@ def merci(titre, texte, accent, extra=''):
     return f'''      <div class="tw-hidden tw-rounded-2xl tw-border-0 tw-border-t-4 tw-border-solid {bord} tw-bg-white tw-p-6 tw-text-center tw-shadow-sm sm:tw-p-10" data-merci>
         <h2 class="tw-m-0 tw-font-serif tw-text-2xl tw-text-slate-900">{titre}</h2>
         <p class="tw-mx-auto tw-mt-3 tw-max-w-lg tw-text-slate-600">{texte}</p>{extra}
-        <pre class="tw-mt-6 tw-whitespace-pre-wrap tw-break-words tw-rounded-xl tw-bg-slate-50 tw-p-5 tw-text-left tw-font-sans tw-text-sm tw-leading-relaxed tw-text-slate-700" data-recap></pre>
+        <div class="recap" data-recap hidden></div>
       </div>'''
 
 

@@ -71,11 +71,29 @@
 // et l'envoie par e-mail dans la boîte Microsoft 365 de l'école (contact@voomnetformation.ci).
 // Si elle échoue, le visiteur peut envoyer la même demande sur WhatsApp (afficherEchec).
 const emailDe=champs=>Object.values(champs).find(v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim()))||'';
-const envoyerEmail=(form,sujet,champs)=>fetch('/api/envoyer',{
+// Réponse : {ok, numero} (numero = référence de la demande dans la base) ; {ok:false} en cas d'échec.
+// sections : [[titre, [libellés…]], …] pour regrouper les réponses dans les e-mails et le récapitulatif.
+const envoyerEmail=(form,sujet,champs,sections=[])=>fetch('/api/envoyer',{
   method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
-  body:JSON.stringify({sujet,champs,formulaire:form.id,replyto:emailDe(champs),page:location.pathname,langue:document.documentElement.lang,
-    botcheck:!!(form.elements.botcheck&&form.elements.botcheck.checked)})
-}).then(r=>r.ok?r.json():{}).then(d=>d.ok===true).catch(()=>false);
+  body:JSON.stringify({sujet,champs,sections,formulaire:form.id,replyto:emailDe(champs),page:location.pathname,
+    langue:document.documentElement.lang,botcheck:!!(form.elements.botcheck&&form.elements.botcheck.checked)})
+}).then(r=>r.ok?r.json():{}).then(d=>d&&d.ok===true?d:{ok:false}).catch(()=>({ok:false}));
+// Récapitulatif affiché après l'envoi : référence de la demande, puis les réponses regroupées par section
+const afficherRecap=(el,champs,sections,numero)=>{
+  const creer=(balise,classe,texte)=>{const x=document.createElement(balise);if(classe)x.className=classe;if(texte!=null)x.textContent=texte;return x;};
+  const vus=new Set(), groupes=[];
+  for(const [titre,cles] of sections){const l=cles.filter(k=>champs[k]);l.forEach(k=>vus.add(k));if(l.length)groupes.push([titre,l]);}
+  const reste=Object.keys(champs).filter(k=>champs[k]&&!vus.has(k));
+  if(reste.length)groupes.push([groupes.length?'Other information':'',reste]);
+  el.textContent='';
+  if(numero){const ref=creer('div','recap-ref','Your request reference');ref.append(creer('b','','no. '+numero));el.append(ref);}
+  for(const [titre,cles] of groupes){
+    const s=creer('div','recap-section');if(titre)s.append(creer('h4','',titre));
+    const dl=creer('dl');cles.forEach(k=>dl.append(creer('dt','',k),creer('dd','',champs[k])));
+    s.append(dl);el.append(s);
+  }
+  el.hidden=false;
+};
 const texteDemande=champs=>Object.entries(champs).filter(([,v])=>v).map(([k,v])=>k+' : '+v).join('\n');
 const afficherEchec=(el,form,sujet,texte)=>{
   const wa='https://wa.me/'+form.dataset.wa+'?text='+encodeURIComponent(sujet+'\n\n'+texte);
@@ -99,11 +117,13 @@ const afficherEchec=(el,form,sujet,texte)=>{
       'Course':form.formation.value?form.formation.selectedOptions[0].textContent:'I don’t know yet',
       'Message':form.message.value.trim()};
     const sujet='Site EchoResta : '+champs['Subject']+' – '+champs['Last name'];
+    const sections=[['Your contact details',['Last name','Phone','E-mail']],['Your request',['Subject','Course','Message']]];
     btn.disabled=true; btn.textContent='Sending…'; err.hidden=true;
-    envoyerEmail(form,sujet,champs).then(ok=>{
+    envoyerEmail(form,sujet,champs,sections).then(rep=>{
       btn.disabled=false; btn.textContent='Send my request';
-      if(ok){form.hidden=true;document.getElementById('form-ok').hidden=false;}
-      else afficherEchec(err,form,sujet,texteDemande(champs));
+      if(!rep.ok){afficherEchec(err,form,sujet,texteDemande(champs));return;}
+      afficherRecap(document.getElementById('contact-recap'),champs,sections,rep.numero);
+      form.hidden=true; const box=document.getElementById('form-ok'); box.hidden=false; box.scrollIntoView({block:'start'});
     });
   });
 })();
@@ -203,11 +223,13 @@ const afficherEchec=(el,form,sujet,texte)=>{
       'Preferred course':el.formation.value?el.formation.selectedOptions[0].textContent:'Not specified',
       'Appointment':jour+' at '+heure.value,'Comments or questions':el.message.value.trim()};
     const sujet='Appointment request: '+jour+' at '+heure.value+' – '+champs['Full name'];
+    const sections=[['Your contact details',['Full name','Phone / WhatsApp','E-mail']],
+                    ['Your appointment',['Appointment','Preferred course','Comments or questions']]];
     btn.disabled=true; btn.textContent='Sending…';
-    envoyerEmail(form,sujet,champs).then(envoye=>{
+    envoyerEmail(form,sujet,champs,sections).then(rep=>{
       btn.disabled=false; btn.textContent=btnTexte;
-      if(!envoye){afficherEchec(err,form,sujet,texteDemande(champs));return;}
-      document.getElementById('rdv-recap').textContent=texteDemande(champs);
+      if(!rep.ok){afficherEchec(err,form,sujet,texteDemande(champs));return;}
+      afficherRecap(document.getElementById('rdv-recap'),champs,sections,rep.numero);
       form.hidden=true; ok.hidden=false; ok.scrollIntoView({block:'start'});
     });
   });
@@ -307,11 +329,16 @@ const listesDrapeaux={};
     if(!tuteur.hidden) Object.assign(champs,{'Parent or guardian':val(el.tuteur_nom),'Relationship':choix(el.tuteur_lien),'Guardian’s phone':val(el.tuteur_tel)});
     Object.assign(champs,{'Emergency contact':val(el.urgence),'How did you hear about us':choix(el.connu),'Career plan':val(el.motivation)});
     const sujet='Application: '+champs['Course']+' – '+champs['First name(s)']+' '+champs['Last name'];
+    const parties=[...form.querySelectorAll('fieldset > legend')].map(l=>{const c=l.cloneNode(true);c.querySelectorAll('small').forEach(x=>x.remove());return c.textContent.replace(/^\s*\d+\.\s*/,'').trim();});
+    const sections=[[parties[0],['Last name','First name(s)','Date of birth','Place of birth','Country','Sex','Nationality','ID document']],
+      [parties[1],['Address','City / District','E-mail','Main phone','Secondary phone']],[parties[2],['Level of education','Latest diploma']],
+      [parties[3],['Course','Current situation','Experience']],[parties[4],['Parent or guardian','Relationship','Guardian’s phone']],
+      [parties[5],['Emergency contact','How did you hear about us','Career plan']]].filter(s=>s[0]);
     btn.disabled=true; btn.textContent='Sending…';
-    envoyerEmail(form,sujet,champs).then(ok=>{
+    envoyerEmail(form,sujet,champs,sections).then(rep=>{
       btn.disabled=false; btn.textContent='Send my application';
-      if(!ok){afficherEchec(err,form,sujet,texteDemande(champs));return;}
-      document.getElementById('ins-recap').textContent=texteDemande(champs);
+      if(!rep.ok){afficherEchec(err,form,sujet,texteDemande(champs));return;}
+      afficherRecap(document.getElementById('ins-recap'),champs,sections,rep.numero);
       form.hidden=true; const box=document.getElementById('ins-ok'); box.hidden=false; box.scrollIntoView({block:'start'});
     });
   });
@@ -337,19 +364,20 @@ const listesDrapeaux={};
       c.classList.toggle('tw-hidden',![...form.querySelectorAll(`[name="${n}"]`)].some(i=>i.checked&&i.value===v));});
     if(conditions.length){form.addEventListener('change',majConditions);majConditions();}
     const valeurs=()=>{
-      const champs={}, vus=new Set();
+      const champs={}, vus=new Set(), parSection=new Map();
+      const ranger=(x,cle)=>{const s=x.closest('[data-section]');if(!s)return;const t=s.dataset.section;if(!parSection.has(t))parSection.set(t,[]);parSection.get(t).push(cle);};
       [...form.elements].forEach(el=>{
         if(!el.name||el.name==='botcheck'||vus.has(el.name)||(el.type==='hidden'&&!el.dataset.label)||(el.type==='checkbox'&&!el.closest('[data-groupe]'))||el.closest('[data-si].tw-hidden')) return;
         const g=el.closest('[data-groupe]');
-        if(g){vus.add(el.name);const v=[...g.querySelectorAll('input:checked')].map(x=>x.value).join(', ');if(v)champs[g.dataset.label]=v;return;}
+        if(g){vus.add(el.name);const v=[...g.querySelectorAll('input:checked')].map(x=>x.value).join(', ');if(v){champs[g.dataset.label]=v;ranger(g,g.dataset.label);}return;}
         let v=el.type==='file'?[...el.files].map(f=>f.name).join(', '):el.tagName==='SELECT'?(el.value?el.selectedOptions[0].textContent:''):el.value.trim();
         if('paysRequis' in el.dataset&&/^Autre/.test(v)){const a=form.elements[el.name+'_autre'];if(a&&a.value.trim())v=a.value.trim();}
         if('paysRequis' in el.dataset) vus.add(el.name+'_autre');
         if(el.dataset.indicatif&&v){const ind=form.elements[el.dataset.indicatif].value;if(ind&&ind!=='Other'&&!v.startsWith('+'))v=ind+' '+v;}
         if('fcfa' in el.dataset&&v){const per=form.elements[el.name+'_periode'];v+=' FCFA'+(per&&per.value?' '+per.value:'');vus.add(el.name+'_periode');}
-        if(v) champs[el.dataset.label||el.name]=v;
+        if(v){champs[el.dataset.label||el.name]=v;ranger(el,el.dataset.label||el.name);}
       });
-      return champs;
+      return [champs,[...parSection]];
     };
     form.addEventListener('submit',e=>{
       e.preventDefault(); echec.classList.add('tw-hidden');
@@ -361,15 +389,15 @@ const listesDrapeaux={};
       if(!form.checkValidity()){form.reportValidity();return;}
       if(paysKo.length){const l=listesDrapeaux[paysKo[0].name];l.btn.scrollIntoView({block:'center'});l.btn.focus();return;}
       if(mauvais.length){mauvais[0].scrollIntoView({block:'center'});return;}
-      const champs=valeurs();
+      const [champs,sections]=valeurs();
       const nom=champs['Establishment or company']||[champs['First names'],champs['Last name']].filter(Boolean).join(' ');
       const objet=champs['I am looking for']||champs['Job sought']||'';
       const sujet=form.dataset.sujet+' : '+objet+' – '+nom;
       btn.disabled=true; btn.textContent='Sending…';
-      envoyerEmail(form,sujet,champs).then(ok=>{
+      envoyerEmail(form,sujet,champs,sections).then(rep=>{
         btn.disabled=false; btn.textContent=btnTexte;
-        if(!ok){afficherEchec(echec,form,sujet,texteDemande(champs));echec.classList.remove('tw-hidden');return;}
-        merci.querySelector('[data-recap]').textContent=texteDemande(champs);
+        if(!rep.ok){afficherEchec(echec,form,sujet,texteDemande(champs));echec.classList.remove('tw-hidden');return;}
+        afficherRecap(merci.querySelector('[data-recap]'),champs,sections,rep.numero);
         const wa=merci.querySelector('[data-wa-fichiers]');
         if(wa) wa.href='https://wa.me/'+form.dataset.wa+'?text='+encodeURIComponent('Hello EchoResta, here are the supporting documents for my application ('+nom+', '+objet+'): CV, photo and diplomas.');
         form.classList.add('tw-hidden'); merci.classList.remove('tw-hidden'); merci.scrollIntoView({block:'start'});

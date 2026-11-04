@@ -849,8 +849,9 @@ contact = page_hero('Contact et inscription : votre école hôtelière à Abidja
         <p class="field-error" id="contact-err" hidden></p>
       </form>
       <div class="form-ok" id="form-ok" hidden>
-        <h3>Merci, votre demande est envoyée !</h3>
+        <h3>Merci, votre demande est envoyée&nbsp;!</h3>
         <p class="muted">Notre équipe vous recontactera sous 48 h.</p>
+        <div class="recap" id="contact-recap" hidden></div>
       </div>
     </div>
   </div>
@@ -1073,7 +1074,7 @@ inscription = page_hero('Inscription à une formation en hôtellerie et restaura
       <div class="form-ok" id="ins-ok" hidden>
         <h3>Votre candidature est envoyée</h3>
         <p class="muted">Merci ! Notre équipe vous recontacte pour fixer votre entretien d’inscription. Pensez à préparer les pièces de votre dossier.</p>
-        <pre class="rdv-recap" id="ins-recap"></pre>
+        <div class="recap" id="ins-recap" hidden></div>
       </div>
     </div>
   </div>
@@ -1155,7 +1156,7 @@ rdv = page_hero('Prendre rendez-vous avec notre école à Abidjan', 'Rendez-vous
       <div class="form-ok" id="rdv-ok" hidden>
         <h3>Votre demande de rendez-vous est envoyée</h3>
         <p class="muted">Merci ! Nous vous confirmons le rendez-vous dans les meilleurs délais.</p>
-        <pre class="rdv-recap" id="rdv-recap"></pre>
+        <div class="recap" id="rdv-recap" hidden></div>
         <div class="quiz-actions" style="justify-content:center">
           <button type="button" class="btn btn-outline" id="rdv-again">Faire une autre demande</button>
         </div>
