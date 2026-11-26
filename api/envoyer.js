@@ -19,7 +19,7 @@ const LOGO = require('./_logo');
 
 const TENANT = process.env.MS_TENANT_ID || 'ffe8f65f-6b4d-42cc-b8f8-b6a4febd98e4';
 const CLIENT = process.env.MS_CLIENT_ID || 'af5fc564-d935-48aa-b512-d72830c631a0';
-const DE = process.env.MAIL_FROM || 'contact@voomnetformation.ci';
+const DE = process.env.MAIL_FROM || 'contact@echoresta.ci';
 const A = process.env.MAIL_TO || DE;
 
 // Pages autorisées à utiliser la fonction (le site, ses aperçus Vercel, les essais en local)
