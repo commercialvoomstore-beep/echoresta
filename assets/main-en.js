@@ -68,7 +68,7 @@
 })();
 
 // Envoi des formulaires : la fonction /api/envoyer (voir api/envoyer.js) enregistre la demande dans la base Neon
-// et l'envoie par e-mail dans la boîte Microsoft 365 de l'école (contact@voomnetformation.ci).
+// et l'envoie par e-mail dans la boîte Microsoft 365 de l'école (contact@echoresta.ci).
 // Si elle échoue, le visiteur peut envoyer la même demande sur WhatsApp (afficherEchec).
 const emailDe=champs=>Object.values(champs).find(v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim()))||'';
 // Réponse : {ok, numero, documents} (numero = référence de la demande dans la base) ; {ok:false} en cas d'échec.

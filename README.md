@@ -96,7 +96,7 @@ Sur vercel.com : **Add New… → Project → Import Git Repository**, choisir c
 Tous les formulaires (contact, rendez-vous, inscription, recherche du personnel, recherche d'emploi) sont envoyés à la
 fonction Vercel `api/envoyer.js`, qui :
 1. enregistre la demande dans la base **Neon Postgres**, table `demandes` (créée automatiquement au premier envoi) ;
-2. l'envoie par e-mail dans la boîte **contact@voomnetformation.ci** (Microsoft 365, via Microsoft Graph, application
+2. l'envoie par e-mail dans la boîte **contact@echoresta.ci** (Microsoft 365, via Microsoft Graph, application
    « Echoresta » de Microsoft Entra ID, permission *Mail.Send* de type Application), avec « Répondre » vers le visiteur ;
 3. note dans la colonne `envoi_email` si l'e-mail est parti.
 Si rien n'a pu être enregistré ni envoyé, la page propose au visiteur d'envoyer sa demande sur WhatsApp.

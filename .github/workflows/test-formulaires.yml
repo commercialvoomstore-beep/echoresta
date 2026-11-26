@@ -1,6 +1,6 @@
 # Vérification du site en ligne et envoi d'un formulaire de test (e-mail + base Neon).
 # Se lance tout seul quand ce fichier change, ou à la main : GitHub → Actions → « Test du site et des formulaires » → Run workflow.
-# Chaque lancement envoie UN e-mail « TEST » (avec son récapitulatif PDF et un document de test) à contact@voomnetformation.ci
+# Chaque lancement envoie UN e-mail « TEST » (avec son récapitulatif PDF et un document de test) à contact@echoresta.ci
 # et ajoute une ligne dans les tables demandes et fichiers.
 name: Test du site et des formulaires
 on:
